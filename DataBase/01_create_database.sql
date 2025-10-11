@@ -14,7 +14,7 @@ CREATE DATABASE congreso_tecnologia
     CONNECTION LIMIT = -1;
 
 -- Conectar a la base de datos
-\c congreso_tecnologia;
+--\c congreso_tecnologia;
 
 -- Crear extensiones necesarias
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
