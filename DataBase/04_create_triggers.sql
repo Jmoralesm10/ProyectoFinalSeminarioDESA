@@ -7,17 +7,24 @@
 CREATE OR REPLACE FUNCTION actualizar_fecha_modificacion()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.fecha_actualizacion = CURRENT_TIMESTAMP;
+    -- Actualizar el campo de fecha de actualización según la tabla
+    IF TG_TABLE_NAME = 'tb_usuarios' THEN
+        NEW.fecha_actualizacion_usuario = CURRENT_TIMESTAMP;
+    ELSIF TG_TABLE_NAME = 'tb_actividades' THEN
+        NEW.fecha_actualizacion_actividad = CURRENT_TIMESTAMP;
+    ELSIF TG_TABLE_NAME = 'tb_faq' THEN
+        NEW.fecha_actualizacion_faq = CURRENT_TIMESTAMP;
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Función para generar código QR único
-CREATE OR REPLACE FUNCTION generar_codigo_qr()
+CREATE OR REPLACE FUNCTION generar_codigo_qr_usuario()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.codigo_qr IS NULL THEN
-        NEW.codigo_qr = 'QR_' || NEW.id::text || '_' || extract(epoch from now())::text;
+    IF NEW.codigo_qr_usuario IS NULL THEN
+        NEW.codigo_qr_usuario = 'CONGRESO_2024_' || NEW.id_usuario::text || '_' || extract(epoch from now())::text;
     END IF;
     RETURN NEW;
 END;
@@ -31,21 +38,21 @@ DECLARE
     inscripciones_count INTEGER;
 BEGIN
     -- Obtener el cupo máximo de la actividad
-    SELECT cupo_maximo INTO actividad_cupo_max
-    FROM actividades 
-    WHERE id = COALESCE(NEW.actividad_id, OLD.actividad_id);
+    SELECT cupo_maximo_actividad INTO actividad_cupo_max
+    FROM tb_actividades 
+    WHERE id_actividad = COALESCE(NEW.id_actividad, OLD.id_actividad);
     
     -- Contar inscripciones confirmadas
     SELECT COUNT(*) INTO inscripciones_count
-    FROM inscripciones_actividad 
-    WHERE actividad_id = COALESCE(NEW.actividad_id, OLD.actividad_id)
-    AND estado = 'confirmada';
+    FROM tb_inscripciones_actividad 
+    WHERE id_actividad = COALESCE(NEW.id_actividad, OLD.id_actividad)
+    AND estado_inscripcion = 'confirmada';
     
     -- Actualizar cupo disponible
-    UPDATE actividades 
-    SET cupo_disponible = actividad_cupo_max - inscripciones_count,
-        fecha_actualizacion = CURRENT_TIMESTAMP
-    WHERE id = COALESCE(NEW.actividad_id, OLD.actividad_id);
+    UPDATE tb_actividades 
+    SET cupo_disponible_actividad = actividad_cupo_max - inscripciones_count,
+        fecha_actualizacion_actividad = CURRENT_TIMESTAMP
+    WHERE id_actividad = COALESCE(NEW.id_actividad, OLD.id_actividad);
     
     RETURN COALESCE(NEW, OLD);
 END;
@@ -83,19 +90,33 @@ $$ LANGUAGE plpgsql;
 -- Función para log de actividades
 CREATE OR REPLACE FUNCTION log_actividad()
 RETURNS TRIGGER AS $$
+DECLARE
+    registro_id TEXT;
 BEGIN
-    INSERT INTO logs_sistema (
-        usuario_id,
-        accion,
-        tabla_afectada,
-        registro_id,
-        detalles,
+    -- Determinar el ID del registro según la tabla
+    CASE TG_TABLE_NAME
+        WHEN 'tb_usuarios' THEN
+            registro_id := COALESCE(NEW.id_usuario::text, OLD.id_usuario::text);
+        WHEN 'tb_inscripciones_actividad' THEN
+            registro_id := COALESCE(NEW.id_inscripcion::text, OLD.id_inscripcion::text);
+        WHEN 'asistencia' THEN
+            registro_id := COALESCE(NEW.id_asistencia::text, OLD.id_asistencia::text);
+        WHEN 'resultados_competencia' THEN
+            registro_id := COALESCE(NEW.id_resultado::text, OLD.id_resultado::text);
+        ELSE
+            registro_id := COALESCE(NEW.id::text, OLD.id::text);
+    END CASE;
+    
+    INSERT INTO tb_logs_sistema (
+        accion_log,
+        tabla_afectada_log,
+        registro_id_log,
+        detalles_log,
         fecha_log
     ) VALUES (
-        COALESCE(NEW.id, OLD.id),
         TG_OP,
         TG_TABLE_NAME,
-        COALESCE(NEW.id::text, OLD.id::text),
+        registro_id,
         CASE 
             WHEN TG_OP = 'DELETE' THEN to_jsonb(OLD)
             ELSE to_jsonb(NEW)
@@ -109,60 +130,60 @@ $$ LANGUAGE plpgsql;
 
 -- Triggers para actualizar fecha_actualizacion
 CREATE TRIGGER trigger_usuarios_actualizar_fecha
-    BEFORE UPDATE ON usuarios
+    BEFORE UPDATE ON tb_usuarios
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
 
 CREATE TRIGGER trigger_actividades_actualizar_fecha
-    BEFORE UPDATE ON actividades
+    BEFORE UPDATE ON tb_actividades
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
 
 CREATE TRIGGER trigger_faq_actualizar_fecha
-    BEFORE UPDATE ON faq
+    BEFORE UPDATE ON tb_faq
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
 
 CREATE TRIGGER trigger_informacion_congreso_actualizar_fecha
-    BEFORE UPDATE ON informacion_congreso
+    BEFORE UPDATE ON tb_informacion_congreso
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
 
 -- Trigger para generar código QR
 CREATE TRIGGER trigger_usuarios_generar_qr
-    BEFORE INSERT ON usuarios
+    BEFORE INSERT ON tb_usuarios
     FOR EACH ROW
-    EXECUTE FUNCTION generar_codigo_qr();
+    EXECUTE FUNCTION generar_codigo_qr_usuario();
 
 -- Triggers para actualizar cupo disponible
 CREATE TRIGGER trigger_inscripciones_actualizar_cupo
-    AFTER INSERT OR UPDATE OR DELETE ON inscripciones_actividad
+    AFTER INSERT OR UPDATE OR DELETE ON tb_inscripciones_actividad
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_cupo_disponible();
 
 -- Trigger para validar inscripción
 CREATE TRIGGER trigger_inscripciones_validar
-    BEFORE INSERT ON inscripciones_actividad
+    BEFORE INSERT ON tb_inscripciones_actividad
     FOR EACH ROW
     EXECUTE FUNCTION validar_inscripcion();
 
 -- Triggers para logging (solo en tablas críticas)
 CREATE TRIGGER trigger_log_usuarios
-    AFTER INSERT OR UPDATE OR DELETE ON usuarios
+    AFTER INSERT OR UPDATE OR DELETE ON tb_usuarios
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();
 
 CREATE TRIGGER trigger_log_inscripciones
-    AFTER INSERT OR UPDATE OR DELETE ON inscripciones_actividad
+    AFTER INSERT OR UPDATE OR DELETE ON tb_inscripciones_actividad
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();
 
 CREATE TRIGGER trigger_log_asistencia
-    AFTER INSERT OR UPDATE OR DELETE ON asistencia
+    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();
 
 CREATE TRIGGER trigger_log_resultados
-    AFTER INSERT OR UPDATE OR DELETE ON resultados_competencia
+    AFTER INSERT OR UPDATE OR DELETE ON tb_resultados_competencia
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();

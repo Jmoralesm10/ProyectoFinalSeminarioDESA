@@ -4,12 +4,12 @@
 -- =====================================================
 
 -- Insertar tipos de usuario
-INSERT INTO tipos_usuario (nombre, descripcion) VALUES
+INSERT INTO tb_tipos_usuario (nombre_tipo_usuario, descripcion_tipo_usuario) VALUES
 ('externo', 'Estudiantes de nivel medio de colegios externos'),
 ('interno', 'Alumnos de la facultad de ingeniería en sistemas');
 
 -- Insertar categorías de actividades
-INSERT INTO categorias_actividad (nombre, descripcion) VALUES
+INSERT INTO tb_categorias_actividad (nombre_categoria, descripcion_categoria) VALUES
 ('programacion', 'Actividades relacionadas con programación y desarrollo de software'),
 ('robotica', 'Talleres y competencias de robótica'),
 ('inteligencia_artificial', 'Actividades sobre IA y machine learning'),
@@ -20,7 +20,7 @@ INSERT INTO categorias_actividad (nombre, descripcion) VALUES
 ('networking', 'Actividades de networking y charlas profesionales');
 
 -- Insertar información del congreso
-INSERT INTO informacion_congreso (titulo, descripcion, fecha_inicio, fecha_fin, lugar, agenda, ponentes_invitados, informacion_carrera) VALUES
+INSERT INTO tb_informacion_congreso (titulo_informacion, descripcion_informacion, fecha_inicio_informacion, fecha_fin_informacion, lugar_informacion, agenda_informacion, ponentes_invitados_informacion, informacion_carrera_informacion) VALUES
 ('Congreso de Tecnología 2024', 
 'El Congreso de Tecnología es un evento anual que busca promover la carrera de ingeniería en sistemas entre estudiantes de nivel medio y ofrecer a los alumnos de la facultad una plataforma para participar en diversas actividades académicas y recreativas.',
 '2024-10-15',
@@ -35,7 +35,7 @@ Lic. Carlos Rodríguez - Emprendedor Tecnológico',
 'La carrera de Ingeniería en Sistemas forma profesionales capaces de diseñar, desarrollar e implementar soluciones tecnológicas innovadoras. Nuestros egresados trabajan en empresas líderes del sector tecnológico, desarrollando software, aplicaciones móviles, sistemas web y soluciones de inteligencia artificial.');
 
 -- Insertar FAQ iniciales
-INSERT INTO faq (pregunta, respuesta, categoria, orden) VALUES
+INSERT INTO tb_faq (pregunta_faq, respuesta_faq, categoria_faq, orden_faq) VALUES
 ('¿Quién puede participar en el congreso?', 
 'Pueden participar estudiantes de nivel medio de colegios externos y alumnos de la facultad de ingeniería en sistemas.', 
 'general', 1),
@@ -69,11 +69,11 @@ INSERT INTO faq (pregunta, respuesta, categoria, orden) VALUES
 'preparacion', 8);
 
 -- Insertar administrador por defecto (password: admin123)
-INSERT INTO administradores (nombre, apellido, email, password_hash, rol) VALUES
+INSERT INTO tb_administradores (nombre_administrador, apellido_administrador, email_administrador, password_hash_administrador, rol_administrador) VALUES
 ('Administrador', 'Sistema', 'admin@congreso.edu', crypt('admin123', gen_salt('bf')), 'super_admin');
 
 -- Insertar algunas actividades de ejemplo
-INSERT INTO actividades (categoria_id, nombre, descripcion, tipo_actividad, fecha_inicio, fecha_fin, cupo_maximo, lugar, ponente) VALUES
+INSERT INTO tb_actividades (id_categoria, nombre_actividad, descripcion_actividad, tipo_actividad, fecha_inicio_actividad, fecha_fin_actividad, cupo_maximo_actividad, lugar_actividad, ponente_actividad) VALUES
 (1, 'Introducción a Python', 'Taller básico de programación en Python para principiantes', 'taller', '2024-10-15 09:00:00', '2024-10-15 12:00:00', 30, 'Aula 101', 'Dr. Ana Martínez'),
 (1, 'Competencia de Programación', 'Competencia de resolución de problemas algorítmicos', 'competencia', '2024-10-16 14:00:00', '2024-10-16 18:00:00', 50, 'Laboratorio de Computación', 'Ing. Roberto Silva'),
 (2, 'Robótica con Arduino', 'Taller práctico de construcción y programación de robots', 'taller', '2024-10-15 14:00:00', '2024-10-15 17:00:00', 20, 'Laboratorio de Robótica', 'Ing. Laura Fernández'),
@@ -82,4 +82,4 @@ INSERT INTO actividades (categoria_id, nombre, descripcion, tipo_actividad, fech
 (7, 'Competencia de Gaming', 'Torneo de videojuegos y desarrollo de juegos', 'competencia', '2024-10-17 14:00:00', '2024-10-17 18:00:00', 40, 'Sala de Gaming', 'Lic. Diego Morales');
 
 -- Actualizar cupo disponible para las actividades
-UPDATE actividades SET cupo_disponible = cupo_maximo;
+UPDATE tb_actividades SET cupo_disponible_actividad = cupo_maximo_actividad;

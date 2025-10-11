@@ -7,22 +7,22 @@
 CREATE OR REPLACE FUNCTION obtener_estadisticas_usuario(p_usuario_id UUID)
 RETURNS TABLE (
     total_inscripciones BIGINT,
-    total_asistencias BIGINT,
-    total_diplomas BIGINT,
-    actividades_inscritas TEXT[]
+    total_tb_asistencias BIGINT,
+    total_tb_diplomas BIGINT,
+    tb_actividades_inscritas TEXT[]
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
-        (SELECT COUNT(*) FROM inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada') as total_inscripciones,
-        (SELECT COUNT(*) FROM asistencia WHERE usuario_id = p_usuario_id) as total_asistencias,
-        (SELECT COUNT(*) FROM diplomas WHERE usuario_id = p_usuario_id) as total_diplomas,
+        (SELECT COUNT(*) FROM tb_inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada') as total_inscripciones,
+        (SELECT COUNT(*) FROM tb_asistencia WHERE usuario_id = p_usuario_id) as total_tb_asistencias,
+        (SELECT COUNT(*) FROM tb_diplomas WHERE usuario_id = p_usuario_id) as total_tb_diplomas,
         ARRAY(
             SELECT a.nombre 
-            FROM inscripciones_actividad ia 
-            JOIN actividades a ON ia.actividad_id = a.id 
+            FROM tb_inscripciones_actividad ia 
+            JOIN tb_actividades a ON ia.actividad_id = a.id 
             WHERE ia.usuario_id = p_usuario_id AND ia.estado = 'confirmada'
-        ) as actividades_inscritas;
+        ) as tb_actividades_inscritas;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -42,14 +42,14 @@ DECLARE
     v_usuario_activo BOOLEAN;
 BEGIN
     -- Verificar si el usuario está activo
-    SELECT activo INTO v_usuario_activo FROM usuarios WHERE id = p_usuario_id;
+    SELECT activo INTO v_usuario_activo FROM tb_usuarios WHERE id = p_usuario_id;
     IF NOT v_usuario_activo THEN
         RETURN QUERY SELECT FALSE, 'Usuario inactivo'::TEXT;
         RETURN;
     END IF;
     
     -- Verificar si la actividad está activa
-    SELECT activo INTO v_actividad_activa FROM actividades WHERE id = p_actividad_id;
+    SELECT activo INTO v_actividad_activa FROM tb_actividades WHERE id = p_actividad_id;
     IF NOT v_actividad_activa THEN
         RETURN QUERY SELECT FALSE, 'Actividad no disponible'::TEXT;
         RETURN;
@@ -57,7 +57,7 @@ BEGIN
     
     -- Verificar si ya está inscrito
     SELECT EXISTS(
-        SELECT 1 FROM inscripciones_actividad 
+        SELECT 1 FROM tb_inscripciones_actividad 
         WHERE usuario_id = p_usuario_id AND actividad_id = p_actividad_id
     ) INTO v_ya_inscrito;
     
@@ -67,7 +67,7 @@ BEGIN
     END IF;
     
     -- Verificar cupo disponible
-    SELECT cupo_disponible INTO v_cupo_disponible FROM actividades WHERE id = p_actividad_id;
+    SELECT cupo_disponible INTO v_cupo_disponible FROM tb_actividades WHERE id = p_actividad_id;
     IF v_cupo_disponible <= 0 THEN
         RETURN QUERY SELECT FALSE, 'No hay cupo disponible'::TEXT;
         RETURN;
@@ -77,34 +77,34 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para generar reporte de asistencia por fecha
-CREATE OR REPLACE FUNCTION generar_reporte_asistencia_fecha(
+-- Función para generar reporte de tb_asistencia por fecha
+CREATE OR REPLACE FUNCTION generar_reporte_tb_asistencia_fecha(
     p_fecha_inicio DATE,
     p_fecha_fin DATE
 )
 RETURNS TABLE (
     fecha DATE,
-    total_asistencia_general BIGINT,
-    total_asistencia_actividades BIGINT,
-    actividades_con_asistencia TEXT[]
+    total_tb_asistencia_general BIGINT,
+    total_tb_asistencia_tb_actividades BIGINT,
+    tb_actividades_con_tb_asistencia TEXT[]
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
-        ast.fecha_asistencia::DATE as fecha,
-        COUNT(CASE WHEN ast.tipo_asistencia = 'general' THEN 1 END) as total_asistencia_general,
-        COUNT(CASE WHEN ast.tipo_asistencia = 'actividad' THEN 1 END) as total_asistencia_actividades,
+        ast.fecha_tb_asistencia::DATE as fecha,
+        COUNT(CASE WHEN ast.tipo_tb_asistencia = 'general' THEN 1 END) as total_tb_asistencia_general,
+        COUNT(CASE WHEN ast.tipo_tb_asistencia = 'actividad' THEN 1 END) as total_tb_asistencia_tb_actividades,
         ARRAY(
             SELECT DISTINCT a.nombre 
-            FROM asistencia ast2 
-            JOIN actividades a ON ast2.actividad_id = a.id 
-            WHERE ast2.fecha_asistencia::DATE = ast.fecha_asistencia::DATE 
-            AND ast2.tipo_asistencia = 'actividad'
-        ) as actividades_con_asistencia
-    FROM asistencia ast
-    WHERE ast.fecha_asistencia::DATE BETWEEN p_fecha_inicio AND p_fecha_fin
-    GROUP BY ast.fecha_asistencia::DATE
-    ORDER BY ast.fecha_asistencia::DATE;
+            FROM tb_asistencia ast2 
+            JOIN tb_actividades a ON ast2.actividad_id = a.id 
+            WHERE ast2.fecha_tb_asistencia::DATE = ast.fecha_tb_asistencia::DATE 
+            AND ast2.tipo_tb_asistencia = 'actividad'
+        ) as tb_actividades_con_tb_asistencia
+    FROM tb_asistencia ast
+    WHERE ast.fecha_tb_asistencia::DATE BETWEEN p_fecha_inicio AND p_fecha_fin
+    GROUP BY ast.fecha_tb_asistencia::DATE
+    ORDER BY ast.fecha_tb_asistencia::DATE;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -128,44 +128,44 @@ BEGIN
         rc.descripcion_proyecto,
         rc.foto_proyecto_path
     FROM resultados_competencia rc
-    JOIN usuarios u ON rc.usuario_id = u.id
+    JOIN tb_usuarios u ON rc.usuario_id = u.id
     WHERE rc.actividad_id = p_actividad_id
     ORDER BY rc.posicion;
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para calcular porcentaje de asistencia de un usuario
-CREATE OR REPLACE FUNCTION calcular_porcentaje_asistencia_usuario(p_usuario_id UUID)
+-- Función para calcular porcentaje de tb_asistencia de un usuario
+CREATE OR REPLACE FUNCTION calcular_porcentaje_tb_asistencia_usuario(p_usuario_id UUID)
 RETURNS TABLE (
     total_inscripciones BIGINT,
-    total_asistencias BIGINT,
-    porcentaje_asistencia DECIMAL(5,2)
+    total_tb_asistencias BIGINT,
+    porcentaje_tb_asistencia DECIMAL(5,2)
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
-        (SELECT COUNT(*) FROM inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada') as total_inscripciones,
-        (SELECT COUNT(*) FROM asistencia WHERE usuario_id = p_usuario_id AND tipo_asistencia = 'actividad') as total_asistencias,
+        (SELECT COUNT(*) FROM tb_inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada') as total_inscripciones,
+        (SELECT COUNT(*) FROM tb_asistencia WHERE usuario_id = p_usuario_id AND tipo_tb_asistencia = 'actividad') as total_tb_asistencias,
         CASE 
-            WHEN (SELECT COUNT(*) FROM inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada') > 0 
+            WHEN (SELECT COUNT(*) FROM tb_inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada') > 0 
             THEN ROUND(
-                (SELECT COUNT(*) FROM asistencia WHERE usuario_id = p_usuario_id AND tipo_asistencia = 'actividad')::decimal / 
-                (SELECT COUNT(*) FROM inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada')::decimal * 100, 2
+                (SELECT COUNT(*) FROM tb_asistencia WHERE usuario_id = p_usuario_id AND tipo_tb_asistencia = 'actividad')::decimal / 
+                (SELECT COUNT(*) FROM tb_inscripciones_actividad WHERE usuario_id = p_usuario_id AND estado = 'confirmada')::decimal * 100, 2
             )
             ELSE 0
-        END as porcentaje_asistencia;
+        END as porcentaje_tb_asistencia;
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para obtener actividades más populares
-CREATE OR REPLACE FUNCTION obtener_actividades_populares(p_limite INTEGER DEFAULT 10)
+-- Función para obtener tb_actividades más populares
+CREATE OR REPLACE FUNCTION obtener_tb_actividades_populares(p_limite INTEGER DEFAULT 10)
 RETURNS TABLE (
     actividad_id INTEGER,
     nombre_actividad VARCHAR(200),
     tipo_actividad VARCHAR(50),
     total_inscripciones BIGINT,
-    total_asistencias BIGINT,
-    porcentaje_asistencia DECIMAL(5,2)
+    total_tb_asistencias BIGINT,
+    porcentaje_tb_asistencia DECIMAL(5,2)
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -174,18 +174,18 @@ BEGIN
         a.nombre as nombre_actividad,
         a.tipo_actividad,
         COUNT(ia.id) as total_inscripciones,
-        COUNT(ast.id) as total_asistencias,
+        COUNT(ast.id) as total_tb_asistencias,
         CASE 
             WHEN COUNT(ia.id) > 0 
             THEN ROUND(COUNT(ast.id)::decimal / COUNT(ia.id)::decimal * 100, 2)
             ELSE 0
-        END as porcentaje_asistencia
-    FROM actividades a
-    LEFT JOIN inscripciones_actividad ia ON a.id = ia.actividad_id AND ia.estado = 'confirmada'
-    LEFT JOIN asistencia ast ON a.id = ast.actividad_id AND ast.tipo_asistencia = 'actividad'
+        END as porcentaje_tb_asistencia
+    FROM tb_actividades a
+    LEFT JOIN tb_inscripciones_actividad ia ON a.id = ia.actividad_id AND ia.estado = 'confirmada'
+    LEFT JOIN tb_asistencia ast ON a.id = ast.actividad_id AND ast.tipo_tb_asistencia = 'actividad'
     WHERE a.activo = true
     GROUP BY a.id, a.nombre, a.tipo_actividad
-    ORDER BY total_inscripciones DESC, porcentaje_asistencia DESC
+    ORDER BY total_inscripciones DESC, porcentaje_tb_asistencia DESC
     LIMIT p_limite;
 END;
 $$ LANGUAGE plpgsql;
@@ -227,7 +227,7 @@ BEGIN
     END IF;
     
     -- Validar que no exista el email
-    IF EXISTS(SELECT 1 FROM usuarios WHERE email = p_email) THEN
+    IF EXISTS(SELECT 1 FROM tb_usuarios WHERE email = p_email) THEN
         RETURN QUERY SELECT FALSE, 'El email ya está registrado'::TEXT;
         RETURN;
     END IF;
@@ -245,8 +245,8 @@ $$ LANGUAGE plpgsql;
 -- Comentarios de las funciones
 COMMENT ON FUNCTION obtener_estadisticas_usuario(UUID) IS 'Obtiene estadísticas completas de un usuario';
 COMMENT ON FUNCTION verificar_disponibilidad_inscripcion(UUID, INTEGER) IS 'Verifica si un usuario puede inscribirse a una actividad';
-COMMENT ON FUNCTION generar_reporte_asistencia_fecha(DATE, DATE) IS 'Genera reporte de asistencia por rango de fechas';
+COMMENT ON FUNCTION generar_reporte_tb_asistencia_fecha(DATE, DATE) IS 'Genera reporte de tb_asistencia por rango de fechas';
 COMMENT ON FUNCTION obtener_ganadores_competencia(INTEGER) IS 'Obtiene los ganadores de una competencia específica';
-COMMENT ON FUNCTION calcular_porcentaje_asistencia_usuario(UUID) IS 'Calcula el porcentaje de asistencia de un usuario';
-COMMENT ON FUNCTION obtener_actividades_populares(INTEGER) IS 'Obtiene las actividades más populares del congreso';
+COMMENT ON FUNCTION calcular_porcentaje_tb_asistencia_usuario(UUID) IS 'Calcula el porcentaje de tb_asistencia de un usuario';
+COMMENT ON FUNCTION obtener_tb_actividades_populares(INTEGER) IS 'Obtiene las tb_actividades más populares del congreso';
 COMMENT ON FUNCTION validar_datos_usuario(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR) IS 'Valida los datos de un usuario antes de insertar';

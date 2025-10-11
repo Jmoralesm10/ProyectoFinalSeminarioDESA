@@ -23,13 +23,13 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO congreso_organizador;
 
 -- Permisos de escritura para organizador en tablas específicas
 GRANT INSERT, UPDATE, DELETE ON usuarios TO congreso_organizador;
-GRANT INSERT, UPDATE, DELETE ON actividades TO congreso_organizador;
+GRANT INSERT, UPDATE, DELETE ON tb_actividades TO congreso_organizador;
 GRANT INSERT, UPDATE, DELETE ON inscripciones_actividad TO congreso_organizador;
 GRANT INSERT, UPDATE, DELETE ON asistencia TO congreso_organizador;
 GRANT INSERT, UPDATE, DELETE ON diplomas TO congreso_organizador;
-GRANT INSERT, UPDATE, DELETE ON resultados_competencia TO congreso_organizador;
-GRANT INSERT, UPDATE, DELETE ON faq TO congreso_organizador;
-GRANT INSERT, UPDATE, DELETE ON informacion_congreso TO congreso_organizador;
+GRANT INSERT, UPDATE, DELETE ON tb_resultados_competencia TO congreso_organizador;
+GRANT INSERT, UPDATE, DELETE ON tb_faq TO congreso_organizador;
+GRANT INSERT, UPDATE, DELETE ON tb_informacion_congreso TO congreso_organizador;
 
 -- Permisos en secuencias para organizador
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO congreso_organizador;
@@ -74,7 +74,7 @@ CREATE POLICY logs_admin_only ON logs_sistema
     USING (true);
 
 -- Crear vistas con seguridad para datos públicos
-CREATE VIEW vista_actividades_publicas AS
+CREATE VIEW vista_tb_actividades_publicas AS
 SELECT 
     id,
     nombre,
@@ -87,7 +87,7 @@ SELECT
     lugar,
     ponente,
     requisitos
-FROM actividades
+FROM tb_actividades
 WHERE activo = true;
 
 -- Crear vista para información pública del congreso
@@ -101,16 +101,16 @@ SELECT
     agenda,
     ponentes_invitados,
     informacion_carrera
-FROM informacion_congreso
+FROM tb_informacion_congreso
 WHERE activo = true;
 
 -- Crear vista para FAQ públicas
-CREATE VIEW vista_faq_publicas AS
+CREATE VIEW vista_tb_faq_publicas AS
 SELECT 
     pregunta,
     respuesta,
     categoria
-FROM faq
+FROM tb_faq
 WHERE activo = true
 ORDER BY orden;
 
@@ -124,16 +124,16 @@ SELECT
     rc.descripcion_proyecto,
     rc.foto_proyecto_path,
     rc.fecha_resultado
-FROM resultados_competencia rc
-JOIN actividades a ON rc.actividad_id = a.id
+FROM tb_resultados_competencia rc
+JOIN tb_actividades a ON rc.actividad_id = a.id
 JOIN usuarios u ON rc.usuario_id = u.id
 WHERE a.tipo_actividad = 'competencia'
 ORDER BY a.nombre, rc.posicion;
 
 -- Otorgar permisos en las vistas públicas
-GRANT SELECT ON vista_actividades_publicas TO congreso_lector;
+GRANT SELECT ON vista_tb_actividades_publicas TO congreso_lector;
 GRANT SELECT ON vista_congreso_publico TO congreso_lector;
-GRANT SELECT ON vista_faq_publicas TO congreso_lector;
+GRANT SELECT ON vista_tb_faq_publicas TO congreso_lector;
 GRANT SELECT ON vista_resultados_publicos TO congreso_lector;
 
 -- Crear función para verificar permisos de usuario
@@ -157,8 +157,8 @@ BEGIN
     
     -- Lógica de permisos
     CASE p_operacion
-        WHEN 'leer_actividades' THEN
-            RETURN TRUE; -- Todos pueden leer actividades
+        WHEN 'leer_tb_actividades' THEN
+            RETURN TRUE; -- Todos pueden leer tb_actividades
         WHEN 'inscribirse' THEN
             RETURN v_tipo_usuario IN ('externo', 'interno'); -- Solo usuarios registrados
         WHEN 'ver_asistencia' THEN
@@ -167,7 +167,7 @@ BEGIN
             RETURN v_es_admin; -- Solo administradores
         WHEN 'gestionar_usuarios' THEN
             RETURN v_es_admin; -- Solo administradores
-        WHEN 'gestionar_actividades' THEN
+        WHEN 'gestionar_tb_actividades' THEN
             RETURN v_es_admin; -- Solo administradores
         ELSE
             RETURN FALSE;

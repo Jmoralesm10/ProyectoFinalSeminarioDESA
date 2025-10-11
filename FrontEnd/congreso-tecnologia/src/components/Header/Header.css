@@ -1,0 +1,313 @@
+/* Header Styles - UMG Brand */
+.header {
+  background: #1A365D;
+  color: white;
+  padding: 1rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(26, 54, 93, 0.2);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 90px;
+}
+
+/* Logo Container */
+.logo-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo-image {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Logo Text */
+.logo-text {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.logo-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.logo-text span {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-left: 0.5rem;
+  color: #FBC02D;
+  font-weight: 600;
+}
+
+/* Navegación Desktop */
+.nav-desktop {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 2rem;
+}
+
+.nav-desktop ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.8rem;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-desktop a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.nav-desktop a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-icon {
+  font-size: 0.9rem;
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+}
+
+/* Botones de Acción */
+.header-actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.btn-primary, .btn-secondary, .btn-login {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: #D92027;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #B81D22;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(217, 32, 39, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #1A365D;
+  transform: translateY(-2px);
+}
+
+.btn-login {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-login:hover {
+  background: white;
+  color: #1A365D;
+  transform: translateY(-2px);
+}
+
+/* Botón Menú Móvil */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.menu-toggle span {
+  width: 25px;
+  height: 3px;
+  background: white;
+  margin: 3px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+/* Navegación Móvil */
+.nav-mobile {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1A365D;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.nav-mobile.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.nav-mobile ul {
+  list-style: none;
+  margin: 0;
+  padding: 2rem;
+}
+
+.nav-mobile li {
+  margin: 1rem 0;
+}
+
+.nav-mobile a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  transition: all 0.3s ease;
+}
+
+.nav-mobile a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  padding-left: 2.5rem;
+}
+
+.nav-mobile .nav-icon {
+  font-size: 1.3rem;
+  width: 28px;
+  text-align: center;
+}
+
+.mobile-actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .nav-desktop ul {
+    gap: 0.6rem;
+  }
+  
+  .nav-desktop a {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .nav-icon {
+    font-size: 0.9rem;
+    width: 18px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .nav-desktop ul {
+    gap: 0.4rem;
+  }
+  
+  .nav-desktop a {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .nav-icon {
+    font-size: 0.8rem;
+    width: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-desktop {
+    display: none;
+  }
+  
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .nav-mobile {
+    display: block;
+  }
+  
+  .header-actions {
+    display: none;
+  }
+  
+  .header-container {
+    padding: 0 1rem;
+    height: 80px;
+  }
+  
+  .logo-text h1 {
+    font-size: 1.3rem;
+  }
+  
+  .logo-image {
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text h1 {
+    font-size: 1.2rem;
+  }
+  
+  .logo span {
+    font-size: 0.8rem;
+  }
+}
