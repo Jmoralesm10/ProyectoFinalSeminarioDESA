@@ -16,11 +16,9 @@ const Header = () => {
         {/* Logo Container */}
         <div className="logo-container">
           <img src={logoUMG} alt="Universidad Mariano Gálvez" className="logo-image" />
-        </div>
-        
-        {/* Logo Text */}
-        <div className="logo-text">
-          <h1>UMG</h1>
+          <div className="logo-text">
+            <h1>UMG</h1>
+          </div>
         </div>
 
         {/* Navegación Desktop */}
@@ -33,14 +31,12 @@ const Header = () => {
             <li><a href="#ponentes"><span className="nav-icon">👥</span>Oponentes</a></li>
             <li><a href="#carrera"><span className="nav-icon">🎓</span>Carrera</a></li>
             <li><a href="#faq"><span className="nav-icon">❓</span>FAQ</a></li>
+            <li className="nav-buttons">
+              <button className="btn-login">Iniciar Sesión</button>
+              <Link to="/registro" className="btn-primary">Inscribirse</Link>
+            </li>
           </ul>
         </nav>
-
-        {/* Botones de Acción */}
-        <div className="header-actions">
-          <button className="btn-login">Iniciar Sesión</button>
-          <Link to="/registro" className="btn-primary">Inscribirse</Link>
-        </div>
 
         {/* Botón Menú Móvil */}
         <button 

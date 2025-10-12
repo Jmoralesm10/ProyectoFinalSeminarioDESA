@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { API_URLS } from '../../config/api';
 import './RegistrationForm.css';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
-    tipo_usuario: 'externo',
+    tipo_usuario: 'interno',
     nombre_usuario: '',
     apellido_usuario: '',
     email_usuario: '',
@@ -119,6 +120,9 @@ const RegistrationForm = () => {
       // Preparar datos para enviar (sin confirmPassword)
       const { confirmPassword, ...dataToSend } = formData;
       
+      console.log('🔍 Datos que se envían:', dataToSend);
+      console.log('🔍 URL de la API:', API_URLS.REGISTER);
+      
       const response = await fetch(API_URLS.REGISTER, {
         method: 'POST',
         headers: {
@@ -127,13 +131,17 @@ const RegistrationForm = () => {
         body: JSON.stringify(dataToSend),
       });
 
+      console.log('🔍 Status de la respuesta:', response.status);
+      console.log('🔍 Headers de la respuesta:', response.headers);
+      
       const result = await response.json();
+      console.log('🔍 Respuesta del servidor:', result);
 
       if (response.ok) {
         setSubmitMessage('¡Registro exitoso! Se ha enviado un correo de confirmación a tu email.');
         // Limpiar formulario
         setFormData({
-          tipo_usuario: 'externo',
+          tipo_usuario: 'interno',
           nombre_usuario: '',
           apellido_usuario: '',
           email_usuario: '',
@@ -162,10 +170,16 @@ const RegistrationForm = () => {
     }
   };
 
+
   return (
     <div className="registration-form-container">
       <div className="registration-form-card">
         <div className="registration-form-header">
+          <div className="header-actions">
+            <Link to="/" className="back-button">
+              ← Volver al Inicio
+            </Link>
+          </div>
           <h2>Registro al Congreso de Tecnología 2025</h2>
           <p>Únete al evento más importante de tecnología del año</p>
         </div>

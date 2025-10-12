@@ -111,7 +111,8 @@ export class UserController {
       console.error('Error en register controller:', error);
       res.status(500).json({
         success: false,
-        message: 'Error interno del servidor'
+        message: 'Error interno del servidor',
+        error: process.env['NODE_ENV'] === 'development' ? (error as Error).message : undefined
       });
     }
   };
@@ -433,6 +434,41 @@ export class UserController {
       }
     } catch (error) {
       console.error('Error en getUserTypes controller:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Enviar correo de confirmación
+  sendConfirmationEmail = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email_usuario } = req.body;
+
+      if (!email_usuario) {
+        res.status(400).json({
+          success: false,
+          message: 'El email es requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.sendConfirmationEmail(email_usuario);
+      
+      if (result.success) {
+        res.status(200).json({
+          success: true,
+          message: result.message
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('Error en sendConfirmationEmail controller:', error);
       res.status(500).json({
         success: false,
         message: 'Error interno del servidor'

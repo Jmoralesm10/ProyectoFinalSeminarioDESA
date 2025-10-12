@@ -5,6 +5,7 @@
 
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repositories/user.repository';
+import { EmailService } from './email.service';
 import { 
   RegisterUserDto, 
   LoginUserDto, 
@@ -23,9 +24,11 @@ import {
 
 export class UserService {
   private userRepository: UserRepository;
+  private emailService: EmailService;
 
   constructor() {
     this.userRepository = new UserRepository();
+    this.emailService = new EmailService();
   }
 
   // Generar JWT token
@@ -75,8 +78,35 @@ export class UserService {
       );
 
       if (result.success) {
-        // TODO: Enviar email de confirmación
-        // await this.sendVerificationEmail(userData.email_usuario, result.id_usuario);
+        // Intentar enviar correo de confirmación (no crítico para el registro)
+        try {
+          const userResult = await this.userRepository.getUserByEmail(userData.email_usuario);
+          
+          if (userResult.success && userResult.id_usuario) {
+            // Crear objeto de usuario para el correo (usando 'any' para evitar problemas de tipos)
+            const userForEmail: any = {
+              id_usuario: userResult.id_usuario,
+              nombre_usuario: userResult.nombre_usuario,
+              apellido_usuario: userResult.apellido_usuario,
+              email_usuario: userResult.email_usuario,
+              telefono_usuario: userResult.telefono_usuario,
+              colegio_usuario: userResult.colegio_usuario,
+              codigo_qr_usuario: userResult.codigo_qr_usuario,
+              email_verificado_usuario: userResult.email_verificado_usuario,
+              ultimo_acceso_usuario: userResult.ultimo_acceso_usuario,
+              estado_usuario: userResult.estado_usuario,
+              fecha_inscripcion_usuario: userResult.fecha_inscripcion_usuario,
+              tipo_usuario: userResult.tipo_usuario
+            };
+
+            // Enviar correo de confirmación de inscripción
+            await this.emailService.sendRegistrationConfirmation(userForEmail);
+            console.log('✅ Correo de confirmación enviado a:', userData.email_usuario);
+          }
+        } catch (emailError) {
+          console.error('❌ Error enviando correo de confirmación (no crítico):', emailError);
+          // No fallar el registro si el correo falla
+        }
         
         return {
           success: true,
@@ -379,12 +409,55 @@ export class UserService {
     }
   }
 
-  // TODO: Implementar envío de emails
-  // private async sendVerificationEmail(email: string, userId: string): Promise<void> {
-  //   // Implementar envío de email de verificación
-  // }
+  // Enviar correo de confirmación
+  async sendConfirmationEmail(email: string): Promise<{ success: boolean; message: string }> {
+    try {
+      // Buscar el usuario por email
+      const userResult = await this.userRepository.getUserByEmail(email);
+      
+      if (!userResult.success || !userResult.id_usuario) {
+        return {
+          success: false,
+          message: 'Usuario no encontrado'
+        };
+      }
 
-  // private async sendPasswordResetEmail(email: string, token: string): Promise<void> {
-  //   // Implementar envío de email de recuperación
-  // }
+      // Crear objeto de usuario para el correo
+      const userForEmail: any = {
+        id_usuario: userResult.id_usuario,
+        nombre_usuario: userResult.nombre_usuario,
+        apellido_usuario: userResult.apellido_usuario,
+        email_usuario: userResult.email_usuario,
+        telefono_usuario: userResult.telefono_usuario,
+        colegio_usuario: userResult.colegio_usuario,
+        codigo_qr_usuario: userResult.codigo_qr_usuario,
+        email_verificado_usuario: userResult.email_verificado_usuario,
+        ultimo_acceso_usuario: userResult.ultimo_acceso_usuario,
+        estado_usuario: userResult.estado_usuario,
+        fecha_inscripcion_usuario: userResult.fecha_inscripcion_usuario,
+        tipo_usuario: userResult.tipo_usuario
+      };
+
+      // Enviar correo de confirmación
+      const emailSent = await this.emailService.sendRegistrationConfirmation(userForEmail);
+      
+      if (emailSent) {
+        return {
+          success: true,
+          message: 'Correo de confirmación enviado exitosamente'
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Error al enviar el correo de confirmación'
+        };
+      }
+    } catch (error) {
+      console.error('Error en sendConfirmationEmail service:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
 }

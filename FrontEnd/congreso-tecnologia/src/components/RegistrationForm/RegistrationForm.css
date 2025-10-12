@@ -36,13 +36,71 @@
 .registration-form-header {
   text-align: center;
   margin-bottom: 2.5rem;
+  position: relative;
+  padding-top: 3rem; /* Espacio para los botones */
+}
+
+.header-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 10;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  color: #1A365D;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.back-button:hover {
+  background: #1A365D;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+}
+
+.test-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #6c757d;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  border: 1px solid #5a6268;
+  cursor: pointer;
+}
+
+.test-button:hover {
+  background: #5a6268;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
 }
 
 .registration-form-header h2 {
   color: #1A365D;
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
+  margin: 1rem 0 0.5rem 0;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
@@ -237,8 +295,11 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
+  width: 100%;
   position: relative;
   overflow: hidden;
+  display: block;
+  text-align: center;
 }
 
 .submit-button:hover:not(:disabled) {
@@ -312,6 +373,16 @@
     font-size: 1.5rem;
   }
 
+  .back-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .test-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -336,8 +407,26 @@
     padding: 1.5rem 1rem;
   }
 
+  .registration-form-header {
+    padding-top: 2.5rem; /* Menos espacio en móviles */
+  }
+
   .registration-form-header h2 {
     font-size: 1.3rem;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+
+  .back-button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .test-button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.7rem;
   }
 
   .form-input {

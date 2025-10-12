@@ -77,6 +77,13 @@ router.post(
  */
 router.get('/types', userController.getUserTypes);
 
+/**
+ * @route   POST /api/users/send-confirmation
+ * @desc    Enviar correo de confirmación a un usuario
+ * @access  Public
+ */
+router.post('/send-confirmation', userController.sendConfirmationEmail);
+
 // =====================================================
 // RUTAS PROTEGIDAS (Requieren autenticación)
 // =====================================================

@@ -26,6 +26,7 @@
   display: flex;
   align-items: center;
   height: 100%;
+  gap: 1rem;
 }
 
 .logo-image {
@@ -38,7 +39,6 @@
 .logo-text {
   display: flex;
   align-items: center;
-  margin-left: 1rem;
 }
 
 .logo-text h1 {
@@ -62,7 +62,7 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  margin: 0 2rem;
+  margin: 0 1rem;
 }
 
 .nav-desktop ul {
@@ -103,11 +103,12 @@
   text-align: center;
 }
 
-/* Botones de Acción */
-.header-actions {
+/* Botones dentro de la navegación */
+.nav-buttons {
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  margin-left: 1rem;
 }
 
 .btn-primary, .btn-secondary, .btn-login {
@@ -253,6 +254,16 @@
     font-size: 0.9rem;
     width: 18px;
   }
+
+  .nav-buttons {
+    gap: 0.6rem;
+    margin-left: 0.8rem;
+  }
+
+  .btn-primary, .btn-login {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -269,6 +280,16 @@
     font-size: 0.8rem;
     width: 16px;
   }
+
+  .nav-buttons {
+    gap: 0.4rem;
+    margin-left: 0.6rem;
+  }
+
+  .btn-primary, .btn-login {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -284,7 +305,7 @@
     display: block;
   }
   
-  .header-actions {
+  .nav-buttons {
     display: none;
   }
   
