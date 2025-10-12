@@ -77,7 +77,22 @@ export class UserService {
         userData.colegio_usuario
       );
 
-      if (result.success) {
+      console.log('🔍 Service: Resultado del registro:', result);
+      console.log('🔍 Service: result.success:', result.success);
+      console.log('🔍 Service: result.id_usuario:', result.id_usuario);
+      
+      if (result.success && result.id_usuario) {
+        console.log('🔍 Service: Entrando a obtener código QR...');
+        // Obtener el código QR del usuario recién creado
+        let qrResult = null;
+        try {
+          console.log('🔍 Service: Llamando getUserQRCode con ID:', result.id_usuario);
+          qrResult = await this.userRepository.getUserQRCode(result.id_usuario);
+          console.log('🔍 Service: Resultado del QR:', qrResult);
+        } catch (qrError) {
+          console.error('❌ Error obteniendo código QR (no crítico):', qrError);
+        }
+
         // Intentar enviar correo de confirmación (no crítico para el registro)
         try {
           const userResult = await this.userRepository.getUserByEmail(userData.email_usuario);
@@ -91,7 +106,7 @@ export class UserService {
               email_usuario: userResult.email_usuario,
               telefono_usuario: userResult.telefono_usuario,
               colegio_usuario: userResult.colegio_usuario,
-              codigo_qr_usuario: userResult.codigo_qr_usuario,
+              codigo_qr_usuario: qrResult?.codigo_qr_usuario || userResult.codigo_qr_usuario,
               email_verificado_usuario: userResult.email_verificado_usuario,
               ultimo_acceso_usuario: userResult.ultimo_acceso_usuario,
               estado_usuario: userResult.estado_usuario,
@@ -108,12 +123,15 @@ export class UserService {
           // No fallar el registro si el correo falla
         }
         
-        return {
+        const finalResponse = {
           success: true,
           message: result.message,
           id_usuario: result.id_usuario,
-          codigo_qr: result.codigo_qr
+          codigo_qr: qrResult?.codigo_qr_usuario
         };
+        
+        console.log('🔍 Service: Respuesta final:', finalResponse);
+        return finalResponse;
       } else {
         return {
           success: false,

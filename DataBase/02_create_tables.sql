@@ -106,16 +106,22 @@ CREATE TABLE tb_inscripciones_actividad (
     PRIMARY KEY (id_usuario, id_actividad)
 );
 
--- Tabla de asistencia
-DROP TABLE IF EXISTS tb_asistencia CASCADE;
-CREATE TABLE tb_asistencia (
-    id_asistencia UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+-- Tabla de asistencia general al congreso
+DROP TABLE IF EXISTS tb_asistencia_general CASCADE;
+CREATE TABLE tb_asistencia_general (
     id_usuario UUID NOT NULL REFERENCES tb_usuarios(id_usuario),
-    id_actividad INTEGER REFERENCES tb_actividades(id_actividad), -- NULL para asistencia general al congreso
+    fecha_asistencia DATE NOT NULL DEFAULT CURRENT_DATE,
+    hora_ingreso TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, fecha_asistencia)
+);
+
+-- Tabla de asistencia a actividades específicas
+DROP TABLE IF EXISTS tb_asistencia_actividad CASCADE;
+CREATE TABLE tb_asistencia_actividad (
+    id_usuario UUID NOT NULL REFERENCES tb_usuarios(id_usuario),
+    id_actividad INTEGER NOT NULL REFERENCES tb_actividades(id_actividad),
     fecha_asistencia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    tipo_asistencia VARCHAR(50) NOT NULL CHECK (tipo_asistencia IN ('general', 'actividad')),
-    metodo_registro_asistencia VARCHAR(50) DEFAULT 'qr' CHECK (metodo_registro_asistencia IN ('qr', 'manual', 'lista')),
-    observaciones_asistencia TEXT
+    PRIMARY KEY (id_usuario, id_actividad)
 );
 
 -- Tabla de diplomas

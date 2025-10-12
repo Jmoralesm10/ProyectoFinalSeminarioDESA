@@ -84,7 +84,7 @@ export interface RegisterResponse {
   success: boolean;
   message: string;
   id_usuario?: string;
-  codigo_qr?: string;
+  codigo_qr?: string | undefined;
 }
 
 export interface VerifyEmailResponse {
@@ -131,7 +131,16 @@ export interface SpRegisterResponse {
   success: boolean;
   message: string;
   id_usuario: string;
-  codigo_qr: string;
+}
+
+export interface SpConsultarQRResponse {
+  success: boolean;
+  message: string;
+  id_usuario?: string;
+  codigo_qr_usuario?: string;
+  nombre_usuario?: string;
+  apellido_usuario?: string;
+  email_usuario?: string;
 }
 
 export interface SpAuthResponse {

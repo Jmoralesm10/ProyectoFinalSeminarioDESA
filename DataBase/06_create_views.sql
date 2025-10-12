@@ -74,21 +74,38 @@ FROM tb_inscripciones_actividad ia
 JOIN tb_usuarios u ON ia.id_usuario = u.id_usuario
 JOIN tb_actividades a ON ia.id_actividad = a.id_actividad;
 
--- Vista de tb_asistencia con información completa
-CREATE VIEW vista_tb_asistencia_completa AS
+-- Vista de asistencia general con información completa
+CREATE VIEW vista_asistencia_general_completa AS
 SELECT 
-    ast.id,
-    u.nombre || ' ' || u.apellido as nombre_completo,
-    u.email,
-    u.codigo_qr,
-    a.nombre as actividad,
-    ast.tipo_tb_asistencia,
-    ast.fecha_tb_asistencia,
-    ast.metodo_registro,
-    ast.observaciones
-FROM tb_asistencia ast
-JOIN tb_usuarios u ON ast.usuario_id = u.id
-LEFT JOIN tb_actividades a ON ast.actividad_id = a.id;
+    ag.id_usuario,
+    ag.fecha_asistencia,
+    ag.hora_ingreso,
+    u.nombre_usuario || ' ' || u.apellido_usuario as nombre_completo,
+    u.email_usuario,
+    u.codigo_qr_usuario,
+    tu.nombre_tipo_usuario
+FROM tb_asistencia_general ag
+JOIN tb_usuarios u ON ag.id_usuario = u.id_usuario
+JOIN tb_tipos_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario;
+
+-- Vista de asistencia por actividad con información completa
+CREATE VIEW vista_asistencia_actividad_completa AS
+SELECT 
+    aa.id_usuario,
+    aa.id_actividad,
+    aa.fecha_asistencia,
+    u.nombre_usuario || ' ' || u.apellido_usuario as nombre_completo,
+    u.email_usuario,
+    u.codigo_qr_usuario,
+    a.nombre_actividad,
+    a.tipo_actividad,
+    a.fecha_inicio_actividad,
+    a.lugar_actividad,
+    ca.nombre_categoria as categoria
+FROM tb_asistencia_actividad aa
+JOIN tb_usuarios u ON aa.id_usuario = u.id_usuario
+JOIN tb_actividades a ON aa.id_actividad = a.id_actividad
+JOIN tb_categorias_actividad ca ON a.id_categoria = ca.id_categoria;
 
 -- Vista de tb_diplomas con información completa
 CREATE VIEW vista_tb_diplomas_completa AS

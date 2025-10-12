@@ -1,4 +1,7 @@
 import nodemailer from 'nodemailer';
+import QRCode from 'qrcode';
+import fs from 'fs';
+import path from 'path';
 
 export class EmailService {
   private transporter: nodemailer.Transporter | undefined;
@@ -85,11 +88,58 @@ export class EmailService {
         return false;
       }
 
+      // Generar código QR como archivo adjunto
+      let qrCodeAttachment = null;
+      console.log('🔍 Generando código QR para:', user.codigo_qr_usuario);
+      
+      if (user.codigo_qr_usuario) {
+        try {
+          // Crear directorio temporal si no existe
+          const tempDir = path.join(process.cwd(), 'temp');
+          if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+          }
+          
+          // Generar código QR como buffer
+          const qrCodeBuffer = await QRCode.toBuffer(user.codigo_qr_usuario, {
+            width: 200,
+            margin: 2,
+            color: {
+              dark: '#000000',
+              light: '#FFFFFF'
+            }
+          });
+          
+          // Crear archivo temporal
+          const fileName = `qr_${user.id_usuario}.png`;
+          const filePath = path.join(tempDir, fileName);
+          fs.writeFileSync(filePath, qrCodeBuffer);
+          
+          // Configurar adjunto
+          qrCodeAttachment = {
+            filename: `codigo_qr_${user.nombre_usuario}_${user.apellido_usuario}.png`,
+            content: qrCodeBuffer,
+            contentType: 'image/png',
+            cid: 'qr-code' // Content-ID para referenciar en el HTML
+          };
+          
+          console.log('✅ Código QR generado como adjunto correctamente');
+          console.log('📁 Archivo temporal creado:', filePath);
+          
+        } catch (qrError) {
+          console.error('❌ Error generando código QR como adjunto:', qrError);
+          // Continuar sin el código QR si hay error
+        }
+      } else {
+        console.warn('⚠️ No hay código QR para generar');
+      }
+
       const mailOptions = {
         from: `"Congreso de Tecnología 2024" <${process.env['SMTP_USER']}>`,
         to: user.email_usuario,
         subject: 'Inscripción Confirmada - Congreso de Tecnología 2024',
-        html: this.getRegistrationConfirmationTemplate(user)
+        html: this.getRegistrationConfirmationTemplate(user, qrCodeAttachment ? 'qr-code' : undefined),
+        attachments: qrCodeAttachment ? [qrCodeAttachment] : []
       };
 
       const result = await transporter.sendMail(mailOptions);
@@ -178,7 +228,7 @@ export class EmailService {
   }
 
   // Plantilla HTML para confirmación de inscripción
-  private getRegistrationConfirmationTemplate(user: any): string {
+  private getRegistrationConfirmationTemplate(user: any, qrCodeCid?: string): string {
     return `
     <!DOCTYPE html>
     <html>
@@ -214,9 +264,25 @@ export class EmailService {
                 </ul>
                 
                 <div class="qr-section">
-                    <p><strong>Tu código QR personal:</strong></p>
-                    <p style="font-family: monospace; background: #eee; padding: 10px; border-radius: 5px;">${user.codigo_qr_usuario}</p>
-                    <p><em>Guarda este código, lo necesitarás para el registro de asistencia.</em></p>
+                    <h3>🔲 Tu código QR personal:</h3>
+                    ${qrCodeCid ? `
+                        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #ffffff; border: 3px solid #28a745; border-radius: 15px;">
+                            <img src="cid:${qrCodeCid}" alt="Código QR del Congreso" style="display: block; margin: 0 auto; width: 200px; height: 200px; border: 1px solid #ddd;" />
+                            <p style="text-align: center; font-size: 14px; color: #333; margin-top: 15px; font-weight: bold;">
+                                Código: ${user.codigo_qr_usuario}
+                            </p>
+                        </div>
+                    ` : `
+                        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px;">
+                            <p style="color: #6c757d; margin: 0;">⚠️ Código QR no disponible</p>
+                            <p style="font-family: monospace; background: #eee; padding: 10px; border-radius: 5px; margin-top: 10px;">${user.codigo_qr_usuario}</p>
+                        </div>
+                    `}
+                    <p style="text-align: center; font-style: italic; color: #666; margin-top: 15px;">
+                        📱 <strong>Guarda este código QR</strong><br>
+                        Lo necesitarás para el registro de asistencia al congreso<br>
+                        <em>También encontrarás el código QR como archivo adjunto en este correo</em>
+                    </p>
                 </div>
                 
                 <h3>📅 Próximos pasos:</h3>

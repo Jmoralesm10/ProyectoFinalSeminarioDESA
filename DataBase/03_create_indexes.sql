@@ -26,11 +26,12 @@ CREATE INDEX idx_inscripciones_estado ON tb_inscripciones_actividad(estado_inscr
 CREATE INDEX idx_inscripciones_fecha ON tb_inscripciones_actividad(fecha_inscripcion);
 CREATE INDEX idx_inscripciones_actividad_estado ON tb_inscripciones_actividad(id_actividad, estado_inscripcion);
 
--- Índices para la tabla asistencia
-CREATE INDEX idx_asistencia_usuario ON tb_asistencia(id_usuario);
-CREATE INDEX idx_asistencia_actividad ON tb_asistencia(id_actividad);
-CREATE INDEX idx_asistencia_fecha ON tb_asistencia(fecha_asistencia);
-CREATE INDEX idx_asistencia_tipo ON tb_asistencia(tipo_asistencia);
+-- Índices para la tabla asistencia general
+CREATE INDEX idx_asistencia_general_fecha ON tb_asistencia_general(fecha_asistencia);
+CREATE INDEX idx_asistencia_general_hora ON tb_asistencia_general(hora_ingreso);
+
+-- Índices para la tabla asistencia por actividad
+CREATE INDEX idx_asistencia_actividad_fecha ON tb_asistencia_actividad(fecha_asistencia);
 
 -- Índices para la tabla diplomas
 CREATE INDEX idx_diplomas_usuario ON tb_diplomas(id_usuario);
@@ -58,5 +59,6 @@ CREATE INDEX idx_usuarios_tipo_activo ON tb_usuarios(id_tipo_usuario, estado_usu
 CREATE INDEX idx_actividades_tipo_activo ON tb_actividades(tipo_actividad, estado_actividad);
 CREATE INDEX idx_actividades_disponibles ON tb_actividades(estado_actividad, permite_inscripciones, fecha_limite_inscripcion);
 CREATE INDEX idx_inscripciones_usuario_estado ON tb_inscripciones_actividad(id_usuario, estado_inscripcion);
-CREATE INDEX idx_asistencia_usuario_fecha ON tb_asistencia(id_usuario, fecha_asistencia);
+CREATE INDEX idx_asistencia_general_usuario_fecha ON tb_asistencia_general(id_usuario, fecha_asistencia);
+CREATE INDEX idx_asistencia_actividad_usuario_fecha ON tb_asistencia_actividad(id_usuario, fecha_asistencia);
 CREATE INDEX idx_diplomas_usuario_actividad ON tb_diplomas(id_usuario, id_actividad);
