@@ -5,38 +5,43 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(null);
+  const { isAuthenticated, user, loading, logout, getUserInscriptions } = useAuth();
+  const [userInscriptions, setUserInscriptions] = useState([]);
+  const [inscriptionsLoading, setInscriptionsLoading] = useState(false);
 
   useEffect(() => {
-    // Verificar si hay token de autenticación
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('userData');
-
-    if (!token || !user) {
-      // Si no hay token o datos de usuario, redirigir al login
+    if (!loading && !isAuthenticated) {
       navigate('/login');
       return;
     }
 
-    try {
-      setUserData(JSON.parse(user));
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      navigate('/login');
+    if (isAuthenticated) {
+      loadUserInscriptions();
     }
-  }, [navigate]);
+  }, [isAuthenticated, loading, navigate]);
+
+  const loadUserInscriptions = async () => {
+    setInscriptionsLoading(true);
+    try {
+      const inscriptions = await getUserInscriptions();
+      setUserInscriptions(inscriptions);
+    } catch (error) {
+      console.error('Error loading user inscriptions:', error);
+    } finally {
+      setInscriptionsLoading(false);
+    }
+  };
 
   const handleLogout = () => {
-    // Limpiar datos de autenticación
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
+    logout();
     navigate('/');
   };
 
-  if (!userData) {
+  if (loading) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -49,6 +54,10 @@ const DashboardPage = () => {
         Cargando...
       </div>
     );
+  }
+
+  if (!user) {
+    return null; // Se redirigirá al login
   }
 
   return (
@@ -129,25 +138,25 @@ const DashboardPage = () => {
               👤 Información Personal
             </h3>
             <div style={{ lineHeight: '1.8' }}>
-              <p><strong>Nombre:</strong> {userData.nombre_usuario} {userData.apellido_usuario}</p>
-              <p><strong>Email:</strong> {userData.email_usuario}</p>
+              <p><strong>Nombre:</strong> {user.nombre_usuario} {user.apellido_usuario}</p>
+              <p><strong>Email:</strong> {user.email_usuario}</p>
               <p><strong>Tipo de Usuario:</strong> 
                 <span style={{
-                  background: userData.tipo_usuario === 'interno' ? '#28a745' : '#17a2b8',
+                  background: user.tipo_usuario === 'interno' ? '#28a745' : '#17a2b8',
                   color: 'white',
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
                   marginLeft: '0.5rem',
                   fontSize: '0.9rem'
                 }}>
-                  {userData.tipo_usuario === 'interno' ? 'Estudiante UMG' : 'Estudiante Externo'}
+                  {user.tipo_usuario === 'interno' ? 'Estudiante UMG' : 'Estudiante Externo'}
                 </span>
               </p>
-              {userData.telefono_usuario && (
-                <p><strong>Teléfono:</strong> {userData.telefono_usuario}</p>
+              {user.telefono_usuario && (
+                <p><strong>Teléfono:</strong> {user.telefono_usuario}</p>
               )}
-              {userData.colegio_usuario && (
-                <p><strong>Colegio:</strong> {userData.colegio_usuario}</p>
+              {user.colegio_usuario && (
+                <p><strong>Colegio:</strong> {user.colegio_usuario}</p>
               )}
             </div>
           </div>
@@ -170,31 +179,119 @@ const DashboardPage = () => {
             <div style={{ lineHeight: '1.8' }}>
               <p><strong>Estado:</strong> 
                 <span style={{
-                  background: userData.estado_usuario ? '#28a745' : '#dc3545',
+                  background: user.estado_usuario ? '#28a745' : '#dc3545',
                   color: 'white',
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
                   marginLeft: '0.5rem',
                   fontSize: '0.9rem'
                 }}>
-                  {userData.estado_usuario ? 'Activo' : 'Inactivo'}
+                  {user.estado_usuario ? 'Activo' : 'Inactivo'}
                 </span>
               </p>
               <p><strong>Email Verificado:</strong> 
                 <span style={{
-                  background: userData.email_verificado_usuario ? '#28a745' : '#ffc107',
-                  color: userData.email_verificado_usuario ? 'white' : '#212529',
+                  background: user.email_verificado_usuario ? '#28a745' : '#ffc107',
+                  color: user.email_verificado_usuario ? 'white' : '#212529',
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
                   marginLeft: '0.5rem',
                   fontSize: '0.9rem'
                 }}>
-                  {userData.email_verificado_usuario ? 'Sí' : 'No'}
+                  {user.email_verificado_usuario ? 'Sí' : 'No'}
                 </span>
               </p>
-              <p><strong>Fecha de Inscripción:</strong> {new Date(userData.fecha_inscripcion_usuario).toLocaleDateString('es-GT')}</p>
+              <p><strong>Fecha de Inscripción:</strong> {new Date(user.fecha_inscripcion_usuario).toLocaleDateString('es-GT')}</p>
             </div>
           </div>
+        </div>
+
+        {/* Sección de inscripciones */}
+        <div style={{
+          background: '#f8f9fa',
+          padding: '1.5rem',
+          borderRadius: '8px',
+          border: '1px solid #e9ecef'
+        }}>
+          <h3 style={{
+            color: '#1A365D',
+            marginTop: 0,
+            marginBottom: '1rem',
+            fontSize: '1.3rem'
+          }}>
+            📋 Mis Inscripciones a Actividades
+          </h3>
+          
+          {inscriptionsLoading ? (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{
+                width: '30px',
+                height: '30px',
+                border: '3px solid #e9ecef',
+                borderTop: '3px solid #1A365D',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                margin: '0 auto 1rem'
+              }}></div>
+              <p style={{ color: '#6c757d', margin: 0 }}>Cargando inscripciones...</p>
+            </div>
+          ) : userInscriptions.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {userInscriptions.map((inscription, index) => (
+                <div key={index} style={{
+                  background: 'white',
+                  padding: '1rem',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 0.5rem 0', color: '#1A365D' }}>
+                      {inscription.nombre_actividad}
+                    </h4>
+                    <p style={{ margin: 0, color: '#6c757d', fontSize: '0.9rem' }}>
+                      Fecha de inscripción: {new Date(inscription.fecha_inscripcion).toLocaleDateString('es-GT')}
+                    </p>
+                  </div>
+                  <span style={{
+                    background: inscription.estado_inscripcion === 'confirmada' ? '#28a745' : '#ffc107',
+                    color: inscription.estado_inscripcion === 'confirmada' ? 'white' : '#212529',
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '12px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    textTransform: 'capitalize'
+                  }}>
+                    {inscription.estado_inscripcion}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📝</div>
+              <p style={{ color: '#6c757d', margin: '0 0 1rem 0' }}>
+                Aún no te has inscrito a ninguna actividad
+              </p>
+              <button
+                onClick={() => navigate('/')}
+                style={{
+                  background: '#1A365D',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.8rem 1.5rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600'
+                }}
+              >
+                Ver Actividades Disponibles
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mensaje de bienvenida */}

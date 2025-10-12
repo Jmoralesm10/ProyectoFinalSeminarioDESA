@@ -314,6 +314,77 @@ export class ValidationMiddleware {
       next();
     };
   };
+
+  // Validar datos de pago
+  validatePaymentRequest = (req: Request, res: Response, next: NextFunction): void => {
+    const errors: ValidationError[] = [];
+    const { id_actividad, metodo_pago, detalles_pago } = req.body;
+
+    // Validar ID de actividad
+    if (!id_actividad) {
+      errors.push({ field: 'id_actividad', message: 'ID de actividad es obligatorio' });
+    } else if (!Number.isInteger(Number(id_actividad)) || Number(id_actividad) <= 0) {
+      errors.push({ field: 'id_actividad', message: 'ID de actividad debe ser un número entero positivo' });
+    }
+
+    // Validar método de pago
+    if (!metodo_pago) {
+      errors.push({ field: 'metodo_pago', message: 'Método de pago es obligatorio' });
+    } else if (!['tarjeta', 'paypal', 'transferencia'].includes(metodo_pago)) {
+      errors.push({ field: 'metodo_pago', message: 'Método de pago debe ser "tarjeta", "paypal" o "transferencia"' });
+    }
+
+    // Validar detalles de pago según el método
+    if (metodo_pago === 'tarjeta') {
+      if (!detalles_pago) {
+        errors.push({ field: 'detalles_pago', message: 'Detalles de pago son obligatorios para tarjeta' });
+      } else {
+        const { numero_tarjeta, fecha_vencimiento, cvv, nombre_tarjeta } = detalles_pago;
+        
+        if (!numero_tarjeta) {
+          errors.push({ field: 'numero_tarjeta', message: 'Número de tarjeta es obligatorio' });
+        } else if (!/^\d{13,19}$/.test(numero_tarjeta.replace(/\s/g, ''))) {
+          errors.push({ field: 'numero_tarjeta', message: 'Número de tarjeta debe tener entre 13 y 19 dígitos' });
+        }
+
+        if (!fecha_vencimiento) {
+          errors.push({ field: 'fecha_vencimiento', message: 'Fecha de vencimiento es obligatoria' });
+        } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(fecha_vencimiento)) {
+          errors.push({ field: 'fecha_vencimiento', message: 'Fecha de vencimiento debe tener formato MM/AA' });
+        }
+
+        if (!cvv) {
+          errors.push({ field: 'cvv', message: 'CVV es obligatorio' });
+        } else if (!/^\d{3,4}$/.test(cvv)) {
+          errors.push({ field: 'cvv', message: 'CVV debe tener 3 o 4 dígitos' });
+        }
+
+        if (!nombre_tarjeta) {
+          errors.push({ field: 'nombre_tarjeta', message: 'Nombre en la tarjeta es obligatorio' });
+        } else if (nombre_tarjeta.trim().length < 2) {
+          errors.push({ field: 'nombre_tarjeta', message: 'Nombre en la tarjeta debe tener al menos 2 caracteres' });
+        }
+      }
+    } else if (metodo_pago === 'paypal') {
+      if (!detalles_pago || !detalles_pago.email_paypal) {
+        errors.push({ field: 'email_paypal', message: 'Email de PayPal es obligatorio' });
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(detalles_pago.email_paypal)) {
+        errors.push({ field: 'email_paypal', message: 'Email de PayPal debe ser válido' });
+      }
+    }
+
+    if (errors.length > 0) {
+      const response: ApiResponse = {
+        success: false,
+        message: 'Datos de pago inválidos',
+        errors
+      };
+      res.status(400).json(response);
+      return;
+    }
+
+    next();
+  };
 }
 
 // Instancia del middleware para exportar

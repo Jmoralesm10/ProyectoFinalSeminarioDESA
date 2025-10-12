@@ -12,6 +12,8 @@ import { testConnection } from './config/database';
 
 // Importar rutas
 import userRoutes from './routes/user.routes';
+import activityRoutes from './routes/activity.routes';
+import paymentRoutes from './routes/payment.routes';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -56,6 +58,8 @@ app.get('/health', (_req, res) => {
 
 // Rutas de la API
 app.use('/api/users', userRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // =====================================================
 // MANEJO DE ERRORES

@@ -20,51 +20,51 @@ INSERT INTO tb_usuarios (tipo_usuario_id, nombre, apellido, email, email_univers
 (2, 'Camila', 'Vargas', 'camila.vargas@gmail.com', 'camila.vargas@universidad.edu');
 
 -- Insertar inscripciones de ejemplo
-INSERT INTO tb_inscripciones_actividad (usuario_id, actividad_id, estado) VALUES
+INSERT INTO tb_inscripciones_actividad (id_usuario, id_actividad, estado_inscripcion) VALUES
 -- Usuario 1 (Juan Pérez)
-((SELECT id FROM tb_usuarios WHERE email = 'juan.perez@colegio1.edu'), 1, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'juan.perez@colegio1.edu'), 2, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'juan.perez@colegio1.edu'), 3, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'juan.perez@colegio1.edu'), 1, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'juan.perez@colegio1.edu'), 2, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'juan.perez@colegio1.edu'), 3, 'confirmada'),
 
 -- Usuario 2 (María González)
-((SELECT id FROM tb_usuarios WHERE email = 'maria.gonzalez@colegio2.edu'), 1, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'maria.gonzalez@colegio2.edu'), 4, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'maria.gonzalez@colegio2.edu'), 6, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'maria.gonzalez@colegio2.edu'), 1, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'maria.gonzalez@colegio2.edu'), 4, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'maria.gonzalez@colegio2.edu'), 6, 'confirmada'),
 
 -- Usuario 3 (Carlos Rodríguez)
-((SELECT id FROM tb_usuarios WHERE email = 'carlos.rodriguez@colegio3.edu'), 2, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'carlos.rodriguez@colegio3.edu'), 3, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'carlos.rodriguez@colegio3.edu'), 5, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'carlos.rodriguez@colegio3.edu'), 2, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'carlos.rodriguez@colegio3.edu'), 3, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'carlos.rodriguez@colegio3.edu'), 5, 'confirmada'),
 
 -- Usuario 4 (Ana Martínez)
-((SELECT id FROM tb_usuarios WHERE email = 'ana.martinez@colegio1.edu'), 1, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'ana.martinez@colegio1.edu'), 4, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'ana.martinez@colegio1.edu'), 1, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'ana.martinez@colegio1.edu'), 4, 'confirmada'),
 
 -- Usuario 5 (Luis Fernández)
-((SELECT id FROM tb_usuarios WHERE email = 'luis.fernandez@colegio4.edu'), 2, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'luis.fernandez@colegio4.edu'), 6, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'luis.fernandez@colegio4.edu'), 2, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'luis.fernandez@colegio4.edu'), 6, 'confirmada'),
 
 -- Usuario 6 (Sofía Ramírez - interna)
-((SELECT id FROM tb_usuarios WHERE email = 'sofia.ramirez@gmail.com'), 1, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'sofia.ramirez@gmail.com'), 3, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'sofia.ramirez@gmail.com'), 5, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'sofia.ramirez@gmail.com'), 1, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'sofia.ramirez@gmail.com'), 3, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'sofia.ramirez@gmail.com'), 5, 'confirmada'),
 
 -- Usuario 7 (Diego Morales - interno)
-((SELECT id FROM tb_usuarios WHERE email = 'diego.morales@gmail.com'), 2, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'diego.morales@gmail.com'), 4, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'diego.morales@gmail.com'), 6, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'diego.morales@gmail.com'), 2, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'diego.morales@gmail.com'), 4, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'diego.morales@gmail.com'), 6, 'confirmada'),
 
 -- Usuario 8 (Valentina Silva - interna)
-((SELECT id FROM tb_usuarios WHERE email = 'valentina.silva@gmail.com'), 1, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'valentina.silva@gmail.com'), 2, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'valentina.silva@gmail.com'), 1, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'valentina.silva@gmail.com'), 2, 'confirmada'),
 
 -- Usuario 9 (Andrés Torres - interno)
-((SELECT id FROM tb_usuarios WHERE email = 'andres.torres@gmail.com'), 3, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'andres.torres@gmail.com'), 5, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'andres.torres@gmail.com'), 3, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'andres.torres@gmail.com'), 5, 'confirmada'),
 
 -- Usuario 10 (Camila Vargas - interna)
-((SELECT id FROM tb_usuarios WHERE email = 'camila.vargas@gmail.com'), 4, 'confirmada'),
-((SELECT id FROM tb_usuarios WHERE email = 'camila.vargas@gmail.com'), 6, 'confirmada');
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'camila.vargas@gmail.com'), 4, 'confirmada'),
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'camila.vargas@gmail.com'), 6, 'confirmada');
 
 -- Insertar tb_asistencia de ejemplo
 INSERT INTO tb_asistencia (usuario_id, actividad_id, tipo_tb_asistencia, metodo_registro) VALUES

@@ -40,7 +40,7 @@ export class UserRepository {
         colegio
       ]);
       
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en registerUser:', error);
       throw new Error('Error al registrar usuario');
@@ -55,7 +55,7 @@ export class UserRepository {
         password
       ]);
       
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en authenticateUser:', error);
       throw new Error('Error al autenticar usuario');
@@ -66,7 +66,7 @@ export class UserRepository {
   async verifyEmail(token: string): Promise<SpVerifyEmailResponse> {
     try {
       const result = await executeStoredProcedure('sp_verificar_email', [token]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en verifyEmail:', error);
       throw new Error('Error al verificar email');
@@ -77,7 +77,7 @@ export class UserRepository {
   async requestPasswordReset(email: string): Promise<SpForgotPasswordResponse> {
     try {
       const result = await executeStoredProcedure('sp_solicitar_recuperacion_password', [email]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en requestPasswordReset:', error);
       throw new Error('Error al solicitar recuperación de contraseña');
@@ -91,7 +91,7 @@ export class UserRepository {
         token,
         newPassword
       ]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en resetPassword:', error);
       throw new Error('Error al resetear contraseña');
@@ -102,7 +102,7 @@ export class UserRepository {
   async getUserById(id: string): Promise<SpConsultarUsuarioResponse> {
     try {
       const result = await executeStoredProcedure('sp_consultar_usuario', [id]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en getUserById:', error);
       throw new Error('Error al obtener usuario');
@@ -113,7 +113,7 @@ export class UserRepository {
   async getUserByEmail(email: string): Promise<SpConsultarUsuarioResponse> {
     try {
       const result = await executeStoredProcedure('sp_consultar_usuario_por_email', [email]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en getUserByEmail:', error);
       throw new Error('Error al obtener usuario por email');
@@ -124,7 +124,7 @@ export class UserRepository {
   async emailExists(email: string): Promise<SpVerificarEmailExisteResponse> {
     try {
       const result = await executeStoredProcedure('sp_verificar_email_existe', [email]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en emailExists:', error);
       throw new Error('Error al verificar email');
@@ -147,7 +147,7 @@ export class UserRepository {
         telefono,
         colegio
       ]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en updateUserProfile:', error);
       throw new Error('Error al actualizar perfil');
@@ -162,7 +162,7 @@ export class UserRepository {
         currentPassword,
         newPassword
       ]);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en changePassword:', error);
       throw new Error('Error al cambiar contraseña');
@@ -173,7 +173,7 @@ export class UserRepository {
   async getUserTypes(): Promise<SpConsultarTiposUsuarioResponse[]> {
     try {
       const result = await executeStoredProcedure('sp_consultar_tipos_usuario', []);
-      return result;
+      return result[0] || result;
     } catch (error) {
       console.error('Error en getUserTypes:', error);
       throw new Error('Error al obtener tipos de usuario');

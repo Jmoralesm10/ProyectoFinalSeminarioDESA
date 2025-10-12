@@ -97,9 +97,9 @@ const LoginForm = () => {
           localStorage.setItem('userData', JSON.stringify(result.data.user));
         }
         
-        // Redirigir al dashboard o página principal
+        // Redirigir a la página principal
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/');
         }, 1500);
         
       } else {

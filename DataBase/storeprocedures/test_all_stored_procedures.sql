@@ -597,6 +597,168 @@ SELECT 'PRUEBA 31: Consultar tipos de usuario' as test_case;
 SELECT * FROM sp_consultar_tipos_usuario();
 
 -- =====================================================
+-- PRUEBAS DEL PROCEDIMIENTO: sp_crear_actividad
+-- =====================================================
+
+SELECT '=====================================================' as separator;
+SELECT 'PRUEBAS: sp_crear_actividad' as test_section;
+SELECT '=====================================================' as separator;
+
+-- =====================================================
+-- PRUEBA 32: Crear actividad exitosa
+-- =====================================================
+SELECT 'PRUEBA 32: Crear actividad exitosa' as test_case;
+
+SELECT * FROM sp_crear_actividad(
+    1, -- id_categoria
+    'Taller de JavaScript Moderno', -- nombre_actividad
+    'taller', -- tipo_actividad
+    '2025-11-15 10:00:00', -- fecha_inicio_actividad
+    '2025-11-15 13:00:00', -- fecha_fin_actividad
+    25, -- cupo_maximo_actividad
+    'Taller de programación con JavaScript ES6+', -- descripcion_actividad
+    '2025-11-14 23:59:59', -- fecha_limite_inscripcion
+    180, -- duracion_estimada_minutos
+    'Aula 102', -- lugar_actividad
+    'Ing. Carlos López', -- ponente_actividad
+    'Conocimientos básicos de programación', -- requisitos_actividad
+    'intermedio', -- nivel_requerido
+    16, -- edad_minima
+    25, -- edad_maxima
+    'Laptop con editor de código', -- materiales_requeridos
+    0.00, -- costo_actividad
+    'GTQ', -- moneda_costo
+    TRUE, -- permite_inscripciones
+    FALSE -- requiere_aprobacion
+);
+
+-- =====================================================
+-- PRUEBA 33: Error - Datos inválidos
+-- =====================================================
+SELECT 'PRUEBA 33: Error - Datos inválidos' as test_case;
+
+SELECT * FROM sp_crear_actividad(
+    NULL, -- id_categoria (inválido)
+    'Taller Inválido', -- nombre_actividad
+    'taller', -- tipo_actividad
+    '2025-11-15 10:00:00', -- fecha_inicio_actividad
+    '2025-11-15 13:00:00', -- fecha_fin_actividad
+    25, -- cupo_maximo_actividad
+    'Descripción', -- descripcion_actividad
+    NULL, -- fecha_limite_inscripcion
+    180, -- duracion_estimada_minutos
+    'Aula 102', -- lugar_actividad
+    'Ing. Carlos López', -- ponente_actividad
+    'Requisitos', -- requisitos_actividad
+    'intermedio', -- nivel_requerido
+    16, -- edad_minima
+    25, -- edad_maxima
+    'Materiales', -- materiales_requeridos
+    0.00, -- costo_actividad
+    'GTQ', -- moneda_costo
+    TRUE, -- permite_inscripciones
+    FALSE -- requiere_aprobacion
+);
+
+-- =====================================================
+-- PRUEBAS DEL PROCEDIMIENTO: sp_listar_actividades
+-- =====================================================
+
+SELECT '=====================================================' as separator;
+SELECT 'PRUEBAS: sp_listar_actividades' as test_section;
+SELECT '=====================================================' as separator;
+
+-- =====================================================
+-- PRUEBA 34: Listar todas las actividades
+-- =====================================================
+SELECT 'PRUEBA 34: Listar todas las actividades' as test_case;
+
+SELECT * FROM sp_listar_actividades();
+
+-- =====================================================
+-- PRUEBA 35: Listar solo talleres
+-- =====================================================
+SELECT 'PRUEBA 35: Listar solo talleres' as test_case;
+
+SELECT * FROM sp_listar_actividades('taller');
+
+-- =====================================================
+-- PRUEBAS DEL PROCEDIMIENTO: sp_inscribirse_actividad
+-- =====================================================
+
+SELECT '=====================================================' as separator;
+SELECT 'PRUEBAS: sp_inscribirse_actividad' as test_section;
+SELECT '=====================================================' as separator;
+
+-- =====================================================
+-- PRUEBA 36: Inscripción exitosa
+-- =====================================================
+SELECT 'PRUEBA 36: Inscripción exitosa' as test_case;
+
+-- Primero obtenemos un ID de usuario y actividad existentes
+SELECT 
+    'ID Usuario: ' || id_usuario as user_id_info
+FROM tb_usuarios 
+WHERE email_usuario = 'juan.perez@test.com'
+LIMIT 1;
+
+-- Luego nos inscribimos (reemplazar con IDs reales)
+-- SELECT * FROM sp_inscribirse_actividad(
+--     'id_usuario_real_aqui', -- id_usuario
+--     1, -- id_actividad
+--     'Interesado en aprender JavaScript' -- observaciones_inscripcion
+-- );
+
+-- =====================================================
+-- PRUEBA 37: Error - Usuario no existe
+-- =====================================================
+SELECT 'PRUEBA 37: Error - Usuario no existe' as test_case;
+
+SELECT * FROM sp_inscribirse_actividad(
+    '00000000-0000-0000-0000-000000000000', -- id_usuario (no existe)
+    1, -- id_actividad
+    'Observaciones' -- observaciones_inscripcion
+);
+
+-- =====================================================
+-- PRUEBAS DEL PROCEDIMIENTO: sp_actualizar_actividad
+-- =====================================================
+
+SELECT '=====================================================' as separator;
+SELECT 'PRUEBAS: sp_actualizar_actividad' as test_section;
+SELECT '=====================================================' as separator;
+
+-- =====================================================
+-- PRUEBA 38: Actualizar actividad exitosa
+-- =====================================================
+SELECT 'PRUEBA 38: Actualizar actividad exitosa' as test_case;
+
+SELECT * FROM sp_actualizar_actividad(
+    1, -- id_actividad
+    NULL, -- id_categoria (no cambiar)
+    'Taller de Python - Actualizado', -- nombre_actividad
+    NULL, -- descripcion_actividad (no cambiar)
+    NULL, -- tipo_actividad (no cambiar)
+    NULL, -- fecha_inicio_actividad (no cambiar)
+    NULL, -- fecha_fin_actividad (no cambiar)
+    NULL, -- fecha_limite_inscripcion (no cambiar)
+    NULL, -- duracion_estimada_minutos (no cambiar)
+    35, -- cupo_maximo_actividad (cambiar a 35)
+    NULL, -- lugar_actividad (no cambiar)
+    NULL, -- ponente_actividad (no cambiar)
+    NULL, -- requisitos_actividad (no cambiar)
+    NULL, -- nivel_requerido (no cambiar)
+    NULL, -- edad_minima (no cambiar)
+    NULL, -- edad_maxima (no cambiar)
+    NULL, -- materiales_requeridos (no cambiar)
+    NULL, -- costo_actividad (no cambiar)
+    NULL, -- moneda_costo (no cambiar)
+    NULL, -- permite_inscripciones (no cambiar)
+    NULL, -- requiere_aprobacion (no cambiar)
+    NULL -- estado_actividad (no cambiar)
+);
+
+-- =====================================================
 -- VERIFICACIONES FINALES
 -- =====================================================
 

@@ -21,8 +21,8 @@ SELECT
 FROM tb_tb_usuarios u
 JOIN tb_tb_tipos_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario;
 
--- Vista de tb_actividades con información completa
-CREATE VIEW vista_tb_actividades_completa AS
+-- Vista de actividades con información completa
+CREATE VIEW vista_actividades_completa AS
 SELECT 
     a.id_actividad,
     a.nombre_actividad,
@@ -30,35 +30,49 @@ SELECT
     a.tipo_actividad,
     a.fecha_inicio_actividad,
     a.fecha_fin_actividad,
+    a.fecha_limite_inscripcion,
+    a.duracion_estimada_minutos,
     a.cupo_maximo_actividad,
-    a.cupo_disponible_actividad,
+    (a.cupo_maximo_actividad - COALESCE(COUNT(ia.id_usuario), 0)) as cupo_disponible_actividad,
     a.lugar_actividad,
     a.ponente_actividad,
     a.requisitos_actividad,
+    a.nivel_requerido,
+    a.edad_minima,
+    a.edad_maxima,
+    a.materiales_requeridos,
+    a.costo_actividad,
+    a.moneda_costo,
+    a.permite_inscripciones,
+    a.requiere_aprobacion,
     ca.nombre_categoria as categoria,
     a.estado_actividad,
     a.fecha_creacion_actividad,
     a.fecha_actualizacion_actividad
-FROM tb_tb_actividades a
-JOIN tb_tb_categorias_actividad ca ON a.id_categoria = ca.id_categoria;
+FROM tb_actividades a
+JOIN tb_categorias_actividad ca ON a.id_categoria = ca.id_categoria
+LEFT JOIN tb_inscripciones_actividad ia ON a.id_actividad = ia.id_actividad 
+    AND ia.estado_inscripcion = 'confirmada'
+GROUP BY a.id_actividad, ca.nombre_categoria;
 
 -- Vista de inscripciones con información de usuario y actividad
 CREATE VIEW vista_inscripciones_completa AS
 SELECT 
-    ia.id,
-    u.nombre || ' ' || u.apellido as nombre_completo,
-    u.email,
-    u.codigo_qr,
-    a.nombre as actividad,
+    ia.id_usuario,
+    ia.id_actividad,
+    u.nombre_usuario || ' ' || u.apellido_usuario as nombre_completo,
+    u.email_usuario,
+    u.codigo_qr_usuario,
+    a.nombre_actividad as actividad,
     a.tipo_actividad,
-    a.fecha_inicio,
-    a.lugar,
+    a.fecha_inicio_actividad,
+    a.lugar_actividad,
     ia.fecha_inscripcion,
-    ia.estado,
-    ia.observaciones
+    ia.estado_inscripcion,
+    ia.observaciones_inscripcion
 FROM tb_inscripciones_actividad ia
-JOIN tb_usuarios u ON ia.usuario_id = u.id
-JOIN tb_actividades a ON ia.actividad_id = a.id;
+JOIN tb_usuarios u ON ia.id_usuario = u.id_usuario
+JOIN tb_actividades a ON ia.id_actividad = a.id_actividad;
 
 -- Vista de tb_asistencia con información completa
 CREATE VIEW vista_tb_asistencia_completa AS

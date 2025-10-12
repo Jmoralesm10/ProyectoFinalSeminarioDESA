@@ -85,6 +85,34 @@ Este documento describe el estado actual de los stored procedures en la base de 
 - **Retorna**: success, message, lista_tipos_usuario
 - **Estado**: ✅ **IMPLEMENTADO Y EN USO**
 
+### 12. **sp_crear_actividad**
+- **Archivo**: `DataBase/storeprocedures/sp_crear_actividad.sql`
+- **Función**: Crear nuevas actividades (talleres y competencias)
+- **Parámetros**: id_categoria, nombre_actividad, descripcion_actividad, tipo_actividad, fechas, cupo, lugar, ponente, requisitos, nivel, edades, materiales, costo, etc.
+- **Retorna**: success, message, id_actividad, nombre_actividad
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 13. **sp_listar_actividades**
+- **Archivo**: `DataBase/storeprocedures/sp_listar_actividades.sql`
+- **Función**: Listar actividades con filtros opcionales y paginación
+- **Parámetros**: tipo_actividad, id_categoria, solo_disponibles, solo_activas, limite, offset
+- **Retorna**: success, message, datos completos de actividades
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 14. **sp_inscribirse_actividad**
+- **Archivo**: `DataBase/storeprocedures/sp_inscribirse_actividad.sql`
+- **Función**: Inscribir usuarios a actividades con validaciones completas
+- **Parámetros**: id_usuario, id_actividad, observaciones_inscripcion
+- **Retorna**: success, message, id_usuario, id_actividad, datos de inscripción
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO** (Actualizado para PK compuesta)
+
+### 15. **sp_actualizar_actividad**
+- **Archivo**: `DataBase/storeprocedures/sp_actualizar_actividad.sql`
+- **Función**: Actualizar actividades existentes con validaciones
+- **Parámetros**: id_actividad, campos opcionales a actualizar
+- **Retorna**: success, message, id_actividad, nombre_actividad
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
 ## 🔄 Plan de Migración
 
 ### ✅ Fase 1: Crear Stored Procedures Faltantes - COMPLETADA
@@ -95,8 +123,15 @@ Este documento describe el estado actual de los stored procedures en la base de 
 5. ✅ Crear `sp_cambiar_password.sql`
 6. ✅ Crear `sp_consultar_tipos_usuario.sql`
 
-### ✅ Fase 2: Actualizar Repositorio - COMPLETADA
-1. ✅ Reemplazar consultas directas con llamadas a stored procedures
+### ✅ Fase 2: Crear Stored Procedures de Actividades - COMPLETADA
+1. ✅ Crear `sp_crear_actividad.sql`
+2. ✅ Crear `sp_listar_actividades.sql`
+3. ✅ Crear `sp_inscribirse_actividad.sql`
+4. ✅ Crear `sp_actualizar_actividad.sql`
+
+### ✅ Fase 3: Actualizar Repositorio - COMPLETADA
+1. ✅ Reemplazar consultas directas con llamadas a stored procedures de usuarios
+2. 🔄 Actualizar repositorio para usar stored procedures de actividades
 2. ✅ Actualizar tipos TypeScript para las nuevas respuestas
 3. ✅ Actualizar servicios para usar nuevos métodos del repositorio
 4. ✅ Actualizar middleware de autenticación

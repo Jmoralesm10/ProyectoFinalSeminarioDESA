@@ -49,9 +49,9 @@ export class AuthMiddleware {
         return;
       }
 
-      // Agregar información del usuario al request
-      req.user = decoded;
-      next();
+    // Agregar información del usuario al request
+    req.user = decoded;
+    next();
     } catch (error) {
       console.error('Error en authenticateToken middleware:', error);
       res.status(403).json({

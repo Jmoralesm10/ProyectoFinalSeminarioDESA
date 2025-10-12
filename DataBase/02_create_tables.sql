@@ -55,28 +55,55 @@ CREATE TABLE tb_actividades (
     nombre_actividad VARCHAR(200) NOT NULL,
     descripcion_actividad TEXT,
     tipo_actividad VARCHAR(50) NOT NULL CHECK (tipo_actividad IN ('taller', 'competencia')),
-    fecha_inicio_actividad TIMESTAMP,
-    fecha_fin_actividad TIMESTAMP,
-    cupo_maximo_actividad INTEGER,
-    cupo_disponible_actividad INTEGER,
+    
+    -- Fechas y horarios
+    fecha_inicio_actividad TIMESTAMP NOT NULL,
+    fecha_fin_actividad TIMESTAMP NOT NULL,
+    fecha_limite_inscripcion TIMESTAMP, -- Límite para inscribirse
+    duracion_estimada_minutos INTEGER, -- Duración en minutos
+    
+    -- Cupos (solo máximo, calcular disponible dinámicamente)
+    cupo_maximo_actividad INTEGER NOT NULL DEFAULT 0,
+    
+    -- Ubicación y ponente
     lugar_actividad VARCHAR(200),
     ponente_actividad VARCHAR(200),
+    
+    -- Requisitos y restricciones
     requisitos_actividad TEXT,
+    nivel_requerido VARCHAR(20) CHECK (nivel_requerido IN ('basico', 'intermedio', 'avanzado')),
+    edad_minima INTEGER DEFAULT 0,
+    edad_maxima INTEGER,
+    materiales_requeridos TEXT,
+    
+    -- Costo
+    costo_actividad DECIMAL(10,2) DEFAULT 0.00, -- 0 = gratis
+    moneda_costo VARCHAR(3) DEFAULT 'GTQ',
+    
+    -- Estado y control
     estado_actividad BOOLEAN DEFAULT TRUE,
+    permite_inscripciones BOOLEAN DEFAULT TRUE, -- Control de inscripciones
+    requiere_aprobacion BOOLEAN DEFAULT FALSE, -- Inscripciones pendientes de aprobación
+    
+    -- Auditoría
     fecha_creacion_actividad TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion_actividad TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_actualizacion_actividad TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Validaciones
+    CONSTRAINT chk_fechas_validas CHECK (fecha_fin_actividad > fecha_inicio_actividad),
+    CONSTRAINT chk_cupo_positivo CHECK (cupo_maximo_actividad >= 0),
+    CONSTRAINT chk_edad_valida CHECK (edad_maxima IS NULL OR edad_maxima >= edad_minima)
 );
 
 -- Tabla de inscripciones a actividades
 DROP TABLE IF EXISTS tb_inscripciones_actividad CASCADE;
 CREATE TABLE tb_inscripciones_actividad (
-    id_inscripcion UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     id_usuario UUID NOT NULL REFERENCES tb_usuarios(id_usuario),
     id_actividad INTEGER NOT NULL REFERENCES tb_actividades(id_actividad),
     fecha_inscripcion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estado_inscripcion VARCHAR(20) DEFAULT 'confirmada' CHECK (estado_inscripcion IN ('confirmada', 'cancelada', 'en_espera')),
     observaciones_inscripcion TEXT,
-    UNIQUE(id_usuario, id_actividad)
+    PRIMARY KEY (id_usuario, id_actividad)
 );
 
 -- Tabla de asistencia
