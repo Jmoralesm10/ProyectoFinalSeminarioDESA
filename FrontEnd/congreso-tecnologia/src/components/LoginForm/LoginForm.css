@@ -1,0 +1,453 @@
+/* =====================================================
+   Estilos del Formulario de Login
+   Sistema de Gestión del Congreso de Tecnología
+   ===================================================== */
+
+
+/* Contenedor principal */
+.login-form-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  padding: 2rem 1rem;
+}
+
+/* Tarjeta del formulario */
+.login-form-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+}
+
+/* Header del formulario */
+.login-form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  padding-top: 3rem;
+}
+
+.header-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 10;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--gray-100);
+  color: var(--primary-color);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  border: 1px solid var(--gray-300);
+}
+
+.back-button:hover {
+  background: var(--primary-color);
+  color: var(--white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+}
+
+.login-form-header h2 {
+  color: #1A365D;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.login-form-header p {
+  color: #2C3E50;
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Grupos de campos */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.label-icon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.form-input {
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: #495057;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1A365D;
+  box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-input:disabled {
+  background: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #dc3545;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 0.8rem;
+}
+
+/* Opciones del formulario */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #6c757d;
+  user-select: none;
+}
+
+.checkbox-container input[type="checkbox"] {
+  display: none;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ced4da;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark {
+  background: #1A365D;
+  border-color: #1A365D;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.forgot-password-link {
+  color: #1A365D;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: #D92027;
+  text-decoration: underline;
+}
+
+/* Botón de envío */
+.submit-button {
+  background: linear-gradient(135deg, #1A365D 0%, #D92027 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 54, 93, 0.3);
+}
+
+.submit-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-button.loading {
+  background: #6c757d;
+}
+
+.button-icon {
+  font-size: 1.2rem;
+}
+
+/* Spinner de carga */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid var(--white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mensaje de resultado */
+.submit-message {
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.submit-message.success {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.submit-message.success::before {
+  content: '✅';
+  font-size: 1.1rem;
+}
+
+.submit-message.error {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.submit-message.error::before {
+  content: '❌';
+  font-size: 1.1rem;
+}
+
+/* Footer del formulario */
+.login-form-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.login-form-footer p {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.register-link {
+  color: #1A365D;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.register-link:hover {
+  color: #D92027;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-form-container {
+    padding: 1rem;
+  }
+  
+  .login-form-card {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+  }
+  
+  .login-form-header {
+    padding-top: 2.5rem;
+  }
+  
+  .login-form-header h2 {
+    font-size: 1.7rem;
+  }
+  
+  .form-options {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .back-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .login-form-header {
+    padding-top: 2rem;
+  }
+  
+  .login-form-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .form-input {
+    padding: 0.8rem;
+  }
+  
+  .submit-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .back-button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-form-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Estados de focus mejorados */
+.form-input:focus,
+.submit-button:focus,
+.back-button:focus,
+.forgot-password-link:focus,
+.register-link:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Modo oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+  .login-form-card {
+    background: var(--gray-800);
+    color: var(--white);
+  }
+  
+  .form-input {
+    background: var(--gray-700);
+    color: var(--white);
+    border-color: var(--gray-600);
+  }
+  
+  .form-label {
+    color: var(--gray-300);
+  }
+  
+  .login-form-header h2 {
+    color: var(--white);
+  }
+  
+  .login-form-header p {
+    color: var(--gray-400);
+  }
+}

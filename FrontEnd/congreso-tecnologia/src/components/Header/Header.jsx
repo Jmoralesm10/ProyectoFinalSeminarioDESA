@@ -31,10 +31,10 @@ const Header = () => {
             <li><a href="#ponentes"><span className="nav-icon">👥</span>Oponentes</a></li>
             <li><a href="#carrera"><span className="nav-icon">🎓</span>Carrera</a></li>
             <li><a href="#faq"><span className="nav-icon">❓</span>FAQ</a></li>
-            <li className="nav-buttons">
-              <button className="btn-login">Iniciar Sesión</button>
-              <Link to="/registro" className="btn-primary">Inscribirse</Link>
-            </li>
+                    <li className="nav-buttons">
+                      <Link to="/login" className="btn-login">Iniciar Sesión</Link>
+                      <Link to="/registro" className="btn-primary">Inscribirse</Link>
+                    </li>
           </ul>
         </nav>
 
@@ -61,7 +61,7 @@ const Header = () => {
           <li><a href="#carrera" onClick={toggleMenu}><span className="nav-icon">🎓</span>Carrera</a></li>
           <li><a href="#faq" onClick={toggleMenu}><span className="nav-icon">❓</span>FAQ</a></li>
           <li className="mobile-actions">
-            <button className="btn-login">Iniciar Sesión</button>
+            <Link to="/login" className="btn-login" onClick={toggleMenu}>Iniciar Sesión</Link>
             <Link to="/registro" className="btn-primary" onClick={toggleMenu}>Inscribirse</Link>
           </li>
         </ul>

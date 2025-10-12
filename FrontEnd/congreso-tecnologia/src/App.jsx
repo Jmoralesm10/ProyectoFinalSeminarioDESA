@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import RegistrationPage from './pages/RegistrationPage';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
 import './App.css';
 
 function App() {
@@ -11,6 +13,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/registro" element={<RegistrationPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
       </div>
     </Router>

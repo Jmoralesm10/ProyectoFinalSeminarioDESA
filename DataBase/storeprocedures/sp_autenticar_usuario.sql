@@ -21,8 +21,6 @@ RETURNS TABLE (
 ) AS $$
 DECLARE
     v_usuario RECORD;
-    v_tipo_usuario VARCHAR(50);
-    v_esta_bloqueado BOOLEAN;
 BEGIN
     -- Inicializar variables de respuesta
     success := FALSE;
@@ -89,28 +87,15 @@ BEGIN
     
     -- Verificar la contraseña
     IF NOT (v_usuario.password_hash_usuario = crypt(p_password, v_usuario.password_hash_usuario)) THEN
-        -- Incrementar intentos fallidos
-        UPDATE tb_usuarios 
-        SET 
-            intentos_login_usuario = intentos_login_usuario + 1,
-            bloqueado_hasta_usuario = CASE 
-                WHEN intentos_login_usuario + 1 >= 5 THEN CURRENT_TIMESTAMP + INTERVAL '30 minutes'
-                ELSE bloqueado_hasta_usuario
-            END
-        WHERE id_usuario = v_usuario.id_usuario;
-        
         message := 'Credenciales inválidas';
         RETURN NEXT;
         RETURN;
     END IF;
     
-    -- Login exitoso - resetear intentos fallidos y actualizar último acceso
+    -- Login exitoso - actualizar último acceso
     UPDATE tb_usuarios 
-    SET 
-        intentos_login_usuario = 0,
-        bloqueado_hasta_usuario = NULL,
-        ultimo_acceso_usuario = CURRENT_TIMESTAMP
-    WHERE id_usuario = v_usuario.id_usuario;
+    SET ultimo_acceso_usuario = CURRENT_TIMESTAMP
+    WHERE tb_usuarios.id_usuario = v_usuario.id_usuario;
     
     -- Preparar respuesta exitosa
     success := TRUE;
@@ -121,24 +106,6 @@ BEGIN
     email_usuario := v_usuario.email_usuario;
     tipo_usuario := v_usuario.nombre_tipo_usuario;
     email_verificado := v_usuario.email_verificado_usuario;
-    
-    -- Registrar en logs
-    INSERT INTO tb_logs_sistema (
-        id_usuario,
-        accion_log,
-        tabla_afectada_log,
-        registro_id_log,
-        detalles_log
-    ) VALUES (
-        v_usuario.id_usuario,
-        'LOGIN_EXITOSO',
-        'tb_usuarios',
-        v_usuario.id_usuario::text,
-        jsonb_build_object(
-            'email', p_email,
-            'tipo_usuario', v_usuario.nombre_tipo_usuario
-        )
-    );
     
     RETURN NEXT;
     

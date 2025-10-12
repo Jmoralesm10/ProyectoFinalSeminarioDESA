@@ -148,7 +148,7 @@ export class UserService {
         const token = this.generateToken(tokenPayload);
 
         // Obtener datos completos del usuario
-        const userResult = await this.userRepository.getUserById(result.id_usuario);
+        const userResult = await this.userRepository.getUserByEmail(result.email_usuario);
         
         let user = undefined;
         if (userResult.success) {
