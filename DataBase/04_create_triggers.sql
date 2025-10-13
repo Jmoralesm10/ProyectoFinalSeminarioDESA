@@ -14,6 +14,8 @@ BEGIN
         NEW.fecha_actualizacion_actividad = CURRENT_TIMESTAMP;
     ELSIF TG_TABLE_NAME = 'tb_faq' THEN
         NEW.fecha_actualizacion_faq = CURRENT_TIMESTAMP;
+    ELSIF TG_TABLE_NAME = 'tb_administradores' THEN
+        NEW.fecha_ultima_actividad_administrador = CURRENT_TIMESTAMP;
     END IF;
     RETURN NEW;
 END;
@@ -30,8 +32,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para actualizar cupo disponible
-CREATE OR REPLACE FUNCTION actualizar_cupo_disponible()
+-- Función para validar cupo disponible (ya no actualizamos cupo_disponible)
+CREATE OR REPLACE FUNCTION validar_cupo_disponible()
 RETURNS TRIGGER AS $$
 DECLARE
     actividad_cupo_max INTEGER;
@@ -40,46 +42,16 @@ BEGIN
     -- Obtener el cupo máximo de la actividad
     SELECT cupo_maximo_actividad INTO actividad_cupo_max
     FROM tb_actividades 
-    WHERE id_actividad = COALESCE(NEW.id_actividad, OLD.id_actividad);
+    WHERE id_actividad = NEW.id_actividad;
     
     -- Contar inscripciones confirmadas
     SELECT COUNT(*) INTO inscripciones_count
     FROM tb_inscripciones_actividad 
-    WHERE id_actividad = COALESCE(NEW.id_actividad, OLD.id_actividad)
+    WHERE id_actividad = NEW.id_actividad
     AND estado_inscripcion = 'confirmada';
     
-    -- Actualizar cupo disponible
-    UPDATE tb_actividades 
-    SET cupo_disponible_actividad = actividad_cupo_max - inscripciones_count,
-        fecha_actualizacion_actividad = CURRENT_TIMESTAMP
-    WHERE id_actividad = COALESCE(NEW.id_actividad, OLD.id_actividad);
-    
-    RETURN COALESCE(NEW, OLD);
-END;
-$$ LANGUAGE plpgsql;
-
--- Función para validar inscripción
-CREATE OR REPLACE FUNCTION validar_inscripcion()
-RETURNS TRIGGER AS $$
-DECLARE
-    cupo_disponible INTEGER;
-    actividad_activa BOOLEAN;
-BEGIN
-    -- Verificar si la actividad está activa
-    SELECT activo INTO actividad_activa
-    FROM actividades 
-    WHERE id = NEW.actividad_id;
-    
-    IF NOT actividad_activa THEN
-        RAISE EXCEPTION 'La actividad no está disponible para inscripción';
-    END IF;
-    
-    -- Verificar cupo disponible
-    SELECT cupo_disponible INTO cupo_disponible
-    FROM actividades 
-    WHERE id = NEW.actividad_id;
-    
-    IF cupo_disponible <= 0 THEN
+    -- Validar que hay cupo disponible
+    IF inscripciones_count >= actividad_cupo_max THEN
         RAISE EXCEPTION 'No hay cupo disponible para esta actividad';
     END IF;
     
@@ -87,44 +59,104 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para log de actividades
-CREATE OR REPLACE FUNCTION log_actividad()
+-- Función para validar inscripción
+CREATE OR REPLACE FUNCTION validar_inscripcion()
+RETURNS TRIGGER AS $$
+DECLARE
+    actividad_activa BOOLEAN;
+    actividad_permite_inscripciones BOOLEAN;
+    cupo_maximo INTEGER;
+    inscripciones_confirmadas INTEGER;
+BEGIN
+    -- Verificar si la actividad está activa y permite inscripciones
+    SELECT 
+        estado_actividad,
+        permite_inscripciones,
+        cupo_maximo_actividad
+    INTO 
+        actividad_activa,
+        actividad_permite_inscripciones,
+        cupo_maximo
+    FROM tb_actividades 
+    WHERE id_actividad = NEW.id_actividad;
+    
+    IF NOT actividad_activa THEN
+        RAISE EXCEPTION 'La actividad no está disponible para inscripción';
+    END IF;
+    
+    IF NOT actividad_permite_inscripciones THEN
+        RAISE EXCEPTION 'Las inscripciones para esta actividad no están permitidas';
+    END IF;
+    
+    -- Contar inscripciones confirmadas
+    SELECT COUNT(*) INTO inscripciones_confirmadas
+    FROM tb_inscripciones_actividad 
+    WHERE id_actividad = NEW.id_actividad
+    AND estado_inscripcion = 'confirmada';
+    
+    -- Verificar cupo disponible
+    IF inscripciones_confirmadas >= cupo_maximo THEN
+        RAISE EXCEPTION 'No hay cupo disponible para esta actividad';
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función general para log de otras actividades
+CREATE OR REPLACE FUNCTION log_actividad_general()
 RETURNS TRIGGER AS $$
 DECLARE
     registro_id TEXT;
+    accion_detalle TEXT;
 BEGIN
     -- Determinar el ID del registro según la tabla
     CASE TG_TABLE_NAME
         WHEN 'tb_usuarios' THEN
             registro_id := COALESCE(NEW.id_usuario::text, OLD.id_usuario::text);
         WHEN 'tb_inscripciones_actividad' THEN
-            registro_id := COALESCE(NEW.id_inscripcion::text, OLD.id_inscripcion::text);
-        WHEN 'asistencia' THEN
-            registro_id := COALESCE(NEW.id_asistencia::text, OLD.id_asistencia::text);
-        WHEN 'resultados_competencia' THEN
+            registro_id := COALESCE(
+                NEW.id_usuario::text || '_' || NEW.id_actividad::text, 
+                OLD.id_usuario::text || '_' || OLD.id_actividad::text
+            );
+        WHEN 'tb_asistencia_general' THEN
+            registro_id := COALESCE(NEW.id_usuario::text || '_' || NEW.fecha_asistencia::text, OLD.id_usuario::text || '_' || OLD.fecha_asistencia::text);
+        WHEN 'tb_asistencia_actividad' THEN
+            registro_id := COALESCE(NEW.id_usuario::text || '_' || NEW.id_actividad::text, OLD.id_usuario::text || '_' || OLD.id_actividad::text);
+        WHEN 'tb_resultados_competencia' THEN
             registro_id := COALESCE(NEW.id_resultado::text, OLD.id_resultado::text);
+        WHEN 'tb_administradores' THEN
+            registro_id := COALESCE(NEW.id_usuario::text || '_' || NEW.rol_administrador, OLD.id_usuario::text || '_' || OLD.rol_administrador);
         ELSE
             registro_id := COALESCE(NEW.id::text, OLD.id::text);
     END CASE;
     
+    -- Determinar la acción
+    accion_detalle := TG_OP;
+    
+    -- Insertar en logs
     INSERT INTO tb_logs_sistema (
         accion_log,
         tabla_afectada_log,
         registro_id_log,
-        detalles_log,
-        fecha_log
+        detalles_log
     ) VALUES (
-        TG_OP,
+        accion_detalle,
         TG_TABLE_NAME,
         registro_id,
-        CASE 
-            WHEN TG_OP = 'DELETE' THEN to_jsonb(OLD)
-            ELSE to_jsonb(NEW)
-        END,
-        CURRENT_TIMESTAMP
+        jsonb_build_object(
+            'operacion', TG_OP,
+            'tabla', TG_TABLE_NAME,
+            'timestamp', CURRENT_TIMESTAMP
+        )
     );
     
-    RETURN COALESCE(NEW, OLD);
+    -- Retornar el registro apropiado
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    ELSE
+        RETURN NEW;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -149,17 +181,22 @@ CREATE TRIGGER trigger_informacion_congreso_actualizar_fecha
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
 
+CREATE TRIGGER trigger_administradores_actualizar_fecha
+    BEFORE UPDATE ON tb_administradores
+    FOR EACH ROW
+    EXECUTE FUNCTION actualizar_fecha_modificacion();
+
 -- Trigger para generar código QR
 CREATE TRIGGER trigger_usuarios_generar_qr
     BEFORE INSERT ON tb_usuarios
     FOR EACH ROW
     EXECUTE FUNCTION generar_codigo_qr_usuario();
 
--- Triggers para actualizar cupo disponible
-CREATE TRIGGER trigger_inscripciones_actualizar_cupo
-    AFTER INSERT OR UPDATE OR DELETE ON tb_inscripciones_actividad
+-- Trigger para validar cupo disponible
+CREATE TRIGGER trigger_inscripciones_validar_cupo
+    BEFORE INSERT ON tb_inscripciones_actividad
     FOR EACH ROW
-    EXECUTE FUNCTION actualizar_cupo_disponible();
+    EXECUTE FUNCTION validar_cupo_disponible();
 
 -- Trigger para validar inscripción
 CREATE TRIGGER trigger_inscripciones_validar
@@ -168,22 +205,35 @@ CREATE TRIGGER trigger_inscripciones_validar
     EXECUTE FUNCTION validar_inscripcion();
 
 -- Triggers para logging (solo en tablas críticas)
+-- NOTA: trigger_log_actividades eliminado para evitar errores de referencia ambigua
+
+-- Triggers generales para otras tablas
 CREATE TRIGGER trigger_log_usuarios
     AFTER INSERT OR UPDATE OR DELETE ON tb_usuarios
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_inscripciones
     AFTER INSERT OR UPDATE OR DELETE ON tb_inscripciones_actividad
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
-CREATE TRIGGER trigger_log_asistencia
-    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia
+CREATE TRIGGER trigger_log_asistencia_general
+    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia_general
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
+
+CREATE TRIGGER trigger_log_asistencia_actividad
+    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia_actividad
+    FOR EACH ROW
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_resultados
     AFTER INSERT OR UPDATE OR DELETE ON tb_resultados_competencia
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
+
+CREATE TRIGGER trigger_log_administradores
+    AFTER INSERT OR UPDATE OR DELETE ON tb_administradores
+    FOR EACH ROW
+    EXECUTE FUNCTION log_actividad_general();

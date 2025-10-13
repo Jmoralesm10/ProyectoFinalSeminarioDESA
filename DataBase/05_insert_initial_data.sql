@@ -21,10 +21,10 @@ INSERT INTO tb_categorias_actividad (nombre_categoria, descripcion_categoria) VA
 
 -- Insertar información del congreso
 INSERT INTO tb_informacion_congreso (titulo_informacion, descripcion_informacion, fecha_inicio_informacion, fecha_fin_informacion, lugar_informacion, agenda_informacion, ponentes_invitados_informacion, informacion_carrera_informacion) VALUES
-('Congreso de Tecnología 2024', 
+('Congreso de Tecnología 2025', 
 'El Congreso de Tecnología es un evento anual que busca promover la carrera de ingeniería en sistemas entre estudiantes de nivel medio y ofrecer a los alumnos de la facultad una plataforma para participar en diversas actividades académicas y recreativas.',
-'2024-10-15',
-'2024-10-17',
+'2025-11-12',
+'2025-11-13',
 'Facultad de Ingeniería en Sistemas - Universidad',
 'Día 1: Inauguración y talleres básicos
 Día 2: Competencias y talleres avanzados
@@ -73,13 +73,31 @@ INSERT INTO tb_administradores (nombre_administrador, apellido_administrador, em
 ('Administrador', 'Sistema', 'admin@congreso.edu', crypt('admin123', gen_salt('bf')), 'super_admin');
 
 -- Insertar algunas actividades de ejemplo
-INSERT INTO tb_actividades (id_categoria, nombre_actividad, descripcion_actividad, tipo_actividad, fecha_inicio_actividad, fecha_fin_actividad, cupo_maximo_actividad, lugar_actividad, ponente_actividad) VALUES
-(1, 'Introducción a Python', 'Taller básico de programación en Python para principiantes', 'taller', '2024-10-15 09:00:00', '2024-10-15 12:00:00', 30, 'Aula 101', 'Dr. Ana Martínez'),
-(1, 'Competencia de Programación', 'Competencia de resolución de problemas algorítmicos', 'competencia', '2024-10-16 14:00:00', '2024-10-16 18:00:00', 50, 'Laboratorio de Computación', 'Ing. Roberto Silva'),
-(2, 'Robótica con Arduino', 'Taller práctico de construcción y programación de robots', 'taller', '2024-10-15 14:00:00', '2024-10-15 17:00:00', 20, 'Laboratorio de Robótica', 'Ing. Laura Fernández'),
-(3, 'Machine Learning Básico', 'Introducción a los conceptos de inteligencia artificial', 'taller', '2024-10-16 09:00:00', '2024-10-16 12:00:00', 25, 'Aula 205', 'Dr. Miguel Torres'),
-(4, 'Desarrollo Web con React', 'Taller de desarrollo de aplicaciones web modernas', 'taller', '2024-10-17 09:00:00', '2024-10-17 12:00:00', 35, 'Laboratorio de Desarrollo', 'Ing. Sofía Ramírez'),
-(7, 'Competencia de Gaming', 'Torneo de videojuegos y desarrollo de juegos', 'competencia', '2024-10-17 14:00:00', '2024-10-17 18:00:00', 40, 'Sala de Gaming', 'Lic. Diego Morales');
-
--- Actualizar cupo disponible para las actividades
-UPDATE tb_actividades SET cupo_disponible_actividad = cupo_maximo_actividad;
+INSERT INTO tb_actividades (
+    id_categoria, 
+    nombre_actividad, 
+    tipo_actividad, 
+    fecha_inicio_actividad, 
+    fecha_fin_actividad, 
+    cupo_maximo_actividad,
+    descripcion_actividad, 
+    fecha_limite_inscripcion,
+    duracion_estimada_minutos,
+    lugar_actividad, 
+    ponente_actividad,
+    requisitos_actividad,
+    nivel_requerido,
+    edad_minima,
+    edad_maxima,
+    materiales_requeridos,
+    costo_actividad,
+    moneda_costo,
+    permite_inscripciones,
+    requiere_aprobacion
+) VALUES
+(1, 'Introducción a Python', 'taller', '2025-11-12 09:00:00', '2025-11-12 12:00:00', 30, 'Taller básico de programación en Python para principiantes', '2025-11-11 23:59:59', 180, 'Aula 101', 'Dr. Ana Martínez', 'Conocimientos básicos de programación', 'basico', 14, 25, 'Laptop con Python instalado', 0.00, 'GTQ', TRUE, FALSE),
+(1, 'Competencia de Programación', 'competencia', '2025-11-12 14:00:00', '2025-11-12 18:00:00', 50, 'Competencia de resolución de problemas algorítmicos', '2025-11-11 23:59:59', 240, 'Laboratorio de Computación', 'Ing. Roberto Silva', 'Conocimientos de programación y algoritmos', 'intermedio', 16, 30, 'Laptop con editor de código', 0.00, 'GTQ', TRUE, FALSE),
+(2, 'Robótica con Arduino', 'taller', '2025-11-12 14:00:00', '2025-11-12 17:00:00', 20, 'Taller práctico de construcción y programación de robots', '2025-11-11 23:59:59', 180, 'Laboratorio de Robótica', 'Ing. Laura Fernández', 'Interés en electrónica y programación', 'basico', 15, 25, 'Kit de Arduino (proporcionado)', 25.00, 'GTQ', TRUE, FALSE),
+(3, 'Machine Learning Básico', 'taller', '2025-11-12 09:00:00', '2025-11-12 12:00:00', 25, 'Introducción a los conceptos de inteligencia artificial', '2025-11-11 23:59:59', 180, 'Aula 205', 'Dr. Miguel Torres', 'Conocimientos básicos de Python y matemáticas', 'intermedio', 17, 30, 'Laptop con Python y librerías ML', 0.00, 'GTQ', TRUE, FALSE),
+(4, 'Desarrollo Web con React', 'taller', '2025-11-13 09:00:00', '2025-11-13 12:00:00', 35, 'Taller de desarrollo de aplicaciones web modernas', '2025-11-11 23:59:59', 180, 'Laboratorio de Desarrollo', 'Ing. Sofía Ramírez', 'Conocimientos básicos de HTML, CSS y JavaScript', 'intermedio', 16, 30, 'Laptop con Node.js instalado', 0.00, 'GTQ', TRUE, FALSE),
+(7, 'Competencia de Gaming', 'competencia', '2025-11-13 14:00:00', '2025-11-13 18:00:00', 40, 'Torneo de videojuegos y desarrollo de juegos', '2025-11-11 23:59:59', 240, 'Sala de Gaming', 'Lic. Diego Morales', 'Experiencia en videojuegos', 'basico', 14, 25, 'Control de juego (opcional)', 0.00, 'GTQ', TRUE, FALSE);

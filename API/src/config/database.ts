@@ -56,13 +56,15 @@ export const executeQuery = async (query: string, params: any[] = []): Promise<a
 export const executeStoredProcedure = async (
   procedureName: string, 
   params: any[] = []
-): Promise<any> => {
+): Promise<any[]> => {
   const client = await pool.connect();
   try {
     const placeholders = params.map((_, index) => `$${index + 1}`).join(', ');
     const query = `SELECT * FROM ${procedureName}(${placeholders})`;
     const result = await client.query(query, params);
-    return result.rows[0]; // Los stored procedures devuelven una sola fila
+    
+    // Devolver todos los resultados, no solo los exitosos
+    return result.rows;
   } catch (error) {
     console.error(`Error ejecutando stored procedure ${procedureName}:`, error);
     throw error;

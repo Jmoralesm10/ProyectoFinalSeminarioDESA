@@ -1,0 +1,347 @@
+/* =====================================================
+   Estilos de la Tarjeta de Actividad
+   Sistema de Gestión del Congreso de Tecnología
+   ===================================================== */
+
+.activity-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  position: relative;
+}
+
+.activity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Header de la tarjeta */
+.activity-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.activity-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.activity-type-icon {
+  font-size: 1rem;
+}
+
+.activity-type-text {
+  text-transform: capitalize;
+}
+
+.activity-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.enrolled {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.status-badge.available {
+  background: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+  border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+.status-badge.unavailable {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+/* Contenido principal */
+.activity-card-content {
+  padding: 1.5rem;
+}
+
+.activity-title {
+  color: #1A365D;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.activity-description {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Información de la actividad */
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.info-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.info-text {
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Requisitos */
+.activity-requirements {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #1A365D;
+  margin-bottom: 1rem;
+}
+
+.activity-requirements h4 {
+  color: #1A365D;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.activity-requirements p {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Footer de la tarjeta */
+.activity-card-footer {
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Botón de inscripción */
+.enroll-button {
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.enroll-button.available {
+  background: linear-gradient(135deg, #1A365D 0%, #D92027 100%);
+  color: white;
+}
+
+.enroll-button.available:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 54, 93, 0.3);
+}
+
+.enroll-button.enrolled {
+  background: #28a745;
+  color: white;
+  cursor: default;
+}
+
+.enroll-button.unavailable {
+  background: #6c757d;
+  color: white;
+  cursor: not-allowed;
+}
+
+.enroll-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button-icon {
+  font-size: 1.1rem;
+}
+
+/* Spinner de carga */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Sección de autenticación requerida */
+.auth-required {
+  text-align: center;
+}
+
+.auth-message {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.auth-icon {
+  font-size: 1.1rem;
+}
+
+.login-link {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: #1A365D;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.login-link:hover {
+  background: #2C5282;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .activity-card-header {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  
+  .activity-card-content {
+    padding: 1rem;
+  }
+  
+  .activity-card-footer {
+    padding: 1rem;
+  }
+  
+  .activity-title {
+    font-size: 1.2rem;
+  }
+  
+  .activity-info {
+    gap: 0.6rem;
+  }
+  
+  .info-item {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-card {
+    margin: 0 0.5rem;
+  }
+  
+  .activity-card-header {
+    padding: 0.8rem 1rem;
+  }
+  
+  .activity-card-content {
+    padding: 0.8rem;
+  }
+  
+  .activity-card-footer {
+    padding: 0.8rem;
+  }
+  
+  .activity-title {
+    font-size: 1.1rem;
+  }
+  
+  .enroll-button {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.activity-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Estados de focus para accesibilidad */
+.enroll-button:focus,
+.login-link:focus {
+  outline: 2px solid #1A365D;
+  outline-offset: 2px;
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .activity-card,
+  .enroll-button,
+  .login-link {
+    transition: none;
+    animation: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+}

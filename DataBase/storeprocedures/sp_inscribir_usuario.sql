@@ -17,13 +17,11 @@ CREATE OR REPLACE FUNCTION sp_inscribir_usuario(
 RETURNS TABLE (
     success BOOLEAN,
     message TEXT,
-    id_usuario UUID,
-    codigo_qr VARCHAR(500)
+    id_usuario UUID
 ) AS $$
 DECLARE
     v_id_tipo_usuario INTEGER;
     v_id_usuario UUID;
-    v_codigo_qr VARCHAR(500);
     v_email_existe BOOLEAN;
     v_tipo_valido BOOLEAN;
 BEGIN
@@ -31,7 +29,6 @@ BEGIN
     success := FALSE;
     message := '';
     id_usuario := NULL;
-    codigo_qr := '';
     
     -- Validar que el tipo de usuario sea válido
     IF p_tipo_usuario NOT IN ('externo', 'interno') THEN
@@ -135,14 +132,13 @@ BEGIN
             ELSE NULL
         END,
         encode(gen_random_bytes(32), 'hex') -- Generar token de verificación
-    ) RETURNING tb_usuarios.id_usuario, tb_usuarios.codigo_qr_usuario INTO v_id_usuario, v_codigo_qr;
+    ) RETURNING tb_usuarios.id_usuario INTO v_id_usuario;
     
     -- Verificar que la inserción fue exitosa
     IF v_id_usuario IS NOT NULL THEN
         success := TRUE;
         message := 'Usuario inscrito exitosamente';
         id_usuario := v_id_usuario;
-        codigo_qr := v_codigo_qr;
         
         -- TODO: Registrar en logs cuando la tabla esté disponible
         -- INSERT INTO tb_logs_sistema (...) VALUES (...);
@@ -157,7 +153,6 @@ EXCEPTION
         success := FALSE;
         message := 'Error interno: ' || SQLERRM;
         id_usuario := NULL;
-        codigo_qr := '';
         RETURN NEXT;
 END;
 $$ LANGUAGE plpgsql;

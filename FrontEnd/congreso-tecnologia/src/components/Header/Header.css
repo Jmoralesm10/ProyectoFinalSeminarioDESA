@@ -26,6 +26,7 @@
   display: flex;
   align-items: center;
   height: 100%;
+  gap: 1rem;
 }
 
 .logo-image {
@@ -38,7 +39,6 @@
 .logo-text {
   display: flex;
   align-items: center;
-  margin-left: 1rem;
 }
 
 .logo-text h1 {
@@ -62,7 +62,7 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  margin: 0 2rem;
+  margin: 0 1rem;
 }
 
 .nav-desktop ul {
@@ -103,11 +103,12 @@
   text-align: center;
 }
 
-/* Botones de Acción */
-.header-actions {
+/* Botones dentro de la navegación */
+.nav-buttons {
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  margin-left: 1rem;
 }
 
 .btn-primary, .btn-secondary, .btn-login {
@@ -253,6 +254,16 @@
     font-size: 0.9rem;
     width: 18px;
   }
+
+  .nav-buttons {
+    gap: 0.6rem;
+    margin-left: 0.8rem;
+  }
+
+  .btn-primary, .btn-login {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -269,6 +280,16 @@
     font-size: 0.8rem;
     width: 16px;
   }
+
+  .nav-buttons {
+    gap: 0.4rem;
+    margin-left: 0.6rem;
+  }
+
+  .btn-primary, .btn-login {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -284,7 +305,7 @@
     display: block;
   }
   
-  .header-actions {
+  .nav-buttons {
     display: none;
   }
   
@@ -309,5 +330,280 @@
   
   .logo span {
     font-size: 0.8rem;
+  }
+}
+
+/* =====================================================
+   ESTILOS PARA DROPDOWN DE PERFIL DE USUARIO
+   ===================================================== */
+
+/* Botón de perfil */
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.profile-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: white;
+}
+
+.profile-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  font-size: 0.7rem;
+  transition: transform 0.3s ease;
+}
+
+.profile-dropdown.open .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Dropdown menu */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e9ecef;
+  min-width: 280px;
+  z-index: 1000;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Información del perfil */
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #e9ecef;
+}
+
+.profile-avatar-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.profile-details h4 {
+  margin: 0 0 0.25rem 0;
+  color: #1A365D;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.profile-details p {
+  margin: 0 0 0.5rem 0;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.user-type {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Acciones del perfil */
+.profile-actions {
+  padding: 0.5rem 0;
+}
+
+.profile-action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  color: #495057;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.profile-action:hover {
+  background: #f8f9fa;
+  color: #1A365D;
+}
+
+.profile-action.logout {
+  color: #dc3545;
+}
+
+.profile-action.logout:hover {
+  background: #fff5f5;
+  color: #c82333;
+}
+
+.action-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.profile-divider {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Estilos para móvil */
+.mobile-profile {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.mobile-profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+}
+
+.mobile-profile-details h4 {
+  margin: 0 0 0.25rem 0;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mobile-profile-details p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+}
+
+.mobile-profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-profile-action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.mobile-profile-action:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mobile-profile-action.logout {
+  color: #ff6b6b;
+}
+
+.mobile-profile-action.logout:hover {
+  background: rgba(255, 107, 107, 0.2);
+}
+
+/* Responsive para dropdown */
+@media (max-width: 768px) {
+  .profile-dropdown-menu {
+    min-width: 250px;
+  }
+  
+  .profile-info {
+    padding: 1rem;
+  }
+  
+  .profile-avatar-large {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
   }
 }

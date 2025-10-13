@@ -13,7 +13,12 @@ import {
   ResetPasswordDto,
   UpdateProfileDto,
   ChangePasswordDto,
-  ApiResponse
+  ApiResponse,
+  ListUsersDto,
+  SearchUsersDto,
+  UpdateUserStatusDto,
+  UserHistoryDto,
+  UpdateAdminPermissionsDto
 } from '../types/user.types';
 
 export class UserController {
@@ -111,7 +116,8 @@ export class UserController {
       console.error('Error en register controller:', error);
       res.status(500).json({
         success: false,
-        message: 'Error interno del servidor'
+        message: 'Error interno del servidor',
+        error: process.env['NODE_ENV'] === 'development' ? (error as Error).message : undefined
       });
     }
   };
@@ -433,6 +439,429 @@ export class UserController {
       }
     } catch (error) {
       console.error('Error en getUserTypes controller:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Enviar correo de confirmación
+  sendConfirmationEmail = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email_usuario } = req.body;
+
+      if (!email_usuario) {
+        res.status(400).json({
+          success: false,
+          message: 'El email es requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.sendConfirmationEmail(email_usuario);
+      
+      if (result.success) {
+        res.status(200).json({
+          success: true,
+          message: result.message
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('Error en sendConfirmationEmail controller:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+
+
+  // =====================================================
+  // MÉTODOS PARA ADMINISTRADORES
+  // =====================================================
+
+  // Obtener lista de administradores
+  getAdmins = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('👑 [UserController] Obteniendo lista de administradores');
+      
+      const admins = await this.userService.getAdmins();
+      
+      res.json({
+        success: true,
+        message: 'Administradores obtenidos exitosamente',
+        data: admins
+      });
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener administradores:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Obtener permisos de un usuario
+  getUserPermissions = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      const requestingUserId = (req as any).user?.id_usuario;
+      console.log('🔐 [UserController] Obteniendo permisos de usuario:', userId, 'por usuario:', requestingUserId);
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      // Verificar que el usuario solo pueda acceder a sus propios permisos (a menos que sea admin)
+      if (userId !== requestingUserId) {
+        const isAdmin = await this.userService.isUserAdmin(requestingUserId);
+        if (!isAdmin) {
+          res.status(403).json({
+            success: false,
+            message: 'No tienes permisos para acceder a los permisos de otro usuario'
+          });
+          return;
+        }
+      }
+
+      const permissions = await this.userService.getUserPermissions(userId);
+      
+      res.json({
+        success: true,
+        message: 'Permisos obtenidos exitosamente',
+        data: {
+          id_usuario: userId,
+          permisos: permissions
+        }
+      });
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener permisos:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Promover usuario a administrador
+  promoteToAdmin = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      const { rol_administrador, permisos, observaciones } = req.body;
+      const asignadoPor = req.user?.id_usuario;
+      
+      console.log('⬆️ [UserController] Promoviendo usuario a administrador:', { userId, rol_administrador, permisos });
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      if (!asignadoPor) {
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado'
+        });
+        return;
+      }
+
+      const result = await this.userService.promoteToAdmin(
+        userId, 
+        rol_administrador || 'admin', 
+        permisos || [], 
+        asignadoPor, 
+        observaciones
+      );
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          message: result.message
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al promover a administrador:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Quitar permisos de administrador
+  demoteFromAdmin = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      console.log('⬇️ [UserController] Quitando permisos de administrador:', userId);
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.demoteFromAdmin(userId);
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          message: result.message
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al quitar permisos de administrador:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Obtener estadísticas del sistema
+  getSystemStats = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('📊 [UserController] Obteniendo estadísticas del sistema');
+      
+      const stats = await this.userService.getSystemStats();
+      
+      res.json({
+        success: true,
+        message: 'Estadísticas obtenidas exitosamente',
+        data: stats
+      });
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener estadísticas:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // =====================================================
+  // ENDPOINTS PARA GESTIÓN DE USUARIOS (ADMIN)
+  // =====================================================
+
+  // Listar usuarios con filtros
+  listUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const filters: ListUsersDto = {
+        tipo_usuario: req.query['tipo_usuario'] as string || undefined,
+        estado_usuario: req.query['estado_usuario'] === 'true' ? true : req.query['estado_usuario'] === 'false' ? false : undefined,
+        busqueda: req.query['busqueda'] as string || undefined,
+        rol_administrador: req.query['rol_administrador'] as string || undefined,
+        limite: req.query['limite'] ? parseInt(req.query['limite'] as string) : 50,
+        offset: req.query['offset'] ? parseInt(req.query['offset'] as string) : 0
+      };
+
+      const result = await this.userService.listUsers(filters);
+      
+      // Siempre devolver 200, incluso si no hay usuarios
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('❌ [UserController] Error al listar usuarios:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Buscar usuarios
+  searchUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const searchData: SearchUsersDto = {
+        termino_busqueda: req.query['termino_busqueda'] as string,
+        tipo_usuario: req.query['tipo_usuario'] as string || undefined,
+        estado_usuario: req.query['estado_usuario'] === 'true' ? true : req.query['estado_usuario'] === 'false' ? false : undefined,
+        limite: req.query['limite'] ? parseInt(req.query['limite'] as string) : 50,
+        offset: req.query['offset'] ? parseInt(req.query['offset'] as string) : 0
+      };
+
+      if (!searchData.termino_busqueda) {
+        res.status(400).json({
+          success: false,
+          message: 'Término de búsqueda requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.searchUsers(searchData);
+      
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).json(result);
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al buscar usuarios:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Cambiar estado de usuario
+  updateUserStatus = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idUsuario = req.params['id'];
+      const statusData: UpdateUserStatusDto = req.body;
+
+      if (!idUsuario) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      if (typeof statusData.estado_usuario !== 'boolean') {
+        res.status(400).json({
+          success: false,
+          message: 'Estado de usuario debe ser un valor booleano'
+        });
+        return;
+      }
+
+      const result = await this.userService.updateUserStatus(idUsuario, statusData);
+      
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al actualizar estado de usuario:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Eliminar usuario
+  deleteUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idUsuario = req.params['id'];
+
+      if (!idUsuario) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.deleteUser(idUsuario);
+      
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al eliminar usuario:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Obtener historial de usuario
+  getUserHistory = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idUsuario = req.params['id'];
+      const historyData: UserHistoryDto = {
+        fecha_desde: req.query['fecha_desde'] as string,
+        fecha_hasta: req.query['fecha_hasta'] as string,
+        tipo_actividad: req.query['tipo_actividad'] as string,
+        limite: req.query['limite'] ? parseInt(req.query['limite'] as string) : 50,
+        offset: req.query['offset'] ? parseInt(req.query['offset'] as string) : 0
+      };
+
+      if (!idUsuario) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.getUserHistory(idUsuario, historyData);
+      
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).json(result);
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener historial de usuario:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Actualizar permisos de administrador
+  updateAdminPermissions = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idUsuario = req.params['userId'];
+      const permissionsData: UpdateAdminPermissionsDto = req.body;
+
+      if (!idUsuario) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      if (!permissionsData.permisos_administrador || !Array.isArray(permissionsData.permisos_administrador)) {
+        res.status(400).json({
+          success: false,
+          message: 'Permisos de administrador requeridos y deben ser un array'
+        });
+        return;
+      }
+
+      const result = await this.userService.updateAdminPermissions(idUsuario, permissionsData);
+      
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al actualizar permisos de administrador:', error);
       res.status(500).json({
         success: false,
         message: 'Error interno del servidor'

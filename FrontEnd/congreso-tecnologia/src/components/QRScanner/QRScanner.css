@@ -1,0 +1,269 @@
+/* =====================================================
+   Estilos para el componente QRScanner
+   ===================================================== */
+
+.qr-scanner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.qr-scanner-header {
+  text-align: center;
+}
+
+.qr-scanner-header h3 {
+  color: #1A365D;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.qr-scanner-header p {
+  color: #7f8c8d;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.qr-scanner-video-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  background: #000;
+}
+
+.qr-scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qr-scanner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.qr-scanner-frame {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+}
+
+.qr-scanner-corner {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 3px solid #667eea;
+}
+
+.qr-scanner-corner.top-left {
+  top: -3px;
+  left: -3px;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 8px;
+}
+
+.qr-scanner-corner.top-right {
+  top: -3px;
+  right: -3px;
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 8px;
+}
+
+.qr-scanner-corner.bottom-left {
+  bottom: -3px;
+  left: -3px;
+  border-right: none;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+}
+
+.qr-scanner-corner.bottom-right {
+  bottom: -3px;
+  right: -3px;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 8px;
+}
+
+.qr-scanner-status {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.qr-scanner-pulse {
+  width: 8px;
+  height: 8px;
+  background: #2ecc71;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.qr-scanner-error {
+  text-align: center;
+  padding: 1rem;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 8px;
+  color: #c53030;
+  max-width: 400px;
+}
+
+.qr-scanner-error .error-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.qr-scanner-error p {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.qr-scanner-error .btn-primary {
+  margin-top: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.qr-scanner-error .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.qr-scanner-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  color: #856404;
+  max-width: 400px;
+  width: 100%;
+}
+
+.warning-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.qr-scanner-warning p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.qr-scanner-instructions {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.qr-scanner-instructions h4 {
+  color: #1A365D;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.qr-scanner-instructions ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #495057;
+}
+
+.qr-scanner-instructions li {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .qr-scanner-container {
+    padding: 0.5rem;
+  }
+  
+  .qr-scanner-frame {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .qr-scanner-corner {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .qr-scanner-header h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-scanner-frame {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .qr-scanner-corner {
+    width: 20px;
+    height: 20px;
+  }
+}

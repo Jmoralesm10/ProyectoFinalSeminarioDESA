@@ -29,6 +29,12 @@ export interface UserType {
 
 export interface UserWithType extends User {
   tipo_usuario: UserType;
+  // Información adicional del SP sp_listar_usuarios y sp_buscar_usuarios
+  total_actividades_inscritas?: number;
+  total_asistencias?: number;
+  es_administrador?: boolean;
+  roles_administrador?: string[];
+  coincidencia_en?: string; // Campo donde se encontró la coincidencia en búsquedas
 }
 
 // DTOs para requests
@@ -84,7 +90,7 @@ export interface RegisterResponse {
   success: boolean;
   message: string;
   id_usuario?: string;
-  codigo_qr?: string;
+  codigo_qr?: string | undefined;
 }
 
 export interface VerifyEmailResponse {
@@ -131,7 +137,16 @@ export interface SpRegisterResponse {
   success: boolean;
   message: string;
   id_usuario: string;
-  codigo_qr: string;
+}
+
+export interface SpConsultarQRResponse {
+  success: boolean;
+  message: string;
+  id_usuario?: string;
+  codigo_qr_usuario?: string;
+  nombre_usuario?: string;
+  apellido_usuario?: string;
+  email_usuario?: string;
 }
 
 export interface SpAuthResponse {
@@ -218,4 +233,110 @@ export interface SpConsultarTiposUsuarioResponse {
   descripcion_tipo_usuario?: string;
   estado_tipo_usuario: boolean;
   fecha_creacion: Date;
+}
+
+// =====================================================
+// TIPOS PARA GESTIÓN DE USUARIOS (ADMIN)
+// =====================================================
+
+export interface ListUsersDto {
+  tipo_usuario?: string | undefined;
+  estado_usuario?: boolean | undefined;
+  busqueda?: string | undefined;
+  rol_administrador?: string | undefined;
+  limite?: number | undefined;
+  offset?: number | undefined;
+}
+
+export interface SearchUsersDto {
+  termino_busqueda: string;
+  tipo_usuario?: string | undefined;
+  estado_usuario?: boolean | undefined;
+  limite?: number | undefined;
+  offset?: number | undefined;
+}
+
+export interface UpdateUserStatusDto {
+  estado_usuario: boolean;
+  motivo?: string;
+}
+
+export interface UserHistoryDto {
+  fecha_desde?: string;
+  fecha_hasta?: string;
+  tipo_actividad?: string;
+  limite?: number;
+  offset?: number;
+}
+
+export interface UpdateAdminPermissionsDto {
+  permisos_administrador: string[];
+  observaciones?: string;
+}
+
+// =====================================================
+// RESPUESTAS PARA GESTIÓN DE USUARIOS
+// =====================================================
+
+export interface ListUsersResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    usuarios: UserWithType[];
+    total: number;
+    pagina_actual: number;
+    total_paginas: number;
+  };
+}
+
+export interface SearchUsersResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    usuarios: UserWithType[];
+    total: number;
+    termino_busqueda: string;
+  };
+}
+
+export interface UserHistoryResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    usuario: UserWithType;
+    actividades_inscritas: any[];
+    asistencias: any[];
+    historial_admin?: any[];
+  };
+}
+
+export interface UpdateUserStatusResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    id_usuario: string;
+    estado_anterior: boolean;
+    estado_nuevo: boolean;
+    fecha_cambio: Date;
+  };
+}
+
+export interface DeleteUserResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    id_usuario: string;
+    fecha_eliminacion: Date;
+  };
+}
+
+export interface UpdateAdminPermissionsResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    id_usuario: string;
+    permisos_anteriores: string[];
+    permisos_nuevos: string[];
+    fecha_actualizacion: Date;
+  };
 }

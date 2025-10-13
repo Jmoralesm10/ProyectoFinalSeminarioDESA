@@ -77,6 +77,13 @@ router.post(
  */
 router.get('/types', userController.getUserTypes);
 
+/**
+ * @route   POST /api/users/send-confirmation
+ * @desc    Enviar correo de confirmación a un usuario
+ * @access  Public
+ */
+router.post('/send-confirmation', userController.sendConfirmationEmail);
+
 // =====================================================
 // RUTAS PROTEGIDAS (Requieren autenticación)
 // =====================================================
@@ -117,6 +124,18 @@ router.put(
   authMiddleware.requireActiveUser,
   validationMiddleware.validateChangePassword,
   userController.changePassword
+);
+
+/**
+ * @route   GET /api/users/:userId/permissions
+ * @desc    Obtener permisos de un usuario específico (propios o admin)
+ * @access  Private (Usuario puede ver sus propios permisos, admin puede ver cualquier usuario)
+ */
+router.get(
+  '/:userId/permissions',
+  authMiddleware.authenticateToken,
+  authMiddleware.requireActiveUser,
+  userController.getUserPermissions
 );
 
 // =====================================================

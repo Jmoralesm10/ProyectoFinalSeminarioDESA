@@ -1,0 +1,189 @@
+/* =====================================================
+   Estilos para los componentes de gráficos
+   ===================================================== */
+
+/* Tooltip personalizado */
+.chart-tooltip {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+}
+
+.tooltip-label {
+  color: #1A365D;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.tooltip-value {
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+/* Gráfico de asistencia */
+.attendance-chart {
+  text-align: center;
+}
+
+.chart-summary {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.summary-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Gráfico de actividades populares */
+.popular-activities-chart {
+  text-align: center;
+}
+
+.activities-summary {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.activities-summary h4 {
+  color: #1A365D;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.activity-item:hover {
+  background: #e9ecef;
+}
+
+.activity-rank {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1A365D;
+  min-width: 30px;
+}
+
+.activity-info {
+  flex: 1;
+}
+
+.activity-name {
+  font-weight: 600;
+  color: #1A365D;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.activity-count {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Estado sin actividades */
+.no-activities {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.no-activities-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.no-activities p {
+  color: #6c757d;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chart-summary {
+    gap: 1rem;
+  }
+  
+  .summary-item {
+    font-size: 0.85rem;
+  }
+  
+  .activities-list {
+    gap: 0.5rem;
+  }
+  
+  .activity-item {
+    padding: 0.5rem;
+    gap: 0.75rem;
+  }
+  
+  .activity-rank {
+    font-size: 1.1rem;
+    min-width: 25px;
+  }
+  
+  .activity-name {
+    font-size: 0.9rem;
+  }
+  
+  .activity-count {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-summary {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .summary-item {
+    justify-content: center;
+  }
+  
+  .activity-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .activity-rank {
+    font-size: 1rem;
+  }
+}
