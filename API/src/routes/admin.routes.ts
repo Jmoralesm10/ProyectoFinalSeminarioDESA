@@ -69,4 +69,74 @@ router.get('/stats',
   userController.getSystemStats.bind(userController)
 );
 
+// =====================================================
+// RUTAS PARA GESTIÓN DE USUARIOS
+// =====================================================
+
+/**
+ * @route   GET /api/admin/users
+ * @desc    Listar usuarios con filtros
+ * @access  Admin (gestionar_usuarios)
+ */
+router.get('/users',
+  authMiddleware.authenticateToken,
+  authMiddleware.requirePermission('gestionar_usuarios'),
+  userController.listUsers.bind(userController)
+);
+
+/**
+ * @route   GET /api/admin/users/search
+ * @desc    Buscar usuarios
+ * @access  Admin (gestionar_usuarios)
+ */
+router.get('/users/search',
+  authMiddleware.authenticateToken,
+  authMiddleware.requirePermission('gestionar_usuarios'),
+  userController.searchUsers.bind(userController)
+);
+
+/**
+ * @route   PUT /api/admin/users/:id/status
+ * @desc    Cambiar estado de usuario
+ * @access  Admin (gestionar_usuarios)
+ */
+router.put('/users/:id/status',
+  authMiddleware.authenticateToken,
+  authMiddleware.requirePermission('gestionar_usuarios'),
+  userController.updateUserStatus.bind(userController)
+);
+
+/**
+ * @route   DELETE /api/admin/users/:id
+ * @desc    Eliminar usuario
+ * @access  Admin (gestionar_usuarios)
+ */
+router.delete('/users/:id',
+  authMiddleware.authenticateToken,
+  authMiddleware.requirePermission('gestionar_usuarios'),
+  userController.deleteUser.bind(userController)
+);
+
+/**
+ * @route   GET /api/admin/users/:id/history
+ * @desc    Obtener historial de usuario
+ * @access  Admin (gestionar_usuarios)
+ */
+router.get('/users/:id/history',
+  authMiddleware.authenticateToken,
+  authMiddleware.requirePermission('gestionar_usuarios'),
+  userController.getUserHistory.bind(userController)
+);
+
+/**
+ * @route   PUT /api/admin/admins/:userId/permissions
+ * @desc    Actualizar permisos de administrador
+ * @access  Admin (gestionar_administradores)
+ */
+router.put('/admins/:userId/permissions',
+  authMiddleware.authenticateToken,
+  authMiddleware.requirePermission('gestionar_administradores'),
+  userController.updateAdminPermissions.bind(userController)
+);
+
 export default router;

@@ -20,7 +20,18 @@ import {
   VerifyEmailResponse,
   ForgotPasswordResponse,
   ResetPasswordResponse,
-  JwtPayload
+  JwtPayload,
+  ListUsersDto,
+  SearchUsersDto,
+  UpdateUserStatusDto,
+  UserHistoryDto,
+  UpdateAdminPermissionsDto,
+  ListUsersResponse,
+  SearchUsersResponse,
+  UserHistoryResponse,
+  UpdateUserStatusResponse,
+  DeleteUserResponse,
+  UpdateAdminPermissionsResponse
 } from '../types/user.types';
 
 export class UserService {
@@ -816,6 +827,88 @@ export class UserService {
         total_asistencia_general: 0,
         total_asistencia_actividades: 0,
         porcentaje_asistencia: 0
+      };
+    }
+  }
+
+  // =====================================================
+  // MÉTODOS PARA GESTIÓN DE USUARIOS (ADMIN)
+  // =====================================================
+
+  // Listar usuarios con filtros
+  async listUsers(filters: ListUsersDto): Promise<ListUsersResponse> {
+    try {
+      return await this.userRepository.listUsers(filters);
+    } catch (error) {
+      console.error('❌ [UserService] Error al listar usuarios:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
+
+  // Buscar usuarios
+  async searchUsers(searchData: SearchUsersDto): Promise<SearchUsersResponse> {
+    try {
+      return await this.userRepository.searchUsers(searchData);
+    } catch (error) {
+      console.error('❌ [UserService] Error al buscar usuarios:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
+
+  // Cambiar estado de usuario
+  async updateUserStatus(idUsuario: string, statusData: UpdateUserStatusDto): Promise<UpdateUserStatusResponse> {
+    try {
+      return await this.userRepository.updateUserStatus(idUsuario, statusData);
+    } catch (error) {
+      console.error('❌ [UserService] Error al actualizar estado de usuario:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
+
+  // Eliminar usuario
+  async deleteUser(idUsuario: string): Promise<DeleteUserResponse> {
+    try {
+      return await this.userRepository.deleteUser(idUsuario);
+    } catch (error) {
+      console.error('❌ [UserService] Error al eliminar usuario:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
+
+  // Obtener historial de usuario
+  async getUserHistory(idUsuario: string, historyData: UserHistoryDto): Promise<UserHistoryResponse> {
+    try {
+      return await this.userRepository.getUserHistory(idUsuario, historyData);
+    } catch (error) {
+      console.error('❌ [UserService] Error al obtener historial de usuario:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
+
+  // Actualizar permisos de administrador
+  async updateAdminPermissions(idUsuario: string, permissionsData: UpdateAdminPermissionsDto): Promise<UpdateAdminPermissionsResponse> {
+    try {
+      return await this.userRepository.updateAdminPermissions(idUsuario, permissionsData);
+    } catch (error) {
+      console.error('❌ [UserService] Error al actualizar permisos de administrador:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
       };
     }
   }

@@ -202,14 +202,23 @@ Este documento describe el estado actual de los stored procedures en la base de 
 3. ✅ Crear `sp_verificar_permisos_administrador.sql`
 4. ✅ Crear `sp_remover_administrador.sql`
 
-### ✅ Fase 5: Actualizar Repositorio - COMPLETADA
+### ✅ Fase 5: Crear Stored Procedures de Gestión de Usuarios - COMPLETADA
+1. ✅ Crear `sp_listar_usuarios.sql`
+2. ✅ Crear `sp_buscar_usuarios.sql`
+3. ✅ Crear `sp_cambiar_estado_usuario.sql`
+4. ✅ Crear `sp_eliminar_usuario.sql`
+5. ✅ Crear `sp_consultar_historial_usuario.sql`
+6. ✅ Crear `sp_actualizar_permisos_administrador.sql`
+7. ✅ Crear `sp_consultar_estadisticas_usuarios.sql`
+
+### ✅ Fase 6: Actualizar Repositorio - COMPLETADA
 1. ✅ Reemplazar consultas directas con llamadas a stored procedures de usuarios
 2. ✅ Actualizar repositorio para usar stored procedures de actividades
 3. ✅ Actualizar tipos TypeScript para las nuevas respuestas
 4. ✅ Actualizar servicios para usar nuevos métodos del repositorio
 5. ✅ Actualizar middleware de autenticación
 
-### 🔄 Fase 6: Testing - PENDIENTE
+### 🔄 Fase 7: Testing - PENDIENTE
 1. ✅ Ejecutar pruebas de stored procedures de usuarios y actividades
 2. 🔄 Ejecutar pruebas de stored procedures de asistencia
 3. 🔄 Probar integración completa con la API
@@ -264,14 +273,20 @@ DataBase/storeprocedures/
 ├── sp_consultar_administradores.sql            ✅ Implementado
 ├── sp_verificar_permisos_administrador.sql     ✅ Implementado
 ├── sp_remover_administrador.sql                ✅ Implementado
-├── test_all_stored_procedures.sql              ✅ Implementado
-└── test_attendance_stored_procedures.sql       ✅ Implementado
+├── sp_listar_usuarios.sql                      ✅ Implementado
+├── sp_buscar_usuarios.sql                      ✅ Implementado
+├── sp_cambiar_estado_usuario.sql               ✅ Implementado
+├── sp_eliminar_usuario.sql                     ✅ Implementado
+├── sp_consultar_historial_usuario.sql          ✅ Implementado
+├── sp_actualizar_permisos_administrador.sql    ✅ Implementado
+└── sp_consultar_estadisticas_usuarios.sql      ✅ Implementado
 ```
 
 ---
 
 **Última actualización**: Diciembre 2024
-**Estado**: 23/23 stored procedures implementados (100% completado)
+**Estado**: 30/30 stored procedures implementados (100% completado)
 **Migración API**: ✅ COMPLETADA - Todos los métodos del repositorio ahora usan stored procedures
-**Funcionalidades**: ✅ Usuarios, Actividades, Asistencia y Administración completamente implementadas
+**Funcionalidades**: ✅ Usuarios, Actividades, Asistencia, Administración y Gestión de Usuarios completamente implementadas
 **Actualización**: ✅ Tabla de administradores modificada para usar clave primaria compuesta (id_usuario, rol_administrador)
+**Nuevo**: ✅ Módulo completo de Gestión de Usuarios con 7 nuevos stored procedures

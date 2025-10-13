@@ -34,8 +34,7 @@ const AdminPanel = () => {
   };
 
   const handleNavigateToUsers = () => {
-    // TODO: Implementar página de gestión de usuarios
-    console.log('Navegar a gestión de usuarios');
+    navigate('/gestion-usuarios');
   };
 
   const handleNavigateToActivities = () => {

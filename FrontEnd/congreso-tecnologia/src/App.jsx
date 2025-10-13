@@ -8,6 +8,8 @@ import AttendancePage from './pages/AttendancePage';
 import AttendanceStatsPage from './pages/AttendanceStatsPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import UserPermissionsPage from './pages/UserPermissionsPage';
+import UserManagementPage from './pages/UserManagementPage';
+import ListUsersPage from './pages/ListUsersPage';
 import AdminGuard from './components/AdminGuard/AdminGuard';
 import './App.css';
 
@@ -32,6 +34,8 @@ function App() {
           } />
           <Route path="/admin-panel" element={<AdminPanelPage />} />
           <Route path="/permisos" element={<UserPermissionsPage />} />
+          <Route path="/gestion-usuarios" element={<UserManagementPage />} />
+          <Route path="/listar-usuarios" element={<ListUsersPage />} />
         </Routes>
       </div>
     </Router>
