@@ -80,7 +80,7 @@ BEGIN
         p_offset := 0;
     END IF;
     
-    -- Listar actividades con filtros (usando subconsulta para evitar COUNT en WHERE)
+    -- Listar actividades con filtros
     FOR id_actividad, nombre_actividad, descripcion_actividad, tipo_actividad, 
         fecha_inicio_actividad, fecha_fin_actividad, fecha_limite_inscripcion,
         duracion_estimada_minutos, cupo_maximo_actividad, cupo_disponible_actividad,
@@ -99,7 +99,7 @@ BEGIN
             a.fecha_limite_inscripcion,
             a.duracion_estimada_minutos,
             a.cupo_maximo_actividad,
-            (a.cupo_maximo_actividad - COALESCE(inscripciones_confirmadas.count, 0)) as cupo_disponible,
+            (a.cupo_maximo_actividad - COALESCE(ic.count, 0)) as cupo_disponible,
             a.lugar_actividad,
             a.ponente_actividad,
             a.requisitos_actividad,
@@ -123,7 +123,7 @@ BEGIN
             FROM tb_inscripciones_actividad ia
             WHERE ia.estado_inscripcion = 'confirmada'
             GROUP BY ia.id_actividad
-        ) inscripciones_confirmadas ON a.id_actividad = inscripciones_confirmadas.id_actividad
+        ) ic ON a.id_actividad = ic.id_actividad
         WHERE 
             (p_tipo_actividad IS NULL OR a.tipo_actividad = p_tipo_actividad)
             AND (p_id_categoria IS NULL OR a.id_categoria = p_id_categoria)
@@ -131,7 +131,7 @@ BEGIN
             AND (NOT p_solo_disponibles OR (
                 a.permite_inscripciones = TRUE 
                 AND (a.fecha_limite_inscripcion IS NULL OR a.fecha_limite_inscripcion > CURRENT_TIMESTAMP)
-                AND (a.cupo_maximo_actividad - COALESCE(inscripciones_confirmadas.count, 0)) > 0
+                AND (a.cupo_maximo_actividad - COALESCE(ic.count, 0)) > 0
             ))
         ORDER BY a.fecha_inicio_actividad ASC
         LIMIT p_limite OFFSET p_offset

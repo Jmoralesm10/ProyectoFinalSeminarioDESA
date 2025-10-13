@@ -204,7 +204,8 @@ DROP TABLE IF EXISTS tb_logs_sistema CASCADE;
 CREATE TABLE tb_logs_sistema (
     id_log UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     id_usuario UUID REFERENCES tb_usuarios(id_usuario),
-    id_administrador UUID REFERENCES tb_administradores(id_administrador),
+    id_administrador_usuario UUID REFERENCES tb_usuarios(id_usuario),
+    rol_administrador VARCHAR(50),
     accion_log VARCHAR(100) NOT NULL,
     tabla_afectada_log VARCHAR(100),
     registro_id_log VARCHAR(100),

@@ -3,6 +3,9 @@
 -- Sistema de Gestión del Congreso de Tecnología
 -- =====================================================
 
+-- Eliminar la función existente para cambiar la estructura de retorno
+DROP FUNCTION IF EXISTS sp_crear_actividad(INTEGER, VARCHAR, VARCHAR, TIMESTAMP, TIMESTAMP, INTEGER, TEXT, TIMESTAMP, INTEGER, VARCHAR, VARCHAR, TEXT, VARCHAR, INTEGER, INTEGER, TEXT, DECIMAL, VARCHAR, BOOLEAN, BOOLEAN);
+
 -- Procedimiento para crear una nueva actividad
 CREATE OR REPLACE FUNCTION sp_crear_actividad(
     p_id_categoria INTEGER,                    -- ID de la categoría
@@ -29,7 +32,7 @@ CREATE OR REPLACE FUNCTION sp_crear_actividad(
 RETURNS TABLE (
     success BOOLEAN,
     message TEXT,
-    id_actividad INTEGER,
+    actividad_id INTEGER,
     nombre_actividad VARCHAR(200)
 ) AS $$
 DECLARE
@@ -38,7 +41,7 @@ BEGIN
     -- Inicializar variables de respuesta
     success := FALSE;
     message := '';
-    id_actividad := NULL;
+    actividad_id := NULL;
     nombre_actividad := '';
     
     -- Validar parámetros obligatorios
@@ -154,25 +157,8 @@ BEGIN
     IF v_actividad_id IS NOT NULL THEN
         success := TRUE;
         message := 'Actividad creada exitosamente';
-        id_actividad := v_actividad_id;
+        actividad_id := v_actividad_id;
         nombre_actividad := TRIM(p_nombre_actividad);
-        
-        -- Registrar en logs
-        INSERT INTO tb_logs_sistema (
-            accion_log,
-            tabla_afectada_log,
-            registro_id_log,
-            detalles_log
-        ) VALUES (
-            'CREACION_ACTIVIDAD',
-            'tb_actividades',
-            v_actividad_id::text,
-            jsonb_build_object(
-                'nombre', TRIM(p_nombre_actividad),
-                'tipo', p_tipo_actividad,
-                'categoria_id', p_id_categoria
-            )
-        );
     ELSE
         message := 'Error al crear la actividad';
     END IF;

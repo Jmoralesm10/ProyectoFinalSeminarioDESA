@@ -38,8 +38,7 @@ const AdminPanel = () => {
   };
 
   const handleNavigateToActivities = () => {
-    // TODO: Implementar página de gestión de actividades
-    console.log('Navegar a gestión de actividades');
+    navigate('/gestion-actividades');
   };
 
   const handleNavigateToReports = () => {

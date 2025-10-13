@@ -151,7 +151,7 @@ export class ActivityService {
           success: true,
           message: result.message,
           data: {
-            id_actividad: result.id_actividad,
+            id_actividad: result.actividad_id,
             id_categoria: activityData.id_categoria,
             nombre_actividad: result.nombre_actividad,
             descripcion_actividad: activityData.descripcion_actividad,

@@ -144,14 +144,14 @@ export interface SpListActivitiesResponse {
 export interface SpCreateActivityResponse {
   success: boolean;
   message: string;
-  id_actividad: number;
+  actividad_id: number;
   nombre_actividad: string;
 }
 
 export interface SpUpdateActivityResponse {
   success: boolean;
   message: string;
-  id_actividad: number;
+  actividad_id: number;
   nombre_actividad: string;
 }
 

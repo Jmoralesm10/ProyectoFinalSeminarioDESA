@@ -103,11 +103,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para log de actividades
-CREATE OR REPLACE FUNCTION log_actividad()
+-- Función general para log de otras actividades
+CREATE OR REPLACE FUNCTION log_actividad_general()
 RETURNS TRIGGER AS $$
 DECLARE
     registro_id TEXT;
+    accion_detalle TEXT;
 BEGIN
     -- Determinar el ID del registro según la tabla
     CASE TG_TABLE_NAME
@@ -130,24 +131,32 @@ BEGIN
             registro_id := COALESCE(NEW.id::text, OLD.id::text);
     END CASE;
     
+    -- Determinar la acción
+    accion_detalle := TG_OP;
+    
+    -- Insertar en logs
     INSERT INTO tb_logs_sistema (
         accion_log,
         tabla_afectada_log,
         registro_id_log,
-        detalles_log,
-        fecha_log
+        detalles_log
     ) VALUES (
-        TG_OP,
+        accion_detalle,
         TG_TABLE_NAME,
         registro_id,
-        CASE 
-            WHEN TG_OP = 'DELETE' THEN to_jsonb(OLD)
-            ELSE to_jsonb(NEW)
-        END,
-        CURRENT_TIMESTAMP
+        jsonb_build_object(
+            'operacion', TG_OP,
+            'tabla', TG_TABLE_NAME,
+            'timestamp', CURRENT_TIMESTAMP
+        )
     );
     
-    RETURN COALESCE(NEW, OLD);
+    -- Retornar el registro apropiado
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    ELSE
+        RETURN NEW;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -196,32 +205,35 @@ CREATE TRIGGER trigger_inscripciones_validar
     EXECUTE FUNCTION validar_inscripcion();
 
 -- Triggers para logging (solo en tablas críticas)
+-- NOTA: trigger_log_actividades eliminado para evitar errores de referencia ambigua
+
+-- Triggers generales para otras tablas
 CREATE TRIGGER trigger_log_usuarios
     AFTER INSERT OR UPDATE OR DELETE ON tb_usuarios
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_inscripciones
     AFTER INSERT OR UPDATE OR DELETE ON tb_inscripciones_actividad
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_asistencia_general
     AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia_general
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_asistencia_actividad
     AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia_actividad
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_resultados
     AFTER INSERT OR UPDATE OR DELETE ON tb_resultados_competencia
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();
 
 CREATE TRIGGER trigger_log_administradores
     AFTER INSERT OR UPDATE OR DELETE ON tb_administradores
     FOR EACH ROW
-    EXECUTE FUNCTION log_actividad();
+    EXECUTE FUNCTION log_actividad_general();

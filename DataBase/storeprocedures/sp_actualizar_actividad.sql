@@ -3,6 +3,9 @@
 -- Sistema de Gestión del Congreso de Tecnología
 -- =====================================================
 
+-- Eliminar la función existente para cambiar la estructura de retorno
+DROP FUNCTION IF EXISTS sp_actualizar_actividad(INTEGER, INTEGER, VARCHAR, TEXT, VARCHAR, TIMESTAMP, TIMESTAMP, TIMESTAMP, INTEGER, INTEGER, VARCHAR, VARCHAR, TEXT, VARCHAR, INTEGER, INTEGER, TEXT, DECIMAL, VARCHAR, BOOLEAN, BOOLEAN, BOOLEAN);
+
 -- Procedimiento para actualizar una actividad existente
 CREATE OR REPLACE FUNCTION sp_actualizar_actividad(
     p_id_actividad INTEGER,                     -- ID de la actividad a actualizar
@@ -31,7 +34,7 @@ CREATE OR REPLACE FUNCTION sp_actualizar_actividad(
 RETURNS TABLE (
     success BOOLEAN,
     message TEXT,
-    id_actividad INTEGER,
+    actividad_id INTEGER,
     nombre_actividad VARCHAR(200)
 ) AS $$
 DECLARE
@@ -41,7 +44,7 @@ BEGIN
     -- Inicializar variables de respuesta
     success := FALSE;
     message := '';
-    id_actividad := NULL;
+    actividad_id := NULL;
     nombre_actividad := '';
     v_cambios := '{}'::jsonb;
     
@@ -109,43 +112,43 @@ BEGIN
         RETURN;
     END IF;
     
-    -- Actualizar la actividad
+    -- Actualizar la actividad (usando alias para evitar ambigüedades)
     UPDATE tb_actividades 
     SET 
-        id_categoria = COALESCE(p_id_categoria, id_categoria),
-        nombre_actividad = COALESCE(TRIM(p_nombre_actividad), nombre_actividad),
-        descripcion_actividad = COALESCE(p_descripcion_actividad, descripcion_actividad),
-        tipo_actividad = COALESCE(p_tipo_actividad, tipo_actividad),
-        fecha_inicio_actividad = COALESCE(p_fecha_inicio_actividad, fecha_inicio_actividad),
-        fecha_fin_actividad = COALESCE(p_fecha_fin_actividad, fecha_fin_actividad),
-        fecha_limite_inscripcion = COALESCE(p_fecha_limite_inscripcion, fecha_limite_inscripcion),
-        duracion_estimada_minutos = COALESCE(p_duracion_estimada_minutos, duracion_estimada_minutos),
-        cupo_maximo_actividad = COALESCE(p_cupo_maximo_actividad, cupo_maximo_actividad),
-        lugar_actividad = COALESCE(p_lugar_actividad, lugar_actividad),
-        ponente_actividad = COALESCE(p_ponente_actividad, ponente_actividad),
-        requisitos_actividad = COALESCE(p_requisitos_actividad, requisitos_actividad),
-        nivel_requerido = COALESCE(p_nivel_requerido, nivel_requerido),
-        edad_minima = COALESCE(p_edad_minima, edad_minima),
-        edad_maxima = COALESCE(p_edad_maxima, edad_maxima),
-        materiales_requeridos = COALESCE(p_materiales_requeridos, materiales_requeridos),
-        costo_actividad = COALESCE(p_costo_actividad, costo_actividad),
-        moneda_costo = COALESCE(p_moneda_costo, moneda_costo),
-        permite_inscripciones = COALESCE(p_permite_inscripciones, permite_inscripciones),
-        requiere_aprobacion = COALESCE(p_requiere_aprobacion, requiere_aprobacion),
-        estado_actividad = COALESCE(p_estado_actividad, estado_actividad),
+        id_categoria = COALESCE(p_id_categoria, tb_actividades.id_categoria),
+        nombre_actividad = COALESCE(TRIM(p_nombre_actividad), tb_actividades.nombre_actividad),
+        descripcion_actividad = COALESCE(p_descripcion_actividad, tb_actividades.descripcion_actividad),
+        tipo_actividad = COALESCE(p_tipo_actividad, tb_actividades.tipo_actividad),
+        fecha_inicio_actividad = COALESCE(p_fecha_inicio_actividad, tb_actividades.fecha_inicio_actividad),
+        fecha_fin_actividad = COALESCE(p_fecha_fin_actividad, tb_actividades.fecha_fin_actividad),
+        fecha_limite_inscripcion = COALESCE(p_fecha_limite_inscripcion, tb_actividades.fecha_limite_inscripcion),
+        duracion_estimada_minutos = COALESCE(p_duracion_estimada_minutos, tb_actividades.duracion_estimada_minutos),
+        cupo_maximo_actividad = COALESCE(p_cupo_maximo_actividad, tb_actividades.cupo_maximo_actividad),
+        lugar_actividad = COALESCE(p_lugar_actividad, tb_actividades.lugar_actividad),
+        ponente_actividad = COALESCE(p_ponente_actividad, tb_actividades.ponente_actividad),
+        requisitos_actividad = COALESCE(p_requisitos_actividad, tb_actividades.requisitos_actividad),
+        nivel_requerido = COALESCE(p_nivel_requerido, tb_actividades.nivel_requerido),
+        edad_minima = COALESCE(p_edad_minima, tb_actividades.edad_minima),
+        edad_maxima = COALESCE(p_edad_maxima, tb_actividades.edad_maxima),
+        materiales_requeridos = COALESCE(p_materiales_requeridos, tb_actividades.materiales_requeridos),
+        costo_actividad = COALESCE(p_costo_actividad, tb_actividades.costo_actividad),
+        moneda_costo = COALESCE(p_moneda_costo, tb_actividades.moneda_costo),
+        permite_inscripciones = COALESCE(p_permite_inscripciones, tb_actividades.permite_inscripciones),
+        requiere_aprobacion = COALESCE(p_requiere_aprobacion, tb_actividades.requiere_aprobacion),
+        estado_actividad = COALESCE(p_estado_actividad, tb_actividades.estado_actividad),
         fecha_actualizacion_actividad = CURRENT_TIMESTAMP
-    WHERE id_actividad = p_id_actividad;
+    WHERE tb_actividades.id_actividad = p_id_actividad;
     
     -- Verificar que la actualización fue exitosa
     IF FOUND THEN
         -- Obtener el nombre actualizado de la actividad
-        SELECT nombre_actividad INTO nombre_actividad
-        FROM tb_actividades 
-        WHERE id_actividad = p_id_actividad;
+        SELECT a.nombre_actividad INTO nombre_actividad
+        FROM tb_actividades a
+        WHERE a.id_actividad = p_id_actividad;
         
         success := TRUE;
         message := 'Actividad actualizada exitosamente';
-        id_actividad := p_id_actividad;
+        actividad_id := p_id_actividad;
         
         -- Registrar cambios en logs
         IF p_id_categoria IS NOT NULL THEN
