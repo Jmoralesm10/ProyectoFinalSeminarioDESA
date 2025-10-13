@@ -3,6 +3,15 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import './Charts.css';
 
 const AttendanceChart = ({ stats }) => {
+  // Verificar que stats existe y tiene los datos necesarios
+  if (!stats || typeof stats.total_asistencia_general !== 'number' || typeof stats.total_usuarios_registrados !== 'number') {
+    return (
+      <div className="no-data">
+        <p>No hay datos disponibles para mostrar el gráfico</p>
+      </div>
+    );
+  }
+
   const data = [
     {
       name: 'Asistieron',
@@ -11,7 +20,7 @@ const AttendanceChart = ({ stats }) => {
     },
     {
       name: 'No Asistieron',
-      value: stats.total_usuarios_registrados - stats.total_asistencia_general,
+      value: Math.max(0, stats.total_usuarios_registrados - stats.total_asistencia_general),
       color: '#e74c3c'
     }
   ];

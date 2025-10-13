@@ -128,14 +128,13 @@ router.put(
 
 /**
  * @route   GET /api/users/:userId/permissions
- * @desc    Obtener permisos de un usuario específico
- * @access  Private (Admin)
+ * @desc    Obtener permisos de un usuario específico (propios o admin)
+ * @access  Private (Usuario puede ver sus propios permisos, admin puede ver cualquier usuario)
  */
 router.get(
   '/:userId/permissions',
   authMiddleware.authenticateToken,
   authMiddleware.requireActiveUser,
-  authMiddleware.requireAdmin,
   userController.getUserPermissions
 );
 

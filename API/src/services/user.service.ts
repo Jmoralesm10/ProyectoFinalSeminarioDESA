@@ -551,24 +551,26 @@ export class UserService {
    */
   async hasPermission(userId: string, permission: string): Promise<boolean> {
     try {
-      console.log('🔐 [UserService] Verificando permiso:', permission, 'para usuario:', userId);
-
-      const query = `
-        SELECT obtener_permisos_usuario($1) as permisos
-      `;
+      console.log('🔐 [UserService] hasPermission - Verificando permiso:', permission, 'para usuario:', userId);
       
-      const result = await executeQuery(query, [userId]);
+      // Obtener permisos del usuario usando la misma lógica que getUserPermissions
+      const permissions = await this.getUserPermissions(userId);
+      console.log('🔐 [UserService] hasPermission - Permisos obtenidos:', permissions);
       
-      if (result && result.length > 0) {
-        const permisos = result[0].permisos;
-        const hasPermission = permisos[permission] === true;
-        console.log('🔐 [UserService] Usuario tiene permiso', permission, ':', hasPermission);
-        return hasPermission;
+      // Verificar si tiene el permiso específico
+      const hasPermission = permissions[permission] === true;
+      console.log('🔐 [UserService] hasPermission - Tiene permiso específico:', hasPermission);
+      
+      // Super admin tiene acceso a todo
+      if (permissions.rol_administrador === 'super_admin') {
+        console.log('🔐 [UserService] hasPermission - Super admin detectado, acceso total concedido');
+        return true;
       }
       
-      return false;
+      console.log('🔐 [UserService] hasPermission - Resultado final:', hasPermission);
+      return hasPermission;
     } catch (error) {
-      console.error('❌ [UserService] Error al verificar permiso:', error);
+      console.error('Error al verificar permiso:', error);
       return false;
     }
   }
@@ -590,9 +592,10 @@ export class UserService {
       `;
       
       const adminResult = await executeQuery(adminQuery, [userId]);
+      console.log('🔐 [UserService] Resultado de consulta tb_administradores:', adminResult);
       
-      if (adminResult && adminResult.length > 0) {
-        const adminData = adminResult[0];
+      if (adminResult && adminResult.rows && adminResult.rows.length > 0) {
+        const adminData = adminResult.rows[0];
         console.log('🔐 [UserService] Datos de administrador encontrados:', adminData);
         
         // Convertir permisos de array a objeto
@@ -619,6 +622,8 @@ export class UserService {
         return permisos;
       }
       
+      console.log('🔐 [UserService] Usuario no es administrador');
+      
       // Si no está en tb_administradores, verificar si es admin por tipo_usuario
       const userQuery = `
         SELECT 
@@ -632,8 +637,8 @@ export class UserService {
       
       const userResult = await executeQuery(userQuery, [userId]);
       
-      if (userResult && userResult.length > 0) {
-        const userData = userResult[0];
+      if (userResult && userResult.rows && userResult.rows.length > 0) {
+        const userData = userResult.rows[0];
         
         if (userData.es_administrador || userData.nombre_tipo_usuario === 'administrador') {
           console.log('🔐 [UserService] Usuario es admin por tipo_usuario');

@@ -64,10 +64,6 @@ const Header = () => {
               <>
                 {isAdmin && (
                   <>
-                    <li><Link to="/asistencia"><span className="nav-icon">📱</span>Asistencia QR</Link></li>
-                    {hasPermission('ver_estadisticas') && (
-                      <li><Link to="/estadisticas"><span className="nav-icon">📊</span>Estadísticas</Link></li>
-                    )}
                     <li><Link to="/admin-panel"><span className="nav-icon">🔧</span>Panel Admin</Link></li>
                   </>
                 )}
@@ -175,10 +171,6 @@ const Header = () => {
             <>
               {isAdmin && (
                 <>
-                  <li><Link to="/asistencia" onClick={toggleMenu}><span className="nav-icon">📱</span>Asistencia QR</Link></li>
-                  {hasPermission('ver_estadisticas') && (
-                    <li><Link to="/estadisticas" onClick={toggleMenu}><span className="nav-icon">📊</span>Estadísticas</Link></li>
-                  )}
                   <li><Link to="/admin-panel" onClick={toggleMenu}><span className="nav-icon">🔧</span>Panel Admin</Link></li>
                 </>
               )}

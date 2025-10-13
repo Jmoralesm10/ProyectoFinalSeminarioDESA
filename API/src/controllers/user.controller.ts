@@ -507,7 +507,8 @@ export class UserController {
   getUserPermissions = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.params['userId'];
-      console.log('🔐 [UserController] Obteniendo permisos de usuario:', userId);
+      const requestingUserId = (req as any).user?.id_usuario;
+      console.log('🔐 [UserController] Obteniendo permisos de usuario:', userId, 'por usuario:', requestingUserId);
       
       if (!userId) {
         res.status(400).json({
@@ -515,6 +516,18 @@ export class UserController {
           message: 'ID de usuario requerido'
         });
         return;
+      }
+
+      // Verificar que el usuario solo pueda acceder a sus propios permisos (a menos que sea admin)
+      if (userId !== requestingUserId) {
+        const isAdmin = await this.userService.isUserAdmin(requestingUserId);
+        if (!isAdmin) {
+          res.status(403).json({
+            success: false,
+            message: 'No tienes permisos para acceder a los permisos de otro usuario'
+          });
+          return;
+        }
       }
 
       const permissions = await this.userService.getUserPermissions(userId);

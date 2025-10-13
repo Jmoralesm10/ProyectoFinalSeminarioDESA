@@ -157,7 +157,6 @@ export const useAuth = () => {
         }
       });
 
-
       if (response.ok) {
         const result = await response.json();
         
@@ -175,8 +174,17 @@ export const useAuth = () => {
           
           return hasAdminAccess;
         } else {
+          // No hay permisos válidos en la respuesta
+          return false;
         }
+      } else if (response.status === 403) {
+        // Usuario no tiene permisos para acceder a este endpoint
+        console.warn('Usuario no tiene permisos para acceder al endpoint de permisos');
+        return false;
       } else {
+        // Otro error HTTP
+        console.error('Error HTTP al verificar permisos:', response.status);
+        return false;
       }
     } catch (error) {
       console.error('Error checking admin permissions:', error);

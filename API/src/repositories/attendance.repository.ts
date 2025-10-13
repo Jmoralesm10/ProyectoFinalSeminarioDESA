@@ -153,7 +153,7 @@ export class AttendanceRepository {
       
       const popularResult = await executeQuery(popularQuery);
       
-      const stats = statsResult[0];
+      const stats = statsResult.rows[0];
       const porcentaje = stats.total_usuarios > 0 
         ? Math.round((stats.total_asistencia_general / stats.total_usuarios) * 100)
         : 0;
@@ -163,7 +163,7 @@ export class AttendanceRepository {
         total_asistencia_general: parseInt(stats.total_asistencia_general),
         total_asistencia_actividades: parseInt(stats.total_asistencia_actividades),
         porcentaje_asistencia_general: porcentaje,
-        actividades_mas_populares: popularResult.map((row: any) => ({
+        actividades_mas_populares: popularResult.rows.map((row: any) => ({
           id_actividad: row.id_actividad,
           nombre_actividad: row.nombre_actividad,
           total_asistentes: parseInt(row.total_asistentes)

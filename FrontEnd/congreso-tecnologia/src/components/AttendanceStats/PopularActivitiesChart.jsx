@@ -3,14 +3,23 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import './Charts.css';
 
 const PopularActivitiesChart = ({ activities }) => {
+  // Verificar que activities existe y es un array
+  if (!activities || !Array.isArray(activities) || activities.length === 0) {
+    return (
+      <div className="no-activities">
+        <div className="no-activities-icon">📊</div>
+        <p>No hay datos de actividades disponibles</p>
+      </div>
+    );
+  }
+
   // Preparar datos para el gráfico
   const chartData = activities.map((activity, index) => ({
     name: activity.nombre_actividad.length > 20 
       ? activity.nombre_actividad.substring(0, 20) + '...' 
       : activity.nombre_actividad,
     fullName: activity.nombre_actividad,
-    asistentes: activity.total_asistentes,
-    color: `hsl(${(index * 60) % 360}, 70%, 50%)` // Colores dinámicos
+    asistentes: activity.total_asistentes
   }));
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -28,19 +37,6 @@ const PopularActivitiesChart = ({ activities }) => {
     return null;
   };
 
-  const CustomBar = (props) => {
-    const { fill, payload, ...rest } = props;
-    return <Bar {...rest} fill={payload.color} />;
-  };
-
-  if (!activities || activities.length === 0) {
-    return (
-      <div className="no-activities">
-        <div className="no-activities-icon">📊</div>
-        <p>No hay datos de actividades disponibles</p>
-      </div>
-    );
-  }
 
   return (
     <div className="popular-activities-chart">
@@ -71,7 +67,7 @@ const PopularActivitiesChart = ({ activities }) => {
           <Tooltip content={<CustomTooltip />} />
           <Bar 
             dataKey="asistentes" 
-            shape={<CustomBar />}
+            fill="#667eea"
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

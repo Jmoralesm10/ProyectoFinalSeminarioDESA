@@ -135,18 +135,13 @@ const AttendanceStatsPage = () => {
       <div className="stats-container">
         {/* Header */}
         <header className="stats-header">
-          <Link to="/" className="back-button">
+          <Link to="/admin-panel" className="back-button">
             <span>←</span>
-            Volver al Inicio
+            Volver al Panel Admin
           </Link>
           <div className="header-content">
             <h1>Estadísticas de Asistencia</h1>
             <p>Análisis detallado de la participación en el congreso</p>
-          </div>
-          <div className="header-actions">
-            <button className="btn-refresh" onClick={refreshStats} title="Actualizar estadísticas">
-              🔄
-            </button>
           </div>
         </header>
 
@@ -165,6 +160,9 @@ const AttendanceStatsPage = () => {
               <option value="all">Todo el Período</option>
             </select>
           </div>
+          <button className="btn-refresh" onClick={refreshStats} title="Actualizar estadísticas">
+            🔄 Actualizar
+          </button>
         </div>
 
         {/* Tarjetas de estadísticas principales */}
