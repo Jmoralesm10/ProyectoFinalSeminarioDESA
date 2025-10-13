@@ -41,7 +41,6 @@ const ActivitiesList = ({ isAuthenticated, userInscriptions = [], user }) => {
       queryParams.append('limite', '50');
 
       const url = `${API_URLS.ACTIVITIES}?${queryParams.toString()}`;
-      console.log('🔍 Cargando actividades desde:', url);
 
       const response = await fetch(url);
       const result = await response.json();
@@ -91,9 +90,6 @@ const ActivitiesList = ({ isAuthenticated, userInscriptions = [], user }) => {
         throw new Error('No hay token de autenticación');
       }
 
-      console.log('🔍 Frontend: Enviando inscripción');
-      console.log('🔍 Frontend: id_actividad:', id_actividad, 'tipo:', typeof id_actividad);
-      console.log('🔍 Frontend: token:', token ? 'presente' : 'ausente');
       
       const response = await fetch(`${API_URLS.ACTIVITIES}/${id_actividad}/inscribe`, {
         method: 'POST',
@@ -106,7 +102,6 @@ const ActivitiesList = ({ isAuthenticated, userInscriptions = [], user }) => {
         })
       });
       
-      console.log('🔍 Frontend: Status de respuesta:', response.status);
 
       const result = await response.json();
 

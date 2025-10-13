@@ -126,6 +126,19 @@ router.put(
   userController.changePassword
 );
 
+/**
+ * @route   GET /api/users/:userId/permissions
+ * @desc    Obtener permisos de un usuario específico
+ * @access  Private (Admin)
+ */
+router.get(
+  '/:userId/permissions',
+  authMiddleware.authenticateToken,
+  authMiddleware.requireActiveUser,
+  authMiddleware.requireAdmin,
+  userController.getUserPermissions
+);
+
 // =====================================================
 // RUTAS ADMINISTRATIVAS (Requieren roles específicos)
 // =====================================================

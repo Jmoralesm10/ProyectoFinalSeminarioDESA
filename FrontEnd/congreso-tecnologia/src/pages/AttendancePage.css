@@ -1,0 +1,403 @@
+/* =====================================================
+   Estilos para la página de asistencia
+   ===================================================== */
+
+.attendance-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 2rem 1rem;
+  padding-top: 120px; /* Espacio para el header fijo */
+}
+
+.attendance-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.attendance-header {
+  background: #1A365D;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.attendance-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.attendance-header h1::before {
+  content: '📱';
+  font-size: 1.8rem;
+}
+
+.attendance-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.attendance-header .back-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-header .back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Selector de tipo de asistencia */
+.attendance-type-selector {
+  padding: 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.attendance-type-selector h3 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.3rem;
+}
+
+.type-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.type-option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.type-option:hover {
+  border-color: #3498db;
+  background: #f8f9fa;
+}
+
+.type-option input[type="radio"] {
+  margin-right: 1rem;
+  transform: scale(1.2);
+}
+
+.type-option input[type="radio"]:checked + .option-content {
+  color: #3498db;
+}
+
+.type-option:has(input:checked) {
+  border-color: #3498db;
+  background: #e3f2fd;
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.option-content strong {
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.option-content small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* Selector de actividad */
+.activity-selector {
+  padding: 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.activity-selector h3 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.3rem;
+}
+
+.activity-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.activity-select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.activity-select:disabled {
+  background: #f8f9fa;
+  color: #6c757d;
+}
+
+/* Controles del escáner */
+.scanner-controls {
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.btn-scan {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-scan:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-scan:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-stop {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-stop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* Sección del escáner */
+.scanner-section {
+  padding: 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Mensajes de resultado */
+.result-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 2rem;
+  margin: 1rem;
+  border-radius: 12px;
+  border: 2px solid;
+}
+
+.result-message.success {
+  background: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.result-message.error {
+  background: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.result-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.result-content {
+  flex: 1;
+}
+
+.result-content h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.result-content p {
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+.result-details {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.result-details p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.btn-reset {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.btn-reset:hover {
+  background: #5a6268;
+}
+
+/* Mensajes de error */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  margin: 1rem;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 8px;
+  color: #c53030;
+}
+
+.error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.error-message p {
+  flex: 1;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.error-message .btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.error-message .btn-secondary:hover {
+  background: #5a6268;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .attendance-page {
+    padding: 1rem 0.5rem;
+    padding-top: 100px;
+  }
+  
+  .attendance-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .attendance-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .attendance-header h1::before {
+    font-size: 1.3rem;
+  }
+  
+  .attendance-header p {
+    font-size: 1rem;
+  }
+  
+  .attendance-header .back-button {
+    position: static;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+  
+  .type-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .attendance-type-selector,
+  .activity-selector,
+  .scanner-controls,
+  .scanner-section {
+    padding: 1.5rem 1rem;
+  }
+  
+  .result-message {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .btn-reset {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-page {
+    padding-top: 90px;
+  }
+  
+  .attendance-header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .attendance-header h1::before {
+    font-size: 1.1rem;
+  }
+  
+  .btn-scan,
+  .btn-stop {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}

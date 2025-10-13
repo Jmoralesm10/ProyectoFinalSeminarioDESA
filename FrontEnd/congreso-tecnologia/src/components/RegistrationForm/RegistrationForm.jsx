@@ -120,8 +120,6 @@ const RegistrationForm = () => {
       // Preparar datos para enviar (sin confirmPassword)
       const { confirmPassword, ...dataToSend } = formData;
       
-      console.log('🔍 Datos que se envían:', dataToSend);
-      console.log('🔍 URL de la API:', API_URLS.REGISTER);
       
       const response = await fetch(API_URLS.REGISTER, {
         method: 'POST',
@@ -131,11 +129,8 @@ const RegistrationForm = () => {
         body: JSON.stringify(dataToSend),
       });
 
-      console.log('🔍 Status de la respuesta:', response.status);
-      console.log('🔍 Headers de la respuesta:', response.headers);
       
       const result = await response.json();
-      console.log('🔍 Respuesta del servidor:', result);
 
       if (response.ok) {
         setSubmitMessage('¡Registro exitoso! Se ha enviado un correo de confirmación a tu email.');

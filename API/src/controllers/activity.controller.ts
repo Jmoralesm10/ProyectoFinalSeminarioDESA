@@ -22,7 +22,6 @@ export class ActivityController {
   // Listar actividades
   listActivities = async (req: Request, res: Response): Promise<void> => {
     try {
-      console.log('🔍 listActivities controller - Query params:', req.query);
       
       const filters: ListActivitiesDto = {
         tipo_actividad: req.query['tipo_actividad'] as 'taller' | 'competencia' | undefined,
@@ -33,11 +32,9 @@ export class ActivityController {
         offset: req.query['offset'] ? parseInt(req.query['offset'] as string) : 0
       };
 
-      console.log('🔍 listActivities controller - Filters:', filters);
 
       const result = await this.activityService.listActivities(filters);
       
-      console.log('🔍 listActivities controller - Service result:', result);
       
       if (result.success) {
         res.status(200).json(result);
@@ -153,11 +150,6 @@ export class ActivityController {
   // Inscribir usuario en actividad
   inscribeUserToActivity = async (req: Request, res: Response): Promise<void> => {
     try {
-      console.log('🔍 Iniciando inscripción de usuario a actividad');
-      console.log('🔍 Headers:', req.headers);
-      console.log('🔍 Body:', req.body);
-      console.log('🔍 Params:', req.params);
-      console.log('🔍 User from token:', (req as any).user);
       
       const id_usuario = (req as any).user?.id_usuario;
       

@@ -475,4 +475,174 @@ export class UserController {
       });
     }
   };
+
+
+
+  // =====================================================
+  // MÉTODOS PARA ADMINISTRADORES
+  // =====================================================
+
+  // Obtener lista de administradores
+  getAdmins = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('👑 [UserController] Obteniendo lista de administradores');
+      
+      const admins = await this.userService.getAdmins();
+      
+      res.json({
+        success: true,
+        message: 'Administradores obtenidos exitosamente',
+        data: admins
+      });
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener administradores:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Obtener permisos de un usuario
+  getUserPermissions = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      console.log('🔐 [UserController] Obteniendo permisos de usuario:', userId);
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      const permissions = await this.userService.getUserPermissions(userId);
+      
+      res.json({
+        success: true,
+        message: 'Permisos obtenidos exitosamente',
+        data: {
+          id_usuario: userId,
+          permisos: permissions
+        }
+      });
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener permisos:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Promover usuario a administrador
+  promoteToAdmin = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      const { rol_administrador, permisos, observaciones } = req.body;
+      const asignadoPor = req.user?.id_usuario;
+      
+      console.log('⬆️ [UserController] Promoviendo usuario a administrador:', { userId, rol_administrador, permisos });
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      if (!asignadoPor) {
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado'
+        });
+        return;
+      }
+
+      const result = await this.userService.promoteToAdmin(
+        userId, 
+        rol_administrador || 'admin', 
+        permisos || [], 
+        asignadoPor, 
+        observaciones
+      );
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          message: result.message
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al promover a administrador:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Quitar permisos de administrador
+  demoteFromAdmin = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      console.log('⬇️ [UserController] Quitando permisos de administrador:', userId);
+      
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido'
+        });
+        return;
+      }
+
+      const result = await this.userService.demoteFromAdmin(userId);
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          message: result.message
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al quitar permisos de administrador:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Obtener estadísticas del sistema
+  getSystemStats = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('📊 [UserController] Obteniendo estadísticas del sistema');
+      
+      const stats = await this.userService.getSystemStats();
+      
+      res.json({
+        success: true,
+        message: 'Estadísticas obtenidas exitosamente',
+        data: stats
+      });
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener estadísticas:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
 }

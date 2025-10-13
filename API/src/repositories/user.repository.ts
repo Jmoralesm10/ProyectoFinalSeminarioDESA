@@ -31,7 +31,6 @@ export class UserRepository {
     colegio?: string
   ): Promise<SpRegisterResponse> {
     try {
-      console.log('🔍 Repository: Registrando usuario con datos:', { tipoUsuario, nombre, apellido, email });
       
       const result = await executeStoredProcedure('sp_inscribir_usuario', [
         tipoUsuario,
@@ -43,18 +42,7 @@ export class UserRepository {
         colegio
       ]);
       
-      console.log('🔍 Repository: Resultado del stored procedure:', JSON.stringify(result, null, 2));
-      console.log('🔍 Repository: Tipo de resultado:', typeof result);
-      console.log('🔍 Repository: Es array:', Array.isArray(result));
-      console.log('🔍 Repository: Longitud:', result?.length);
-      
-      if (result && result.length > 0) {
-        console.log('🔍 Repository: Primer elemento:', JSON.stringify(result[0], null, 2));
-        console.log('🔍 Repository: Campos del primer elemento:', Object.keys(result[0]));
-      }
-      
       const finalResult = result && result.length > 0 ? result[0] : result;
-      console.log('🔍 Repository: Resultado final:', JSON.stringify(finalResult, null, 2));
       
       return finalResult;
     } catch (error) {
@@ -199,11 +187,9 @@ export class UserRepository {
   // Consultar código QR de un usuario usando stored procedure
   async getUserQRCode(id_usuario: string): Promise<SpConsultarQRResponse> {
     try {
-      console.log('🔍 Repository: Consultando código QR para usuario:', id_usuario);
       
       const result = await executeStoredProcedure('sp_consultar_codigo_qr_usuario', [id_usuario]);
       
-      console.log('🔍 Repository: Resultado del SP consultar QR:', JSON.stringify(result, null, 2));
       
       return result[0] || result;
     } catch (error) {

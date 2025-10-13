@@ -48,6 +48,12 @@ CREATE INDEX idx_faq_categoria ON tb_faq(categoria_faq);
 CREATE INDEX idx_faq_activo ON tb_faq(estado_faq);
 CREATE INDEX idx_faq_orden ON tb_faq(orden_faq);
 
+-- Índices para la tabla administradores
+-- Nota: No necesitamos índice en id_usuario ni rol_administrador ya que son parte de la PK compuesta
+CREATE INDEX idx_administradores_estado ON tb_administradores(estado_administrador);
+CREATE INDEX idx_administradores_fecha_asignacion ON tb_administradores(fecha_asignacion_administrador);
+CREATE INDEX idx_administradores_asignado_por ON tb_administradores(asignado_por_usuario);
+
 -- Índices para la tabla logs_sistema
 CREATE INDEX idx_logs_usuario ON tb_logs_sistema(id_usuario);
 CREATE INDEX idx_logs_administrador ON tb_logs_sistema(id_administrador);
@@ -62,3 +68,5 @@ CREATE INDEX idx_inscripciones_usuario_estado ON tb_inscripciones_actividad(id_u
 CREATE INDEX idx_asistencia_general_usuario_fecha ON tb_asistencia_general(id_usuario, fecha_asistencia);
 CREATE INDEX idx_asistencia_actividad_usuario_fecha ON tb_asistencia_actividad(id_usuario, fecha_asistencia);
 CREATE INDEX idx_diplomas_usuario_actividad ON tb_diplomas(id_usuario, id_actividad);
+CREATE INDEX idx_administradores_rol_estado ON tb_administradores(rol_administrador, estado_administrador);
+CREATE INDEX idx_administradores_usuario_estado ON tb_administradores(id_usuario, estado_administrador);

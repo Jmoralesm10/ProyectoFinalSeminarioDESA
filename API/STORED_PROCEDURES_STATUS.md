@@ -113,6 +113,66 @@ Este documento describe el estado actual de los stored procedures en la base de 
 - **Retorna**: success, message, id_actividad, nombre_actividad
 - **Estado**: ✅ **IMPLEMENTADO Y EN USO**
 
+## ✅ Stored Procedures de Asistencia Implementados
+
+### 16. **sp_registrar_asistencia_general**
+- **Archivo**: `DataBase/storeprocedures/sp_registrar_asistencia_general.sql`
+- **Función**: Registrar asistencia general de usuarios al congreso mediante código QR
+- **Parámetros**: codigo_qr_usuario
+- **Retorna**: success, message, id_usuario, nombre_completo, fecha_asistencia, hora_ingreso
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 17. **sp_registrar_asistencia_actividad**
+- **Archivo**: `DataBase/storeprocedures/sp_registrar_asistencia_actividad.sql`
+- **Función**: Registrar asistencia de usuarios a actividades específicas mediante código QR
+- **Parámetros**: codigo_qr_usuario, id_actividad
+- **Retorna**: success, message, id_usuario, id_actividad, nombre_completo, nombre_actividad, fecha_asistencia
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 18. **sp_consultar_asistencia_usuario**
+- **Archivo**: `DataBase/storeprocedures/sp_consultar_asistencia_usuario.sql`
+- **Función**: Consultar historial completo de asistencia de un usuario
+- **Parámetros**: codigo_qr_usuario (opcional), id_usuario (opcional), fecha_desde (opcional), fecha_hasta (opcional)
+- **Retorna**: success, message, datos completos de asistencia (general y por actividades)
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 19. **sp_generar_reporte_asistencia**
+- **Archivo**: `DataBase/storeprocedures/sp_generar_reporte_asistencia.sql`
+- **Función**: Generar reportes de asistencia con diferentes tipos y filtros
+- **Parámetros**: tipo_reporte, fecha_desde, fecha_hasta, id_actividad, limite, offset
+- **Retorna**: success, message, datos de reporte con paginación
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+## ✅ Stored Procedures de Administración Implementados
+
+### 20. **sp_asignar_administrador**
+- **Archivo**: `DataBase/storeprocedures/sp_asignar_administrador.sql`
+- **Función**: Asigna un rol de administrador a un usuario existente
+- **Parámetros**: id_usuario, rol_administrador, permisos_administrador, asignado_por_administrador, observaciones_administrador
+- **Retorna**: success, message, id_administrador, id_usuario, nombre_completo, rol_administrador
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 21. **sp_consultar_administradores**
+- **Archivo**: `DataBase/storeprocedures/sp_consultar_administradores.sql`
+- **Función**: Consulta la lista de administradores con filtros opcionales
+- **Parámetros**: rol_administrador, estado_administrador, limite, offset
+- **Retorna**: success, message, datos completos de administradores con paginación
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 22. **sp_verificar_permisos_administrador**
+- **Archivo**: `DataBase/storeprocedures/sp_verificar_permisos_administrador.sql`
+- **Función**: Verifica si un usuario tiene permisos de administrador específicos
+- **Parámetros**: id_usuario, permiso_requerido
+- **Retorna**: success, message, es_administrador, rol_administrador, tiene_permiso, permisos_disponibles
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
+### 23. **sp_remover_administrador**
+- **Archivo**: `DataBase/storeprocedures/sp_remover_administrador.sql`
+- **Función**: Remueve o desactiva un administrador del sistema
+- **Parámetros**: id_administrador, removido_por_administrador, razon_remocion, desactivar_en_lugar_de_eliminar
+- **Retorna**: success, message, id_administrador, id_usuario, nombre_completo, accion_realizada
+- **Estado**: ✅ **IMPLEMENTADO Y EN USO**
+
 ## 🔄 Plan de Migración
 
 ### ✅ Fase 1: Crear Stored Procedures Faltantes - COMPLETADA
@@ -129,17 +189,31 @@ Este documento describe el estado actual de los stored procedures en la base de 
 3. ✅ Crear `sp_inscribirse_actividad.sql`
 4. ✅ Crear `sp_actualizar_actividad.sql`
 
-### ✅ Fase 3: Actualizar Repositorio - COMPLETADA
-1. ✅ Reemplazar consultas directas con llamadas a stored procedures de usuarios
-2. 🔄 Actualizar repositorio para usar stored procedures de actividades
-2. ✅ Actualizar tipos TypeScript para las nuevas respuestas
-3. ✅ Actualizar servicios para usar nuevos métodos del repositorio
-4. ✅ Actualizar middleware de autenticación
+### ✅ Fase 3: Crear Stored Procedures de Asistencia - COMPLETADA
+1. ✅ Crear `sp_registrar_asistencia_general.sql`
+2. ✅ Crear `sp_registrar_asistencia_actividad.sql`
+3. ✅ Crear `sp_consultar_asistencia_usuario.sql`
+4. ✅ Crear `sp_generar_reporte_asistencia.sql`
+5. ✅ Crear `test_attendance_stored_procedures.sql`
 
-### 🔄 Fase 3: Testing - PENDIENTE
-1. Ejecutar pruebas de todos los stored procedures
-2. Probar integración completa con la API
-3. Validar manejo de errores
+### ✅ Fase 4: Crear Stored Procedures de Administración - COMPLETADA
+1. ✅ Crear `sp_asignar_administrador.sql`
+2. ✅ Crear `sp_consultar_administradores.sql`
+3. ✅ Crear `sp_verificar_permisos_administrador.sql`
+4. ✅ Crear `sp_remover_administrador.sql`
+
+### ✅ Fase 5: Actualizar Repositorio - COMPLETADA
+1. ✅ Reemplazar consultas directas con llamadas a stored procedures de usuarios
+2. ✅ Actualizar repositorio para usar stored procedures de actividades
+3. ✅ Actualizar tipos TypeScript para las nuevas respuestas
+4. ✅ Actualizar servicios para usar nuevos métodos del repositorio
+5. ✅ Actualizar middleware de autenticación
+
+### 🔄 Fase 6: Testing - PENDIENTE
+1. ✅ Ejecutar pruebas de stored procedures de usuarios y actividades
+2. 🔄 Ejecutar pruebas de stored procedures de asistencia
+3. 🔄 Probar integración completa con la API
+4. 🔄 Validar manejo de errores
 
 ## 📝 Notas Importantes
 
@@ -168,21 +242,36 @@ Este documento describe el estado actual de los stored procedures en la base de 
 
 ```
 DataBase/storeprocedures/
-├── sp_inscribir_usuario.sql          ✅ Implementado
-├── sp_autenticar_usuario.sql         ✅ Implementado
-├── sp_verificar_email.sql            ✅ Implementado
-├── sp_recuperar_password.sql         ✅ Implementado
-├── sp_consultar_usuario.sql          ✅ Implementado
-├── sp_consultar_usuario_por_email.sql ✅ Implementado
-├── sp_verificar_email_existe.sql     ✅ Implementado
-├── sp_actualizar_usuario.sql         ✅ Implementado
-├── sp_cambiar_password.sql           ✅ Implementado
-├── sp_consultar_tipos_usuario.sql    ✅ Implementado
-└── test_all_stored_procedures.sql    ✅ Implementado
+├── sp_inscribir_usuario.sql                    ✅ Implementado
+├── sp_autenticar_usuario.sql                   ✅ Implementado
+├── sp_verificar_email.sql                      ✅ Implementado
+├── sp_recuperar_password.sql                   ✅ Implementado
+├── sp_consultar_usuario.sql                    ✅ Implementado
+├── sp_consultar_usuario_por_email.sql          ✅ Implementado
+├── sp_verificar_email_existe.sql               ✅ Implementado
+├── sp_actualizar_usuario.sql                   ✅ Implementado
+├── sp_cambiar_password.sql                     ✅ Implementado
+├── sp_consultar_tipos_usuario.sql              ✅ Implementado
+├── sp_crear_actividad.sql                      ✅ Implementado
+├── sp_listar_actividades.sql                   ✅ Implementado
+├── sp_inscribirse_actividad.sql                ✅ Implementado
+├── sp_actualizar_actividad.sql                 ✅ Implementado
+├── sp_registrar_asistencia_general.sql         ✅ Implementado
+├── sp_registrar_asistencia_actividad.sql       ✅ Implementado
+├── sp_consultar_asistencia_usuario.sql         ✅ Implementado
+├── sp_generar_reporte_asistencia.sql           ✅ Implementado
+├── sp_asignar_administrador.sql                ✅ Implementado
+├── sp_consultar_administradores.sql            ✅ Implementado
+├── sp_verificar_permisos_administrador.sql     ✅ Implementado
+├── sp_remover_administrador.sql                ✅ Implementado
+├── test_all_stored_procedures.sql              ✅ Implementado
+└── test_attendance_stored_procedures.sql       ✅ Implementado
 ```
 
 ---
 
 **Última actualización**: Diciembre 2024
-**Estado**: 11/11 stored procedures implementados (100% completado)
+**Estado**: 23/23 stored procedures implementados (100% completado)
 **Migración API**: ✅ COMPLETADA - Todos los métodos del repositorio ahora usan stored procedures
+**Funcionalidades**: ✅ Usuarios, Actividades, Asistencia y Administración completamente implementadas
+**Actualización**: ✅ Tabla de administradores modificada para usar clave primaria compuesta (id_usuario, rol_administrador)

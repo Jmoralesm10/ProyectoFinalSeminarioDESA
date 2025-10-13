@@ -14,6 +14,8 @@ BEGIN
         NEW.fecha_actualizacion_actividad = CURRENT_TIMESTAMP;
     ELSIF TG_TABLE_NAME = 'tb_faq' THEN
         NEW.fecha_actualizacion_faq = CURRENT_TIMESTAMP;
+    ELSIF TG_TABLE_NAME = 'tb_administradores' THEN
+        NEW.fecha_ultima_actividad_administrador = CURRENT_TIMESTAMP;
     END IF;
     RETURN NEW;
 END;
@@ -116,10 +118,14 @@ BEGIN
                 NEW.id_usuario::text || '_' || NEW.id_actividad::text, 
                 OLD.id_usuario::text || '_' || OLD.id_actividad::text
             );
-        WHEN 'tb_asistencia' THEN
-            registro_id := COALESCE(NEW.id_asistencia::text, OLD.id_asistencia::text);
+        WHEN 'tb_asistencia_general' THEN
+            registro_id := COALESCE(NEW.id_usuario::text || '_' || NEW.fecha_asistencia::text, OLD.id_usuario::text || '_' || OLD.fecha_asistencia::text);
+        WHEN 'tb_asistencia_actividad' THEN
+            registro_id := COALESCE(NEW.id_usuario::text || '_' || NEW.id_actividad::text, OLD.id_usuario::text || '_' || OLD.id_actividad::text);
         WHEN 'tb_resultados_competencia' THEN
             registro_id := COALESCE(NEW.id_resultado::text, OLD.id_resultado::text);
+        WHEN 'tb_administradores' THEN
+            registro_id := COALESCE(NEW.id_usuario::text || '_' || NEW.rol_administrador, OLD.id_usuario::text || '_' || OLD.rol_administrador);
         ELSE
             registro_id := COALESCE(NEW.id::text, OLD.id::text);
     END CASE;
@@ -166,6 +172,11 @@ CREATE TRIGGER trigger_informacion_congreso_actualizar_fecha
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
 
+CREATE TRIGGER trigger_administradores_actualizar_fecha
+    BEFORE UPDATE ON tb_administradores
+    FOR EACH ROW
+    EXECUTE FUNCTION actualizar_fecha_modificacion();
+
 -- Trigger para generar código QR
 CREATE TRIGGER trigger_usuarios_generar_qr
     BEFORE INSERT ON tb_usuarios
@@ -195,12 +206,22 @@ CREATE TRIGGER trigger_log_inscripciones
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();
 
-CREATE TRIGGER trigger_log_asistencia
-    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia
+CREATE TRIGGER trigger_log_asistencia_general
+    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia_general
+    FOR EACH ROW
+    EXECUTE FUNCTION log_actividad();
+
+CREATE TRIGGER trigger_log_asistencia_actividad
+    AFTER INSERT OR UPDATE OR DELETE ON tb_asistencia_actividad
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();
 
 CREATE TRIGGER trigger_log_resultados
     AFTER INSERT OR UPDATE OR DELETE ON tb_resultados_competencia
+    FOR EACH ROW
+    EXECUTE FUNCTION log_actividad();
+
+CREATE TRIGGER trigger_log_administradores
+    AFTER INSERT OR UPDATE OR DELETE ON tb_administradores
     FOR EACH ROW
     EXECUTE FUNCTION log_actividad();

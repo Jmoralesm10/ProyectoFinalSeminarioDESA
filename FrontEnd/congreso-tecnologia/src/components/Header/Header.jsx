@@ -7,8 +7,9 @@ import './Header.css';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isAdmin, hasPermission, permissionsLoading } = useAuth();
   const profileDropdownRef = useRef(null);
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -59,6 +60,19 @@ const Header = () => {
             <li><a href="#ponentes"><span className="nav-icon">👥</span>Oponentes</a></li>
             <li><a href="#carrera"><span className="nav-icon">🎓</span>Carrera</a></li>
             <li><a href="#faq"><span className="nav-icon">❓</span>FAQ</a></li>
+            {isAuthenticated && (
+              <>
+                {isAdmin && (
+                  <>
+                    <li><Link to="/asistencia"><span className="nav-icon">📱</span>Asistencia QR</Link></li>
+                    {hasPermission('ver_estadisticas') && (
+                      <li><Link to="/estadisticas"><span className="nav-icon">📊</span>Estadísticas</Link></li>
+                    )}
+                    <li><Link to="/admin-panel"><span className="nav-icon">🔧</span>Panel Admin</Link></li>
+                  </>
+                )}
+              </>
+            )}
             {isAuthenticated ? (
               <li className="nav-profile">
                 <div className="profile-dropdown" ref={profileDropdownRef}>
@@ -86,7 +100,16 @@ const Header = () => {
                           <h4>{user?.nombre_usuario} {user?.apellido_usuario}</h4>
                           <p>{user?.email_usuario}</p>
                           <span className="user-type">
-                            {user?.tipo_usuario === 'interno' ? 'Estudiante Interno' : 'Estudiante Externo'}
+                            {(() => {
+                              const isSuperAdmin = user?.permisos_especiales && Array.isArray(user.permisos_especiales) &&
+                                user.permisos_especiales.some(item => 
+                                  typeof item === 'object' && item.rol_administrador === 'super_admin'
+                                );
+                              
+                              if (isSuperAdmin) return '👑 Super Administrador';
+                              if (isAdmin) return '👑 Administrador';
+                              return user?.tipo_usuario === 'interno' ? 'Estudiante Interno' : 'Estudiante Externo';
+                            })()}
                           </span>
                         </div>
                       </div>
@@ -102,6 +125,10 @@ const Header = () => {
                         <Link to="/mis-actividades" className="profile-action">
                           <span className="action-icon">🎯</span>
                           Mis Actividades
+                        </Link>
+                        <Link to="/permisos" className="profile-action">
+                          <span className="action-icon">🔐</span>
+                          Mis Permisos
                         </Link>
                         <hr className="profile-divider" />
                         <button onClick={handleLogout} className="profile-action logout">
@@ -144,6 +171,19 @@ const Header = () => {
           <li><a href="#ponentes" onClick={toggleMenu}><span className="nav-icon">👥</span>Oponentes</a></li>
           <li><a href="#carrera" onClick={toggleMenu}><span className="nav-icon">🎓</span>Carrera</a></li>
           <li><a href="#faq" onClick={toggleMenu}><span className="nav-icon">❓</span>FAQ</a></li>
+          {isAuthenticated && (
+            <>
+              {isAdmin && (
+                <>
+                  <li><Link to="/asistencia" onClick={toggleMenu}><span className="nav-icon">📱</span>Asistencia QR</Link></li>
+                  {hasPermission('ver_estadisticas') && (
+                    <li><Link to="/estadisticas" onClick={toggleMenu}><span className="nav-icon">📊</span>Estadísticas</Link></li>
+                  )}
+                  <li><Link to="/admin-panel" onClick={toggleMenu}><span className="nav-icon">🔧</span>Panel Admin</Link></li>
+                </>
+              )}
+            </>
+          )}
           {isAuthenticated ? (
             <li className="mobile-profile">
               <div className="mobile-profile-info">
@@ -167,6 +207,10 @@ const Header = () => {
                 <Link to="/mis-actividades" className="mobile-profile-action" onClick={toggleMenu}>
                   <span className="action-icon">🎯</span>
                   Mis Actividades
+                </Link>
+                <Link to="/permisos" className="mobile-profile-action" onClick={toggleMenu}>
+                  <span className="action-icon">🔐</span>
+                  Mis Permisos
                 </Link>
                 <button onClick={handleLogout} className="mobile-profile-action logout">
                   <span className="action-icon">🚪</span>

@@ -160,10 +160,6 @@ export class ActivityRepository {
     observaciones_inscripcion?: string
   ): Promise<SpInscribeActivityResponse> {
     try {
-      console.log('🔍 Repository: Inscribiendo usuario a actividad');
-      console.log('🔍 Repository: id_usuario:', id_usuario);
-      console.log('🔍 Repository: id_actividad:', id_actividad);
-      console.log('🔍 Repository: observaciones_inscripcion:', observaciones_inscripcion);
       
       const result = await executeStoredProcedure('sp_inscribirse_actividad', [
         id_usuario, // PostgreSQL debería convertir automáticamente string a UUID
@@ -171,7 +167,6 @@ export class ActivityRepository {
         observaciones_inscripcion
       ]);
       
-      console.log('🔍 Repository: Resultado del stored procedure:', result);
       
       if (!result || result.length === 0) {
         throw new Error('El stored procedure no devolvió ningún resultado');

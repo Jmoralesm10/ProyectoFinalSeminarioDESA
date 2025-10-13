@@ -70,8 +70,6 @@ const LoginForm = () => {
     setSubmitMessage('');
 
     try {
-      console.log('🔍 Datos que se envían:', formData);
-      console.log('🔍 URL de la API:', API_URLS.LOGIN);
       
       const response = await fetch(API_URLS.LOGIN, {
         method: 'POST',
@@ -81,11 +79,8 @@ const LoginForm = () => {
         body: JSON.stringify(formData),
       });
 
-      console.log('🔍 Status de la respuesta:', response.status);
-      console.log('🔍 Headers de la respuesta:', response.headers);
       
       const result = await response.json();
-      console.log('🔍 Respuesta del servidor:', result);
 
       if (response.ok) {
         // Login exitoso

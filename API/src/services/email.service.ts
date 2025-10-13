@@ -90,7 +90,6 @@ export class EmailService {
 
       // Generar código QR como archivo adjunto
       let qrCodeAttachment = null;
-      console.log('🔍 Generando código QR para:', user.codigo_qr_usuario);
       
       if (user.codigo_qr_usuario) {
         try {

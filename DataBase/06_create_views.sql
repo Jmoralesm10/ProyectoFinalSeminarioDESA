@@ -192,10 +192,35 @@ WHERE u.activo = true
 GROUP BY u.id, u.nombre, u.apellido, u.email, tu.nombre
 ORDER BY total_inscripciones DESC, total_tb_asistencias DESC;
 
+-- Vista de administradores con información completa del usuario
+CREATE VIEW vista_administradores_completa AS
+SELECT 
+    a.id_usuario,
+    a.rol_administrador,
+    u.nombre_usuario || ' ' || u.apellido_usuario as nombre_completo,
+    u.email_usuario,
+    u.telefono_usuario,
+    u.colegio_usuario,
+    tu.nombre_tipo_usuario,
+    a.permisos_administrador,
+    a.estado_administrador,
+    a.fecha_asignacion_administrador,
+    a.fecha_ultima_actividad_administrador,
+    a.asignado_por_usuario,
+    asignador.nombre_usuario || ' ' || asignador.apellido_usuario as asignado_por_nombre,
+    a.observaciones_administrador,
+    u.estado_usuario,
+    u.fecha_inscripcion_usuario
+FROM tb_administradores a
+JOIN tb_usuarios u ON a.id_usuario = u.id_usuario
+JOIN tb_tipos_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario
+LEFT JOIN tb_usuarios asignador ON a.asignado_por_usuario = asignador.id_usuario;
+
 -- Comentarios de las vistas
 COMMENT ON VIEW vista_tb_usuarios_completa IS 'Vista completa de tb_usuarios con información de tipo';
 COMMENT ON VIEW vista_tb_actividades_completa IS 'Vista completa de tb_actividades con información de categoría';
 COMMENT ON VIEW vista_inscripciones_completa IS 'Vista de inscripciones con datos de usuario y actividad';
+COMMENT ON VIEW vista_administradores_completa IS 'Vista completa de administradores con información del usuario y quien los asignó';
 COMMENT ON VIEW vista_tb_asistencia_completa IS 'Vista de tb_asistencia con información completa';
 COMMENT ON VIEW vista_tb_diplomas_completa IS 'Vista de tb_diplomas con información de usuario y actividad';
 COMMENT ON VIEW vista_tb_resultados_competencia IS 'Vista de resultados de competencias';

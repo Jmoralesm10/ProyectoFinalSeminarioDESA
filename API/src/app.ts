@@ -14,6 +14,8 @@ import { testConnection } from './config/database';
 import userRoutes from './routes/user.routes';
 import activityRoutes from './routes/activity.routes';
 import paymentRoutes from './routes/payment.routes';
+import attendanceRoutes from './routes/attendance.routes';
+import adminRoutes from './routes/admin.routes';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -60,6 +62,8 @@ app.get('/health', (_req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/admin', adminRoutes);
 
 // =====================================================
 // MANEJO DE ERRORES
@@ -103,6 +107,8 @@ const initializeApp = async () => {
       console.log(`📱 API disponible en: http://localhost:${PORT}`);
       console.log(`🔍 Health check: http://localhost:${PORT}/health`);
       console.log(`👥 Usuarios API: http://localhost:${PORT}/api/users`);
+      console.log(`📋 Asistencia API: http://localhost:${PORT}/api/attendance`);
+      console.log(`👑 Administradores API: http://localhost:${PORT}/api/admin`);
       console.log(`🌍 Entorno: ${process.env['NODE_ENV'] || 'development'}`);
     });
   } catch (error) {

@@ -183,18 +183,20 @@ CREATE TABLE tb_informacion_congreso (
     fecha_actualizacion_informacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla de administradores del sistema
+-- Tabla de administradores del sistema (conectada a usuarios existentes)
 DROP TABLE IF EXISTS tb_administradores CASCADE;
 CREATE TABLE tb_administradores (
-    id_administrador UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    nombre_administrador VARCHAR(100) NOT NULL,
-    apellido_administrador VARCHAR(100) NOT NULL,
-    email_administrador VARCHAR(255) NOT NULL UNIQUE,
-    password_hash_administrador VARCHAR(255) NOT NULL,
-    rol_administrador VARCHAR(50) DEFAULT 'admin' CHECK (rol_administrador IN ('admin', 'super_admin')),
+    id_usuario UUID NOT NULL REFERENCES tb_usuarios(id_usuario) ON DELETE CASCADE,
+    rol_administrador VARCHAR(50) NOT NULL CHECK (rol_administrador IN ('admin', 'super_admin', 'moderador')),
+    permisos_administrador TEXT[], -- Array de permisos específicos
     estado_administrador BOOLEAN DEFAULT TRUE,
-    ultimo_acceso_administrador TIMESTAMP,
-    fecha_creacion_administrador TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_asignacion_administrador TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_ultima_actividad_administrador TIMESTAMP,
+    asignado_por_usuario UUID REFERENCES tb_usuarios(id_usuario), -- Usuario que asignó este rol
+    observaciones_administrador TEXT,
+    
+    -- Clave primaria compuesta
+    PRIMARY KEY (id_usuario, rol_administrador)
 );
 
 -- Tabla de logs del sistema

@@ -104,6 +104,72 @@ export class AuthMiddleware {
     };
   };
 
+  // Middleware para verificar permisos de administrador
+  requireAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.user) {
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado'
+        });
+        return;
+      }
+
+      // Verificar si el usuario es administrador
+      const isAdmin = await this.userService.isUserAdmin(req.user.id_usuario);
+      
+      if (!isAdmin) {
+        res.status(403).json({
+          success: false,
+          message: 'Se requieren permisos de administrador para acceder a este recurso'
+        });
+        return;
+      }
+
+      next();
+    } catch (error) {
+      console.error('Error en requireAdmin middleware:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
+
+  // Middleware para verificar permisos específicos
+  requirePermission = (permission: string) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        if (!req.user) {
+          res.status(401).json({
+            success: false,
+            message: 'Usuario no autenticado'
+          });
+          return;
+        }
+
+        // Verificar si el usuario tiene el permiso específico
+        const hasPermission = await this.userService.hasPermission(req.user.id_usuario, permission);
+        
+        if (!hasPermission) {
+          res.status(403).json({
+            success: false,
+            message: `No tienes permisos para realizar la acción: ${permission}`
+          });
+          return;
+        }
+
+        next();
+      } catch (error) {
+        console.error('Error en requirePermission middleware:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
+    };
+  };
+
   // Middleware para verificar que el usuario esté activo
   requireActiveUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

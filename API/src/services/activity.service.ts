@@ -28,7 +28,6 @@ export class ActivityService {
   // Listar actividades
   async listActivities(filters: ListActivitiesDto): Promise<ActivityListResponse> {
     try {
-      console.log('🔍 listActivities service - Filters:', filters);
       
       const result = await this.activityRepository.listActivities(
         filters.tipo_actividad,
@@ -39,10 +38,7 @@ export class ActivityService {
         filters.offset ?? 0
       );
 
-      console.log('🔍 listActivities service - Repository result length:', result.length);
-
       if (result.length === 0) {
-        console.log('🔍 listActivities service - No activities found');
         return {
           success: false,
           message: 'No se encontraron actividades con los criterios especificados'
@@ -262,9 +258,6 @@ export class ActivityService {
     inscriptionData: InscribeActivityDto
   ): Promise<ActivityInscriptionResponse> {
     try {
-      console.log('🔍 Service: Inscribiendo usuario a actividad');
-      console.log('🔍 Service: id_usuario:', id_usuario);
-      console.log('🔍 Service: inscriptionData:', inscriptionData);
       
       const result = await this.activityRepository.inscribeUserToActivity(
         id_usuario,
@@ -272,7 +265,6 @@ export class ActivityService {
         inscriptionData.observaciones_inscripcion
       );
       
-      console.log('🔍 Service: Resultado del repositorio:', result);
 
       if (result.success) {
         const inscription: ActivityInscription = {

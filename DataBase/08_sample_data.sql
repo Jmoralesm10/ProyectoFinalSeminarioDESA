@@ -137,6 +137,36 @@ INSERT INTO tb_resultados_competencia (actividad_id, usuario_id, posicion, puntu
 (6, (SELECT id FROM tb_usuarios WHERE email = 'luis.fernandez@colegio4.edu'), 2, 94.5, 'Simulador de ciudad con elementos de estrategia', '/fotos/luis_fernandez_juego1.jpg'),
 (6, (SELECT id FROM tb_usuarios WHERE email = 'camila.vargas@gmail.com'), 3, 91.0, 'Puzzle game con física realista', '/fotos/camila_vargas_juego1.jpg');
 
+-- Insertar administradores de ejemplo
+INSERT INTO tb_administradores (
+    id_usuario, 
+    rol_administrador, 
+    permisos_administrador, 
+    estado_administrador,
+    asignado_por_usuario,
+    observaciones_administrador
+) VALUES
+-- Super administrador (usuario interno) - asignado por sí mismo (primer admin)
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'sofia.ramirez@gmail.com'), 'super_admin', 
+ ARRAY['gestion_usuarios', 'gestion_actividades', 'gestion_administradores', 'ver_reportes', 'gestion_sistema'], 
+ TRUE, 
+ (SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'sofia.ramirez@gmail.com'),
+ 'Super administrador del sistema'),
+
+-- Administrador general (usuario interno) - asignado por el super admin
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'diego.morales@gmail.com'), 'admin', 
+ ARRAY['gestion_usuarios', 'gestion_actividades', 'ver_reportes'], 
+ TRUE, 
+ (SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'sofia.ramirez@gmail.com'),
+ 'Administrador general del congreso'),
+
+-- Moderador (usuario externo) - asignado por el admin
+((SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'juan.perez@colegio1.edu'), 'moderador', 
+ ARRAY['ver_reportes', 'gestion_actividades'], 
+ TRUE, 
+ (SELECT id_usuario FROM tb_usuarios WHERE email_usuario = 'diego.morales@gmail.com'),
+ 'Moderador de actividades');
+
 -- Actualizar fechas de descarga de tb_diplomas
 UPDATE tb_diplomas SET fecha_descarga = CURRENT_TIMESTAMP WHERE enviado_email = true;
 

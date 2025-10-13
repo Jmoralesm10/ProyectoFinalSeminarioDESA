@@ -4,6 +4,11 @@ import HomePage from './pages/HomePage';
 import RegistrationPage from './pages/RegistrationPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AttendancePage from './pages/AttendancePage';
+import AttendanceStatsPage from './pages/AttendanceStatsPage';
+import AdminPanelPage from './pages/AdminPanelPage';
+import UserPermissionsPage from './pages/UserPermissionsPage';
+import AdminGuard from './components/AdminGuard/AdminGuard';
 import './App.css';
 
 function App() {
@@ -15,6 +20,18 @@ function App() {
           <Route path="/registro" element={<RegistrationPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/asistencia" element={
+            <AdminGuard>
+              <AttendancePage />
+            </AdminGuard>
+          } />
+          <Route path="/estadisticas" element={
+            <AdminGuard requiredPermission="ver_estadisticas">
+              <AttendanceStatsPage />
+            </AdminGuard>
+          } />
+          <Route path="/admin-panel" element={<AdminPanelPage />} />
+          <Route path="/permisos" element={<UserPermissionsPage />} />
         </Routes>
       </div>
     </Router>
