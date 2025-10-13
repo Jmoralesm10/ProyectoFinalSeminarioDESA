@@ -16,6 +16,7 @@ import activityRoutes from './routes/activity.routes';
 import paymentRoutes from './routes/payment.routes';
 import attendanceRoutes from './routes/attendance.routes';
 import adminRoutes from './routes/admin.routes';
+import reportRoutes from './routes/report.routes';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -64,6 +65,7 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/reports', reportRoutes);
 
 // =====================================================
 // MANEJO DE ERRORES

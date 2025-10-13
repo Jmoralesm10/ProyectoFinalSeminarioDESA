@@ -14,6 +14,7 @@ import ActivityManagementPage from './pages/ActivityManagementPage';
 import ListActivitiesPage from './pages/ListActivitiesPage';
 import CreateActivityPage from './pages/CreateActivityPage';
 import EditActivityPage from './pages/EditActivityPage';
+import ReportsPage from './pages/ReportsPage';
 import AdminGuard from './components/AdminGuard/AdminGuard';
 import './App.css';
 
@@ -50,6 +51,11 @@ function App() {
                 <Route path="/editar-actividad" element={
                   <AdminGuard requiredPermission="gestion_actividades">
                     <EditActivityPage />
+                  </AdminGuard>
+                } />
+                <Route path="/generar-reportes" element={
+                  <AdminGuard requiredPermission="ver_reportes">
+                    <ReportsPage />
                   </AdminGuard>
                 } />
         </Routes>

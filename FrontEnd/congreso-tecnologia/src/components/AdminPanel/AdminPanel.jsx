@@ -42,8 +42,7 @@ const AdminPanel = () => {
   };
 
   const handleNavigateToReports = () => {
-    // TODO: Implementar página de reportes
-    console.log('Navegar a reportes');
+    navigate('/generar-reportes');
   };
 
   const handleNavigateToDiplomas = () => {
