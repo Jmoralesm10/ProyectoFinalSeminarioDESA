@@ -99,12 +99,13 @@ const ActivityCard = ({ activity, isAuthenticated, onEnroll, userInscriptions = 
         
         {activity.descripcion_actividad && (
           <p className="activity-description">
-            {activity.descripcion_actividad.length > 150 
-              ? `${activity.descripcion_actividad.substring(0, 150)}...` 
+            {activity.descripcion_actividad.length > 300 
+              ? `${activity.descripcion_actividad.substring(0, 300)}...` 
               : activity.descripcion_actividad
             }
           </p>
         )}
+
 
         {/* Información de la actividad */}
         <div className="activity-info">

@@ -46,8 +46,7 @@ const AdminPanel = () => {
   };
 
   const handleNavigateToDiplomas = () => {
-    // TODO: Implementar página de gestión de diplomas
-    console.log('Navegar a gestión de diplomas');
+    navigate('/generar-diplomas');
   };
 
   // Definir las funcionalidades disponibles como botones principales
@@ -104,13 +103,13 @@ const AdminPanel = () => {
     },
     {
       id: 'diplomas',
-      title: 'Gestionar Diplomas',
-      description: 'Generar y administrar diplomas',
-      icon: '🏆',
-      permission: 'gestionar_diplomas',
+      title: 'Generar Diplomas',
+      description: 'Generar diplomas para actividades y competencias',
+      icon: '🎓',
+      permission: 'gestionar_actividades',
       superAdminOnly: false,
       onClick: handleNavigateToDiplomas,
-      color: 'secondary'
+      color: 'success'
     },
     {
       id: 'administradores',

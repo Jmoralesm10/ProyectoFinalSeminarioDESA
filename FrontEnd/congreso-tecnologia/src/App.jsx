@@ -15,6 +15,7 @@ import ListActivitiesPage from './pages/ListActivitiesPage';
 import CreateActivityPage from './pages/CreateActivityPage';
 import EditActivityPage from './pages/EditActivityPage';
 import ReportsPage from './pages/ReportsPage';
+import GenerateDiplomasPage from './pages/GenerateDiplomasPage';
 import AdminGuard from './components/AdminGuard/AdminGuard';
 import './App.css';
 
@@ -56,6 +57,11 @@ function App() {
                 <Route path="/generar-reportes" element={
                   <AdminGuard requiredPermission="ver_reportes">
                     <ReportsPage />
+                  </AdminGuard>
+                } />
+                <Route path="/generar-diplomas" element={
+                  <AdminGuard requiredPermission="gestion_actividades">
+                    <GenerateDiplomasPage />
                   </AdminGuard>
                 } />
         </Routes>

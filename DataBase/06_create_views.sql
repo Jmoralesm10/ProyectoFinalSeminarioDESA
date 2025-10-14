@@ -120,28 +120,42 @@ JOIN tb_tipos_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario;
 -- Vista de diplomas con información completa
 CREATE OR REPLACE VIEW vista_diplomas_completa AS
 SELECT 
-    d.id_diploma,
     d.id_usuario,
     d.id_actividad,
     u.nombre_usuario || ' ' || u.apellido_usuario as nombre_completo,
     u.email_usuario,
     a.nombre_actividad as actividad_nombre,
     a.tipo_actividad,
+    d.tipo_diploma,
     d.nombre_diploma,
     d.plantilla_path_diploma,
     d.archivo_path_diploma,
     d.fecha_generacion_diploma,
     d.fecha_descarga_diploma,
     d.enviado_email_diploma,
-    d.fecha_envio_email_diploma
+    d.fecha_envio_email_diploma,
+    generador.nombre_usuario || ' ' || generador.apellido_usuario as generado_por_nombre,
+    d.observaciones_diploma,
+    -- Información de posición si es ganador
+    rc.posicion_resultado,
+    rc.puntuacion_resultado,
+    CASE 
+        WHEN d.tipo_diploma = 'participacion' AND rc.posicion_resultado = 1 THEN '🥇 Primer Lugar'
+        WHEN d.tipo_diploma = 'participacion' AND rc.posicion_resultado = 2 THEN '🥈 Segundo Lugar'
+        WHEN d.tipo_diploma = 'participacion' AND rc.posicion_resultado = 3 THEN '🥉 Tercer Lugar'
+        WHEN d.tipo_diploma = 'participacion' THEN '📜 Participación'
+        WHEN d.tipo_diploma = 'congreso_general' THEN '🏆 Congreso General'
+        ELSE d.tipo_diploma
+    END as tipo_diploma_descripcion
 FROM tb_diplomas d
 JOIN tb_usuarios u ON d.id_usuario = u.id_usuario
-LEFT JOIN tb_actividades a ON d.id_actividad = a.id_actividad;
+LEFT JOIN tb_actividades a ON d.id_actividad = a.id_actividad
+LEFT JOIN tb_usuarios generador ON d.generado_por_usuario = generador.id_usuario
+LEFT JOIN tb_resultados_competencia rc ON d.id_usuario = rc.id_usuario AND d.id_actividad = rc.id_actividad;
 
 -- Vista de resultados de competencias
 CREATE OR REPLACE VIEW vista_resultados_competencia AS
 SELECT 
-    rc.id_resultado,
     rc.id_actividad,
     rc.id_usuario,
     a.nombre_actividad as competencia_nombre,
@@ -154,10 +168,22 @@ SELECT
     rc.fecha_resultado,
     rc.observaciones_resultado,
     a.fecha_inicio_actividad,
-    a.lugar_actividad
+    a.lugar_actividad,
+    ca.nombre_categoria as categoria_nombre,
+    -- Indicar si ya tiene diploma generado
+    CASE 
+        WHEN EXISTS(
+            SELECT 1 FROM tb_diplomas d 
+            WHERE d.id_usuario = rc.id_usuario 
+            AND d.id_actividad = rc.id_actividad
+            AND d.tipo_diploma = 'participacion'
+        ) THEN TRUE
+        ELSE FALSE
+    END as tiene_diploma_generado
 FROM tb_resultados_competencia rc
 JOIN tb_actividades a ON rc.id_actividad = a.id_actividad
 JOIN tb_usuarios u ON rc.id_usuario = u.id_usuario
+JOIN tb_categorias_actividad ca ON a.id_categoria = ca.id_categoria
 WHERE a.tipo_actividad = 'competencia';
 
 -- Vista de estadísticas generales
@@ -327,6 +353,75 @@ WHERE ca.estado_categoria = TRUE
 GROUP BY ca.id_categoria, ca.nombre_categoria, ca.descripcion_categoria
 ORDER BY total_actividades DESC;
 
+-- Vista de reporte de diplomas por actividad
+CREATE OR REPLACE VIEW vista_reporte_diplomas_actividad AS
+SELECT 
+    a.id_actividad,
+    a.nombre_actividad,
+    a.tipo_actividad,
+    a.fecha_inicio_actividad,
+    ca.nombre_categoria as categoria_nombre,
+    COUNT(DISTINCT d.id_usuario) as total_diplomas_generados,
+    -- Contar ganadores por posición
+    COUNT(CASE WHEN rc.posicion_resultado = 1 THEN 1 END) as diplomas_primer_lugar,
+    COUNT(CASE WHEN rc.posicion_resultado = 2 THEN 1 END) as diplomas_segundo_lugar,
+    COUNT(CASE WHEN rc.posicion_resultado = 3 THEN 1 END) as diplomas_tercer_lugar,
+    -- Contar diplomas de participación (excluyendo ganadores)
+    COUNT(CASE WHEN d.tipo_diploma = 'participacion' AND rc.posicion_resultado IS NULL THEN 1 END) as diplomas_participacion,
+    COUNT(CASE WHEN d.enviado_email_diploma = TRUE THEN 1 END) as diplomas_enviados,
+    COUNT(CASE WHEN d.enviado_email_diploma = FALSE THEN 1 END) as diplomas_pendientes_envio,
+    COUNT(CASE WHEN d.fecha_descarga_diploma IS NOT NULL THEN 1 END) as diplomas_descargados,
+    MAX(d.fecha_generacion_diploma) as ultima_generacion
+FROM tb_actividades a
+LEFT JOIN tb_diplomas d ON a.id_actividad = d.id_actividad
+LEFT JOIN tb_resultados_competencia rc ON d.id_usuario = rc.id_usuario AND d.id_actividad = rc.id_actividad
+JOIN tb_categorias_actividad ca ON a.id_categoria = ca.id_categoria
+WHERE a.estado_actividad = TRUE
+GROUP BY a.id_actividad, a.nombre_actividad, a.tipo_actividad, a.fecha_inicio_actividad, ca.nombre_categoria;
+
+-- Vista de reporte de diplomas del congreso
+CREATE OR REPLACE VIEW vista_reporte_diplomas_congreso AS
+SELECT 
+    DATE(d.fecha_generacion_diploma) as fecha_generacion,
+    COUNT(*) as total_diplomas_generados,
+    COUNT(CASE WHEN d.enviado_email_diploma = TRUE THEN 1 END) as diplomas_enviados,
+    COUNT(CASE WHEN d.enviado_email_diploma = FALSE THEN 1 END) as diplomas_pendientes_envio,
+    COUNT(CASE WHEN d.fecha_descarga_diploma IS NOT NULL THEN 1 END) as diplomas_descargados,
+    COUNT(DISTINCT d.generado_por_usuario) as administradores_generadores
+FROM tb_diplomas d
+WHERE d.tipo_diploma = 'congreso_general'
+GROUP BY DATE(d.fecha_generacion_diploma)
+ORDER BY fecha_generacion DESC;
+
+-- Vista de estadísticas de diplomas
+CREATE OR REPLACE VIEW vista_estadisticas_diplomas AS
+SELECT 
+    COUNT(*) as total_diplomas,
+    -- Contar ganadores por posición usando JOIN con resultados
+    COUNT(CASE WHEN rc.posicion_resultado = 1 THEN 1 END) as total_primer_lugar,
+    COUNT(CASE WHEN rc.posicion_resultado = 2 THEN 1 END) as total_segundo_lugar,
+    COUNT(CASE WHEN rc.posicion_resultado = 3 THEN 1 END) as total_tercer_lugar,
+    -- Contar diplomas de participación (excluyendo ganadores)
+    COUNT(CASE WHEN d.tipo_diploma = 'participacion' AND rc.posicion_resultado IS NULL THEN 1 END) as total_participacion,
+    COUNT(CASE WHEN d.tipo_diploma = 'congreso_general' THEN 1 END) as total_congreso_general,
+    COUNT(CASE WHEN d.enviado_email_diploma = TRUE THEN 1 END) as total_enviados,
+    COUNT(CASE WHEN d.enviado_email_diploma = FALSE THEN 1 END) as total_pendientes_envio,
+    COUNT(CASE WHEN d.fecha_descarga_diploma IS NOT NULL THEN 1 END) as total_descargados,
+    ROUND(
+        CASE 
+            WHEN COUNT(*) > 0 THEN (COUNT(CASE WHEN d.enviado_email_diploma = TRUE THEN 1 END)::decimal / COUNT(*)::decimal) * 100 
+            ELSE 0 
+        END, 2
+    ) as porcentaje_enviados,
+    ROUND(
+        CASE 
+            WHEN COUNT(*) > 0 THEN (COUNT(CASE WHEN d.fecha_descarga_diploma IS NOT NULL THEN 1 END)::decimal / COUNT(*)::decimal) * 100 
+            ELSE 0 
+        END, 2
+    ) as porcentaje_descargados
+FROM tb_diplomas d
+LEFT JOIN tb_resultados_competencia rc ON d.id_usuario = rc.id_usuario AND d.id_actividad = rc.id_actividad;
+
 -- Comentarios de las vistas
 COMMENT ON VIEW vista_usuarios_completa IS 'Vista completa de usuarios con información de tipo y datos adicionales';
 COMMENT ON VIEW vista_actividades_completa IS 'Vista completa de actividades con información de categoría y cupos disponibles';
@@ -342,3 +437,6 @@ COMMENT ON VIEW vista_administradores_completa IS 'Vista completa de administrad
 COMMENT ON VIEW vista_reporte_inscripciones_actividad IS 'Reporte de inscripciones por actividad con estadísticas';
 COMMENT ON VIEW vista_reporte_usuarios_por_colegio IS 'Reporte de usuarios agrupados por colegio';
 COMMENT ON VIEW vista_reporte_actividades_por_categoria IS 'Reporte de actividades agrupadas por categoría';
+COMMENT ON VIEW vista_reporte_diplomas_actividad IS 'Reporte de diplomas generados por actividad';
+COMMENT ON VIEW vista_reporte_diplomas_congreso IS 'Reporte de diplomas del congreso por fecha';
+COMMENT ON VIEW vista_estadisticas_diplomas IS 'Estadísticas generales de diplomas';

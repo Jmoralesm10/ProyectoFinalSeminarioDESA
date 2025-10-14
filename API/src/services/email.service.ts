@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import QRCode from 'qrcode';
 import fs from 'fs';
 import path from 'path';
+import { DiplomaEmailData, EnvioDiplomaResponse } from '../types/diploma.types';
 
 export class EmailService {
   private transporter: nodemailer.Transporter | undefined;
@@ -347,6 +348,222 @@ export class EmailService {
             </div>
             <div class="footer">
                 <p>Si tienes problemas, contacta a nuestro equipo de soporte.</p>
+                <p>© 2024 Congreso de Tecnología. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+  }
+
+  // =====================================================
+  // MÉTODOS PARA ENVÍO DE DIPLOMAS
+  // =====================================================
+
+  /**
+   * Enviar diploma por correo electrónico
+   */
+  async sendDiplomaEmail(diplomaData: DiplomaEmailData): Promise<{ success: boolean; message: string }> {
+    try {
+      const transporter = this.getTransporter();
+      if (!transporter) {
+        return {
+          success: false,
+          message: 'Servicio de correo no configurado'
+        };
+      }
+
+      const subject = this.getDiplomaEmailSubject(diplomaData.diploma);
+      const htmlContent = this.getDiplomaEmailTemplate(diplomaData);
+
+      const mailOptions: nodemailer.SendMailOptions = {
+        from: `"Congreso de Tecnología 2024" <${process.env['SMTP_USER']}>`,
+        to: diplomaData.usuario.email,
+        subject: subject,
+        html: htmlContent,
+        attachments: []
+      };
+
+      // Agregar archivo de diploma como adjunto si existe
+      if (diplomaData.archivo_path && fs.existsSync(diplomaData.archivo_path)) {
+        mailOptions.attachments?.push({
+          filename: `diploma_${diplomaData.usuario.nombre}_${diplomaData.diploma.tipo}.pdf`,
+          path: diplomaData.archivo_path,
+          contentType: 'application/pdf'
+        });
+      }
+
+      await transporter.sendMail(mailOptions);
+      
+      console.log(`✅ Diploma enviado exitosamente a: ${diplomaData.usuario.email}`);
+      return {
+        success: true,
+        message: 'Diploma enviado exitosamente'
+      };
+    } catch (error) {
+      console.error('❌ Error al enviar diploma por correo:', error);
+      return {
+        success: false,
+        message: 'Error al enviar diploma: ' + (error as Error).message
+      };
+    }
+  }
+
+  /**
+   * Enviar múltiples diplomas por correo electrónico
+   */
+  async sendMultipleDiplomas(diplomasData: DiplomaEmailData[]): Promise<EnvioDiplomaResponse> {
+    const resultado: EnvioDiplomaResponse = {
+      success: true,
+      message: 'Proceso de envío de diplomas completado',
+      diplomas_enviados: 0,
+      diplomas_fallidos: 0,
+      detalles_envio: []
+    };
+
+    for (const diplomaData of diplomasData) {
+      try {
+        const envioResult = await this.sendDiplomaEmail(diplomaData);
+        
+        resultado.detalles_envio.push({
+          email: diplomaData.usuario.email,
+          nombre: diplomaData.usuario.nombre + ' ' + diplomaData.usuario.apellido,
+          tipo_diploma: diplomaData.diploma.tipo,
+          success: envioResult.success,
+          message: envioResult.message
+        });
+
+        if (envioResult.success) {
+          resultado.diplomas_enviados++;
+        } else {
+          resultado.diplomas_fallidos++;
+        }
+      } catch (error) {
+        resultado.diplomas_fallidos++;
+        resultado.detalles_envio.push({
+          email: diplomaData.usuario.email,
+          nombre: diplomaData.usuario.nombre + ' ' + diplomaData.usuario.apellido,
+          tipo_diploma: diplomaData.diploma.tipo,
+          success: false,
+          message: 'Error interno: ' + (error as Error).message
+        });
+      }
+    }
+
+    if (resultado.diplomas_fallidos > 0) {
+      resultado.success = false;
+      resultado.message = `${resultado.diplomas_enviados} diplomas enviados, ${resultado.diplomas_fallidos} fallaron`;
+    }
+
+    return resultado;
+  }
+
+  /**
+   * Obtener asunto del email de diploma
+   */
+  private getDiplomaEmailSubject(diploma: any): string {
+    const tipoDiploma = diploma.tipo;
+    const actividad = diploma.actividad;
+    const posicion = diploma.posicion;
+
+    if (tipoDiploma === 'congreso_general') {
+      return '🏆 Tu Diploma de Participación - Congreso de Tecnología 2024';
+    }
+
+    if (posicion) {
+      const posicionTexto = posicion === 1 ? 'Primer Lugar' : 
+                           posicion === 2 ? 'Segundo Lugar' : 
+                           posicion === 3 ? 'Tercer Lugar' : 'Participación';
+      return `🥇 Tu Diploma de ${posicionTexto} - ${actividad}`;
+    }
+
+    return `📜 Tu Diploma de Participación - ${actividad}`;
+  }
+
+  /**
+   * Obtener plantilla HTML para email de diploma
+   */
+  private getDiplomaEmailTemplate(diplomaData: DiplomaEmailData): string {
+    const { usuario, diploma } = diplomaData;
+    const tipoDiploma = diploma.tipo;
+    const actividad = diploma.actividad;
+    const posicion = diploma.posicion;
+
+    let tituloDiploma = '';
+    let descripcionDiploma = '';
+    let emoji = '📜';
+
+    if (tipoDiploma === 'congreso_general') {
+      tituloDiploma = 'Diploma de Participación General';
+      descripcionDiploma = 'por tu participación en el Congreso de Tecnología 2024';
+      emoji = '🏆';
+    } else if (posicion) {
+      const posicionTexto = posicion === 1 ? 'Primer Lugar' : 
+                           posicion === 2 ? 'Segundo Lugar' : 
+                           posicion === 3 ? 'Tercer Lugar' : 'Participación';
+      tituloDiploma = `Diploma de ${posicionTexto}`;
+      descripcionDiploma = `por obtener el ${posicionTexto.toLowerCase()} en ${actividad}`;
+      emoji = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : '🥉';
+    } else {
+      tituloDiploma = 'Diploma de Participación';
+      descripcionDiploma = `por tu participación en ${actividad}`;
+      emoji = '📜';
+    }
+
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${tituloDiploma}</title>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #007bff 0%, #28a745 100%); color: white; padding: 40px; text-align: center; border-radius: 15px 15px 0 0; }
+            .content { background: #f8f9fa; padding: 40px; border-radius: 0 0 15px 15px; }
+            .diploma-card { background: white; border: 3px solid #007bff; border-radius: 15px; padding: 30px; margin: 20px 0; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+            .diploma-title { font-size: 28px; font-weight: bold; color: #007bff; margin-bottom: 10px; }
+            .diploma-subtitle { font-size: 18px; color: #6c757d; margin-bottom: 20px; }
+            .user-name { font-size: 24px; font-weight: bold; color: #28a745; margin: 20px 0; }
+            .activity-name { font-size: 20px; color: #007bff; font-weight: bold; margin: 15px 0; }
+            .position-badge { display: inline-block; background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; padding: 10px 20px; border-radius: 25px; font-weight: bold; margin: 10px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #6c757d; font-size: 14px; }
+            .attachment-info { background: #e9ecef; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #007bff; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>${emoji} ¡Felicitaciones!</h1>
+                <p>Congreso de Tecnología 2024</p>
+            </div>
+            <div class="content">
+                <h2>Hola ${usuario.nombre} ${usuario.apellido}</h2>
+                <p>Nos complace informarte que has recibido un diploma ${descripcionDiploma}.</p>
+                
+                <div class="diploma-card">
+                    <div class="diploma-title">${emoji} ${tituloDiploma}</div>
+                    <div class="diploma-subtitle">se otorga a</div>
+                    <div class="user-name">${usuario.nombre} ${usuario.apellido}</div>
+                    <div class="diploma-subtitle">${descripcionDiploma}</div>
+                    ${actividad ? `<div class="activity-name">${actividad}</div>` : ''}
+                    ${posicion ? `<div class="position-badge">${posicion === 1 ? '🥇 Primer Lugar' : posicion === 2 ? '🥈 Segundo Lugar' : '🥉 Tercer Lugar'}</div>` : ''}
+                    <div style="margin-top: 20px; color: #6c757d; font-size: 14px;">
+                        Fecha de generación: ${new Date(diploma.fecha_generacion).toLocaleDateString('es-GT')}
+                    </div>
+                </div>
+
+                <div class="attachment-info">
+                    <h3>📎 Archivo Adjunto</h3>
+                    <p>Tu diploma oficial se encuentra adjunto a este correo en formato PDF. Puedes descargarlo y guardarlo para tus registros.</p>
+                </div>
+
+                <p><strong>¡Gracias por tu participación!</strong></p>
+                <p>Este diploma es un reconocimiento a tu esfuerzo y dedicación. Te animamos a compartirlo en tus redes sociales y con tu familia.</p>
+            </div>
+            <div class="footer">
+                <p>Si tienes alguna pregunta sobre tu diploma, no dudes en contactarnos.</p>
                 <p>© 2024 Congreso de Tecnología. Todos los derechos reservados.</p>
             </div>
         </div>
