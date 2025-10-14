@@ -127,30 +127,37 @@ CREATE TABLE tb_asistencia_actividad (
 -- Tabla de diplomas
 DROP TABLE IF EXISTS tb_diplomas CASCADE;
 CREATE TABLE tb_diplomas (
-    id_diploma UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     id_usuario UUID NOT NULL REFERENCES tb_usuarios(id_usuario),
-    id_actividad INTEGER REFERENCES tb_actividades(id_actividad),
+    id_actividad INTEGER REFERENCES tb_actividades(id_actividad), -- NULL para diplomas del congreso general
+    tipo_diploma VARCHAR(50) NOT NULL CHECK (tipo_diploma IN ('participacion', 'congreso_general')),
     nombre_diploma VARCHAR(200) NOT NULL,
     plantilla_path_diploma VARCHAR(500),
     archivo_path_diploma VARCHAR(500),
     fecha_generacion_diploma TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_descarga_diploma TIMESTAMP,
     enviado_email_diploma BOOLEAN DEFAULT FALSE,
-    fecha_envio_email_diploma TIMESTAMP
+    fecha_envio_email_diploma TIMESTAMP,
+    generado_por_usuario UUID REFERENCES tb_usuarios(id_usuario), -- Usuario administrador que generó el diploma
+    observaciones_diploma TEXT,
+    -- Clave primaria compuesta para evitar duplicados
+    PRIMARY KEY (id_usuario, id_actividad, tipo_diploma)
 );
 
 -- Tabla de resultados de competencias
 DROP TABLE IF EXISTS tb_resultados_competencia CASCADE;
 CREATE TABLE tb_resultados_competencia (
-    id_resultado UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     id_actividad INTEGER NOT NULL REFERENCES tb_actividades(id_actividad),
     id_usuario UUID NOT NULL REFERENCES tb_usuarios(id_usuario),
-    posicion_resultado INTEGER NOT NULL CHECK (posicion_resultado > 0),
+    posicion_resultado INTEGER NOT NULL CHECK (posicion_resultado IN (1, 2, 3)), -- Solo primeros 3 lugares
     puntuacion_resultado DECIMAL(10,2),
     descripcion_proyecto_resultado TEXT,
     foto_proyecto_path_resultado VARCHAR(500),
     fecha_resultado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    observaciones_resultado TEXT
+    observaciones_resultado TEXT,
+    -- Clave primaria compuesta: un usuario solo puede tener una posición por competencia
+    PRIMARY KEY (id_actividad, id_usuario),
+    -- Constraint para asegurar que solo hay un ganador por posición por competencia
+    UNIQUE (id_actividad, posicion_resultado)
 );
 
 -- Tabla de FAQ (Preguntas Frecuentes)

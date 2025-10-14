@@ -146,7 +146,7 @@
 /* Grid de actividades */
 .activities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 2rem;
 }
 
@@ -259,6 +259,13 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .activities-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .activities-list-container {
     padding: 1rem 0.5rem;
