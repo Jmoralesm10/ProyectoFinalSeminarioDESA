@@ -5,9 +5,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { isSuperAdmin } from '../../utils/adminUtils';
 
 const AdminGuard = ({ children, fallback = null, requiredPermission = null }) => {
-  const { user, isAuthenticated, isAdmin, hasPermission, permissionsLoading } = useAuth();
+  const { user, isAuthenticated, isAdmin, hasPermission, permissionsLoading, adminPermissions } = useAuth();
   const [hasAccess, setHasAccess] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -27,12 +28,9 @@ const AdminGuard = ({ children, fallback = null, requiredPermission = null }) =>
         }
 
         // Verificar si es super admin (acceso total)
-        const isSuperAdmin = user?.permisos_especiales && Array.isArray(user.permisos_especiales) &&
-          user.permisos_especiales.some(item => 
-            typeof item === 'object' && item.rol_administrador === 'super_admin'
-          );
+        const isSuperAdminUser = isSuperAdmin(user, adminPermissions);
 
-        if (isSuperAdmin) {
+        if (isSuperAdminUser) {
           setHasAccess(true);
         } else if (requiredPermission) {
           // Si se requiere un permiso específico, verificarlo

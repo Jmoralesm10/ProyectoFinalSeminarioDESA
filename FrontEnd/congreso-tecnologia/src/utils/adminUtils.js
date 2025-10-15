@@ -6,16 +6,23 @@
 /**
  * Verifica si un usuario es super administrador
  * @param {Object} user - Objeto usuario
+ * @param {Object} adminPermissions - Permisos de administrador de la API
  * @returns {boolean} - true si es super admin, false en caso contrario
  */
-export const isSuperAdmin = (user) => {
-  if (!user || !user.permisos_especiales || !Array.isArray(user.permisos_especiales)) {
-    return false;
+export const isSuperAdmin = (user, adminPermissions = null) => {
+  // Primero verificar en adminPermissions (datos de la API)
+  if (adminPermissions && adminPermissions.rol_administrador === 'super_admin') {
+    return true;
   }
   
-  return user.permisos_especiales.some(item => 
-    typeof item === 'object' && item.rol_administrador === 'super_admin'
-  );
+  // Fallback: verificar en permisos_especiales (localStorage)
+  if (user && user.permisos_especiales && Array.isArray(user.permisos_especiales)) {
+    return user.permisos_especiales.some(item => 
+      typeof item === 'object' && item.rol_administrador === 'super_admin'
+    );
+  }
+  
+  return false;
 };
 
 /**

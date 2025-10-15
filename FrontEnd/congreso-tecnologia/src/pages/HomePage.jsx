@@ -3,6 +3,10 @@ import Header from '../components/Header/Header';
 import Hero from '../components/Hero/Hero';
 import InfoSection from '../components/InfoSection/InfoSection';
 import ActivitiesList from '../components/ActivitiesList/ActivitiesList';
+import Agenda from '../components/Agenda/Agenda';
+import Speakers from '../components/Speakers/Speakers';
+import CareerInfo from '../components/CareerInfo/CareerInfo';
+import FAQ from '../components/FAQ/FAQ';
 import { useAuth } from '../hooks/useAuth';
 import './HomePage.css';
 
@@ -45,18 +49,30 @@ const HomePage = () => {
         <Hero />
         <InfoSection />
         
-        {/* Sección de Actividades */}
-        <section id="actividades" className="activities-section">
-          <div className="section-header">
-            <h2>Actividades del Congreso</h2>
-            <p>Explora los talleres y competencias disponibles</p>
-          </div>
-          <ActivitiesList 
-            isAuthenticated={isAuthenticated}
-            userInscriptions={userInscriptions}
-            user={user}
-          />
-        </section>
+            {/* Sección de Actividades */}
+            <section id="actividades" className="activities-section">
+              <div className="section-header">
+                <h2>Actividades del Congreso</h2>
+                <p>Explora los talleres y competencias disponibles</p>
+              </div>
+              <ActivitiesList 
+                isAuthenticated={isAuthenticated}
+                userInscriptions={userInscriptions}
+                user={user}
+              />
+            </section>
+
+            {/* Sección de Agenda */}
+            <Agenda />
+
+            {/* Sección de Ponentes */}
+            <Speakers />
+
+            {/* Sección de Información de Carrera */}
+            <CareerInfo />
+
+            {/* Sección de Preguntas Frecuentes */}
+            <FAQ />
       </main>
     </div>
   );

@@ -112,26 +112,36 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
     switch (activeTab) {
       case 'actividades':
         return (
-          <div className="tab-content">
-            <h4>Actividades Inscritas</h4>
+          <div>
             {userHistory.actividades_inscritas && userHistory.actividades_inscritas.length > 0 ? (
               <div className="history-list">
                 {userHistory.actividades_inscritas.map((actividad, index) => (
                   <div key={index} className="history-item">
-                    <div className="item-header">
-                      <span className="item-title">{actividad.nombre_actividad || 'Actividad'}</span>
-                      <span className="item-date">{formatDate(actividad.fecha_inscripcion)}</span>
+                    <div className="history-item-header">
+                      <div className="history-activity">
+                        <div className="history-activity-name">{actividad.nombre_actividad || 'Actividad'}</div>
+                        <span className="history-activity-type taller">Taller</span>
+                      </div>
+                      <span className="history-detail-value">{formatDate(actividad.fecha_inscripcion)}</span>
                     </div>
-                    <div className="item-details">
-                      <p><strong>Estado:</strong> {actividad.estado_inscripcion || 'N/A'}</p>
-                      <p><strong>Descripción:</strong> {actividad.descripcion_actividad || 'Sin descripción'}</p>
+                    <div className="history-details">
+                      <div className="history-detail">
+                        <span className="history-detail-label">Estado</span>
+                        <span className="history-detail-value">{actividad.estado_inscripcion || 'N/A'}</span>
+                      </div>
+                      <div className="history-detail">
+                        <span className="history-detail-label">Descripción</span>
+                        <span className="history-detail-value">{actividad.descripcion_actividad || 'Sin descripción'}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="no-data">
-                <p>No hay actividades inscritas registradas.</p>
+              <div className="no-data-container">
+                <div className="no-data-icon">📚</div>
+                <div className="no-data-title">Sin Actividades</div>
+                <div className="no-data-message">No hay actividades inscritas registradas.</div>
               </div>
             )}
           </div>
@@ -139,30 +149,40 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
 
       case 'asistencias':
         return (
-          <div className="tab-content">
-            <h4>Registro de Asistencias</h4>
+          <div>
             {userHistory.asistencias && userHistory.asistencias.length > 0 ? (
               <div className="history-list">
                 {userHistory.asistencias.map((asistencia, index) => (
                   <div key={index} className="history-item">
-                    <div className="item-header">
-                      <span className="item-title">{asistencia.nombre_actividad || 'Asistencia'}</span>
-                      <span className="item-date">{formatDate(asistencia.fecha_asistencia)}</span>
+                    <div className="history-item-header">
+                      <div className="history-activity">
+                        <div className="history-activity-name">{asistencia.nombre_actividad || 'Asistencia'}</div>
+                        <span className={`history-activity-type ${asistencia.presente ? 'competencia' : 'taller'}`}>
+                          {asistencia.presente ? 'Presente' : 'Ausente'}
+                        </span>
+                      </div>
+                      <span className="history-detail-value">{formatDate(asistencia.fecha_asistencia)}</span>
                     </div>
-                    <div className="item-details">
-                      <p><strong>Estado:</strong> 
-                        <span className={`badge badge-${asistencia.presente ? 'success' : 'danger'}`}>
+                    <div className="history-details">
+                      <div className="history-detail">
+                        <span className="history-detail-label">Estado</span>
+                        <span className={`history-detail-value ${asistencia.presente ? 'text-success' : 'text-danger'}`}>
                           {asistencia.presente ? '✅ Presente' : '❌ Ausente'}
                         </span>
-                      </p>
-                      <p><strong>Hora de registro:</strong> {formatDate(asistencia.fecha_registro)}</p>
+                      </div>
+                      <div className="history-detail">
+                        <span className="history-detail-label">Hora de registro</span>
+                        <span className="history-detail-value">{formatDate(asistencia.fecha_registro)}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="no-data">
-                <p>No hay registros de asistencia.</p>
+              <div className="no-data-container">
+                <div className="no-data-icon">✅</div>
+                <div className="no-data-title">Sin Asistencias</div>
+                <div className="no-data-message">No hay registros de asistencia.</div>
               </div>
             )}
           </div>
@@ -170,26 +190,36 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
 
       case 'administracion':
         return (
-          <div className="tab-content">
-            <h4>Historial Administrativo</h4>
+          <div>
             {userHistory.historial_admin && userHistory.historial_admin.length > 0 ? (
               <div className="history-list">
                 {userHistory.historial_admin.map((admin, index) => (
                   <div key={index} className="history-item">
-                    <div className="item-header">
-                      <span className="item-title">{admin.accion || 'Acción administrativa'}</span>
-                      <span className="item-date">{formatDate(admin.fecha_accion)}</span>
+                    <div className="history-item-header">
+                      <div className="history-activity">
+                        <div className="history-activity-name">{admin.accion || 'Acción administrativa'}</div>
+                        <span className="history-activity-type taller">Admin</span>
+                      </div>
+                      <span className="history-detail-value">{formatDate(admin.fecha_accion)}</span>
                     </div>
-                    <div className="item-details">
-                      <p><strong>Rol:</strong> {admin.rol_administrador || 'N/A'}</p>
-                      <p><strong>Descripción:</strong> {admin.descripcion || 'Sin descripción'}</p>
+                    <div className="history-details">
+                      <div className="history-detail">
+                        <span className="history-detail-label">Rol</span>
+                        <span className="history-detail-value">{admin.rol_administrador || 'N/A'}</span>
+                      </div>
+                      <div className="history-detail">
+                        <span className="history-detail-label">Descripción</span>
+                        <span className="history-detail-value">{admin.descripcion || 'Sin descripción'}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="no-data">
-                <p>No hay historial administrativo registrado.</p>
+              <div className="no-data-container">
+                <div className="no-data-icon">👨‍💼</div>
+                <div className="no-data-title">Sin Historial Admin</div>
+                <div className="no-data-message">No hay historial administrativo registrado.</div>
               </div>
             )}
           </div>
@@ -204,7 +234,7 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content user-history-modal">
+      <div className="modal-content">
         <div className="modal-header">
           <h2>Historial de Usuario</h2>
           <button className="close-button" onClick={onClose}>✕</button>
@@ -217,6 +247,14 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
               value={searchEmail}
               onChange={(e) => setSearchEmail(e.target.value)}
               required
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '2px solid #e9ecef',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                marginBottom: '1rem'
+              }}
             />
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading ? 'Buscando...' : 'Buscar Usuario'}
@@ -226,40 +264,73 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
           {error && <div className="error-message">{error}</div>}
 
           {foundUser && (
-            <div className="user-details-card">
+            <div className="user-info">
               <h3>Usuario Encontrado:</h3>
-              <div className="user-info">
-                <p><strong>Nombre:</strong> {foundUser.nombre_usuario} {foundUser.apellido_usuario}</p>
-                <p><strong>Email:</strong> {foundUser.email_usuario}</p>
-                <p>
-                  <strong>Estado:</strong> 
-                  <span className={`badge badge-${foundUser.estado_usuario ? 'success' : 'danger'}`}>
+              <div className="user-details">
+                <div className="user-detail">
+                  <span className="user-detail-label">Nombre</span>
+                  <span className="user-detail-value">{foundUser.nombre_usuario} {foundUser.apellido_usuario}</span>
+                </div>
+                <div className="user-detail">
+                  <span className="user-detail-label">Email</span>
+                  <span className="user-detail-value">{foundUser.email_usuario}</span>
+                </div>
+                <div className="user-detail">
+                  <span className="user-detail-label">Estado</span>
+                  <span className={`user-detail-value ${foundUser.estado_usuario ? 'text-success' : 'text-danger'}`}>
                     {foundUser.estado_usuario ? '✅ Activo' : '❌ Inactivo'}
                   </span>
-                </p>
-                <p><strong>Tipo:</strong> {foundUser.tipo_usuario?.nombre_tipo_usuario || foundUser.tipo_usuario || 'N/A'}</p>
+                </div>
+                <div className="user-detail">
+                  <span className="user-detail-label">Tipo</span>
+                  <span className="user-detail-value">{foundUser.tipo_usuario?.nombre_tipo_usuario || foundUser.tipo_usuario || 'N/A'}</span>
+                </div>
               </div>
             </div>
           )}
 
           {userHistory && (
             <div className="history-section">
-              <div className="tabs">
+              <div className="history-header">
+                <h3>Historial del Usuario</h3>
+                <div className="history-count">
+                  {activeTab === 'actividades' && userHistory.actividades_inscritas?.length || 0}
+                  {activeTab === 'asistencias' && userHistory.asistencias?.length || 0}
+                  {activeTab === 'administracion' && userHistory.historial_admin?.length || 0}
+                </div>
+              </div>
+              
+              <div className="tabs" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                 <button 
-                  className={`tab-button ${activeTab === 'actividades' ? 'active' : ''}`}
+                  className={`btn-primary ${activeTab === 'actividades' ? 'active' : ''}`}
                   onClick={() => setActiveTab('actividades')}
+                  style={{ 
+                    background: activeTab === 'actividades' ? '#D92027' : '#1A365D',
+                    fontSize: '0.8rem',
+                    padding: '0.5rem 1rem'
+                  }}
                 >
                   📚 Actividades
                 </button>
                 <button 
-                  className={`tab-button ${activeTab === 'asistencias' ? 'active' : ''}`}
+                  className={`btn-primary ${activeTab === 'asistencias' ? 'active' : ''}`}
                   onClick={() => setActiveTab('asistencias')}
+                  style={{ 
+                    background: activeTab === 'asistencias' ? '#D92027' : '#1A365D',
+                    fontSize: '0.8rem',
+                    padding: '0.5rem 1rem'
+                  }}
                 >
                   ✅ Asistencias
                 </button>
                 <button 
-                  className={`tab-button ${activeTab === 'administracion' ? 'active' : ''}`}
+                  className={`btn-primary ${activeTab === 'administracion' ? 'active' : ''}`}
                   onClick={() => setActiveTab('administracion')}
+                  style={{ 
+                    background: activeTab === 'administracion' ? '#D92027' : '#1A365D',
+                    fontSize: '0.8rem',
+                    padding: '0.5rem 1rem'
+                  }}
                 >
                   👨‍💼 Administración
                 </button>
@@ -268,6 +339,12 @@ const UserHistoryModal = ({ isOpen, onClose }) => {
               {renderTabContent()}
             </div>
           )}
+        </div>
+        
+        <div className="modal-footer">
+          <button className="btn-primary" onClick={onClose}>
+            Cerrar
+          </button>
         </div>
       </div>
     </div>

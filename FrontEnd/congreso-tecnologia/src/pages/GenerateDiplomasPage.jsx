@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import './GenerateDiplomasPage.css';
 
 const GenerateDiplomasPage = () => {
   const navigate = useNavigate();
-  const { getAuthToken } = useAuth();
+  const { getAuthToken, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -291,16 +291,18 @@ const GenerateDiplomasPage = () => {
 
   return (
     <div className="generate-diplomas-page">
-      <div className="page-header">
-        <button 
-          className="back-button"
-          onClick={() => navigate('/admin-panel')}
-        >
-          ← Volver al Panel
-        </button>
-        <h1>🎓 Generar Diplomas</h1>
-        <p>Selecciona una actividad y registra los ganadores para generar diplomas automáticamente</p>
-      </div>
+      <div className="diploma-container">
+        <div className="management-header">
+          <Link to="/admin-panel" className="back-button">
+            ← Volver al Panel Admin
+          </Link>
+          <h1>🎓 Generar Diplomas</h1>
+          <p>Selecciona una actividad y registra los ganadores para generar diplomas automáticamente</p>
+          <div className="management-info">
+            <div className="management-badge">🎓 Generar Diplomas</div>
+            <div className="management-email">{user?.email || 'Usuario'}</div>
+          </div>
+        </div>
 
       {error && (
         <div className="error-message">
@@ -670,6 +672,7 @@ const GenerateDiplomasPage = () => {
           <p>Generando diplomas...</p>
         </div>
       )}
+      </div>
     </div>
   );
 };

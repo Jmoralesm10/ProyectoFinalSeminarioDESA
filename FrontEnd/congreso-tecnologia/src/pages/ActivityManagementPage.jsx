@@ -148,29 +148,39 @@ const ActivityManagementPage = () => {
   return (
     <AdminGuard>
       <div className="activity-management-page">
-        <header className="page-header">
-          <Link to="/admin-panel" className="back-button">
-            <span>←</span> Volver al Panel de Administración
-          </Link>
-          <h1>Gestión de Actividades</h1>
-        </header>
+        <div className="activity-container">
+          <header className="management-header">
+            <Link to="/admin-panel" className="back-button">
+              <span>←</span> Volver al Panel de Administración
+            </Link>
+            <h1>🎯 Gestión de Actividades</h1>
+            <p>Administra actividades, talleres y competencias del congreso</p>
+            <div className="management-info">
+              <span className="management-badge">🎯 Administrador de Actividades</span>
+              <span className="management-email">{user?.email_usuario}</span>
+            </div>
+          </header>
 
-        <div className="features-grid">
-          {activityManagementFeatures.map((feature) => (
-            hasPermission(feature.permission) && (
-              <div 
-                key={feature.id} 
-                className={`feature-card ${feature.status || ''}`}
-                onClick={feature.onClick}
-              >
-                <div className="feature-icon">{feature.icon}</div>
-                <h2 className="feature-title">{feature.title}</h2>
-                <p className="feature-description">{feature.description}</p>
-                <div className="feature-endpoint">{feature.endpoint}</div>
-                {feature.status === 'completed' && <span className="feature-status">✅ Completado</span>}
-              </div>
-            )
-          ))}
+          <div className="management-features">
+            <h2>🎯 Gestión de Actividades</h2>
+            <div className="features-grid">
+              {activityManagementFeatures.map((feature) => (
+                hasPermission(feature.permission) && (
+                  <button
+                    key={feature.id}
+                    className={`feature-btn ${feature.id === 'list-activities' ? 'primary' : 'secondary'}`}
+                    onClick={feature.onClick}
+                  >
+                    <div className="feature-icon">{feature.icon}</div>
+                    <div className="feature-content">
+                      <h3>{feature.title}</h3>
+                      <p>{feature.description}</p>
+                    </div>
+                  </button>
+                )
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Tablas de Inscripciones y Estadísticas */}

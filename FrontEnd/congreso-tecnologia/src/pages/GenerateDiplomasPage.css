@@ -4,61 +4,92 @@
    ===================================================== */
 
 .generate-diplomas-page {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f8f9fa;
+  background: #f8f9fa;
+  padding: 2rem 1rem;
+  padding-top: 120px;
   min-height: 100vh;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.diploma-container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* =====================================================
    HEADER DE LA PÁGINA
    ===================================================== */
 
-.page-header {
-  text-align: center;
-  margin-bottom: 2rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, #1A365D 0%, #2C3E50 100%);
+.management-header {
+  background: #1A365D;
   color: white;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(26, 54, 93, 0.3);
+  padding: 2rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
   position: relative;
+  box-shadow: 0 4px 20px rgba(26, 54, 93, 0.2);
+  text-align: center;
 }
 
-.back-button {
+.management-header .back-button {
   position: absolute;
-  left: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.2);
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
+  border-radius: 25px;
+  text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.3);
+.management-header .back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
 }
 
-.page-header h1 {
-  font-size: 2.2rem;
-  margin: 0 0 0.5rem 0;
+.management-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  color: white;
 }
 
-.page-header p {
-  font-size: 1rem;
-  margin: 0;
+.management-header p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
   opacity: 0.9;
-  font-weight: 300;
+  color: white;
+}
+
+.management-info {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.management-badge {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.management-email {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
 }
 
 /* =====================================================
@@ -66,28 +97,28 @@
    ===================================================== */
 
 .error-message {
-  background-color: #f8d7da;
-  color: #721c24;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
-  border-left: 4px solid #D92027;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-weight: 500;
 }
 
 .success-message {
-  background-color: #d4edda;
-  color: #155724;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #059669;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
-  border-left: 4px solid #28a745;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-weight: 500;
 }
 
@@ -117,7 +148,7 @@
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: white;
-  border-radius: 15px;
+  border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -183,7 +214,7 @@
 .step-content {
   background: white;
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -487,23 +518,24 @@
 .btn-secondary {
   padding: 0.75rem 2rem;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: inherit;
+  box-shadow: 0 4px 15px rgba(26, 54, 93, 0.3);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #1A365D, #2C3E50);
+  background: linear-gradient(135deg, #1A365D, #2C5282);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2C3E50, #1A365D);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(26, 54, 93, 0.3);
+  background: linear-gradient(135deg, #D92027, #B81D22);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 32, 39, 0.4);
 }
 
 .btn-primary:disabled {
@@ -514,14 +546,14 @@
 }
 
 .btn-secondary {
-  background: #6c757d;
+  background: linear-gradient(135deg, #64748b, #475569);
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #5a6268;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+  background: linear-gradient(135deg, #D92027, #B81D22);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 32, 39, 0.4);
 }
 
 /* =====================================================
@@ -565,101 +597,6 @@
 }
 
 /* =====================================================
-   RESPONSIVE DESIGN
-   ===================================================== */
-
-@media (max-width: 768px) {
-  .generate-diplomas-page {
-    padding: 1rem;
-  }
-
-  .page-header {
-    padding: 1.5rem;
-  }
-
-  .back-button {
-    position: static;
-    transform: none;
-    margin-bottom: 1rem;
-    align-self: flex-start;
-  }
-
-  .page-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .steps-indicator {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .step:not(:last-child)::after {
-    display: none;
-  }
-
-  .activities-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .step-content {
-    padding: 1.5rem;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .generate-diplomas-page {
-    padding: 0.5rem;
-  }
-
-  .page-header {
-    padding: 1rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .activity-card {
-    padding: 1rem;
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .activity-icon {
-    font-size: 2rem;
-  }
-
-  .step-content {
-    padding: 1rem;
-  }
-
-  .place-section {
-    padding: 1rem;
-  }
-
-  .success-content {
-    padding: 1rem;
-  }
-
-  .generated-info {
-    padding: 1rem;
-  }
-}
-
-/* =====================================================
    ESTILOS PARA INFORMACIÓN DE ACTIVIDAD
    ===================================================== */
 
@@ -670,9 +607,10 @@
 .info-card {
   background: #ffffff;
   border: 1px solid #e9ecef;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .info-card h4 {
@@ -708,8 +646,9 @@
 .diploma-info {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .diploma-info h4 {
@@ -746,13 +685,112 @@
   font-size: 0.95rem;
 }
 
-/* Responsive para nueva información */
+/* =====================================================
+   RESPONSIVE DESIGN
+   ===================================================== */
+
 @media (max-width: 768px) {
+  .generate-diplomas-page {
+    padding: 1rem;
+    padding-top: 100px;
+  }
+
+  .management-header {
+    padding: 1.5rem;
+  }
+
+  .management-header .back-button {
+    position: static;
+    transform: none;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+
+  .management-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .management-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .steps-indicator {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .step:not(:last-child)::after {
+    display: none;
+  }
+
+  .activities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .step-content {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
   .info-grid {
     grid-template-columns: 1fr;
   }
   
   .diploma-features {
     gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .generate-diplomas-page {
+    padding: 0.5rem;
+    padding-top: 80px;
+  }
+
+  .management-header {
+    padding: 1rem;
+  }
+
+  .management-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .activity-card {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .activity-icon {
+    font-size: 2rem;
+  }
+
+  .step-content {
+    padding: 1rem;
+  }
+
+  .place-section {
+    padding: 1rem;
+  }
+
+  .success-content {
+    padding: 1rem;
+  }
+
+  .generated-info {
+    padding: 1rem;
   }
 }

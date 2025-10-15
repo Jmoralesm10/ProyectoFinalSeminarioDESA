@@ -173,7 +173,7 @@ CREATE TABLE tb_faq (
     fecha_actualizacion_faq TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla de información del congreso
+-- Tabla de información general del congreso
 DROP TABLE IF EXISTS tb_informacion_congreso CASCADE;
 CREATE TABLE tb_informacion_congreso (
     id_informacion SERIAL PRIMARY KEY,
@@ -182,12 +182,49 @@ CREATE TABLE tb_informacion_congreso (
     fecha_inicio_informacion DATE,
     fecha_fin_informacion DATE,
     lugar_informacion VARCHAR(200),
-    agenda_informacion TEXT,
-    ponentes_invitados_informacion TEXT,
     informacion_carrera_informacion TEXT,
     estado_informacion BOOLEAN DEFAULT TRUE,
     fecha_creacion_informacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion_informacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de agenda del congreso
+DROP TABLE IF EXISTS tb_agenda_congreso CASCADE;
+CREATE TABLE tb_agenda_congreso (
+    id_agenda SERIAL PRIMARY KEY,
+    id_informacion INTEGER NOT NULL REFERENCES tb_informacion_congreso(id_informacion),
+    dia_agenda INTEGER NOT NULL CHECK (dia_agenda IN (1, 2, 3, 4, 5)), -- Día del congreso (1, 2, 3, etc.)
+    hora_inicio_agenda TIME NOT NULL,
+    hora_fin_agenda TIME NOT NULL,
+    titulo_actividad_agenda VARCHAR(200) NOT NULL,
+    descripcion_actividad_agenda TEXT,
+    tipo_actividad_agenda VARCHAR(50) CHECK (tipo_actividad_agenda IN ('inauguracion', 'conferencia', 'taller', 'competencia', 'coffee_break', 'almuerzo', 'networking', 'premiacion', 'clausura')),
+    ponente_agenda VARCHAR(200), -- Nombre del ponente para esta actividad específica
+    orden_agenda INTEGER DEFAULT 0, -- Para ordenar las actividades del día
+    estado_agenda BOOLEAN DEFAULT TRUE,
+    fecha_creacion_agenda TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion_agenda TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de ponentes invitados
+DROP TABLE IF EXISTS tb_ponentes_congreso CASCADE;
+CREATE TABLE tb_ponentes_congreso (
+    id_ponente SERIAL PRIMARY KEY,
+    id_informacion INTEGER NOT NULL REFERENCES tb_informacion_congreso(id_informacion),
+    nombre_ponente VARCHAR(100) NOT NULL,
+    apellido_ponente VARCHAR(100) NOT NULL,
+    titulo_academico_ponente VARCHAR(100), -- Dr., Ing., Lic., etc.
+    cargo_ponente VARCHAR(200), -- Director de Tecnología, CEO, etc.
+    empresa_ponente VARCHAR(200), -- Tigo Guatemala, Microsoft, etc.
+    especialidad_ponente VARCHAR(200), -- IA, Desarrollo Web, Ciberseguridad, etc.
+    foto_ponente_path VARCHAR(500), -- Ruta de la foto del ponente
+    email_ponente VARCHAR(200),
+    linkedin_ponente VARCHAR(200),
+    twitter_ponente VARCHAR(200),
+    orden_ponente INTEGER DEFAULT 0, -- Para ordenar la presentación de ponentes
+    estado_ponente BOOLEAN DEFAULT TRUE,
+    fecha_creacion_ponente TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion_ponente TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla de administradores del sistema (conectada a usuarios existentes)

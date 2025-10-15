@@ -91,7 +91,7 @@ export const useAuth = () => {
       setPermissionsLoading(true);
       
       // Verificación local rápida
-      const isLocalAdmin = userData?.tipo_usuario === 'administrador' || userData?.es_administrador === true;
+      const isLocalAdmin = userData?.tipo_usuario?.nombre_tipo_usuario === 'administrador' || userData?.es_administrador === true;
       
       if (isLocalAdmin) {
         // Si es admin local, verificar permisos completos con la API
@@ -142,7 +142,6 @@ export const useAuth = () => {
     const currentUser = userData || user;
     const currentToken = token || getAuthToken();
     
-    
     if (!currentUser || !currentToken) {
       return false;
     }
@@ -171,10 +170,8 @@ export const useAuth = () => {
                                 permissions.gestionar_actividades === true ||
                                 permissions.ver_reportes === true;
           
-          
           return hasAdminAccess;
         } else {
-          // No hay permisos válidos en la respuesta
           return false;
         }
       } else if (response.status === 403) {
@@ -224,7 +221,7 @@ export const useAuth = () => {
     }
 
     // Último fallback: verificar campos básicos del usuario
-    const fallbackResult = currentUser?.tipo_usuario === 'administrador' || currentUser?.es_administrador === true;
+    const fallbackResult = currentUser?.tipo_usuario?.nombre_tipo_usuario === 'administrador' || currentUser?.es_administrador === true;
     return fallbackResult;
   };
 
@@ -233,7 +230,7 @@ export const useAuth = () => {
     if (!isAdmin) return false;
     
     // Super admin tiene acceso a todo
-    if (isSuperAdmin(user)) {
+    if (isSuperAdmin(user, adminPermissions)) {
       return true;
     }
     
@@ -319,7 +316,7 @@ export const useAuth = () => {
 
   // Función para verificar si es super administrador
   const isUserSuperAdmin = () => {
-    return isSuperAdmin(user);
+    return isSuperAdmin(user, adminPermissions);
   };
 
   return {

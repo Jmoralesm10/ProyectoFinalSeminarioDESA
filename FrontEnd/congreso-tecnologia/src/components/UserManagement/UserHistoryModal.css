@@ -349,6 +349,15 @@
   box-shadow: 0 4px 15px rgba(217, 32, 39, 0.3);
 }
 
+/* Colores de texto adicionales */
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .modal-content {

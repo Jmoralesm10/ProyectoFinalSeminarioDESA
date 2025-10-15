@@ -6,7 +6,7 @@ import './ReportsPage.css';
 
 const ReportsPage = () => {
   const navigate = useNavigate();
-  const { getAuthToken } = useAuth();
+  const { getAuthToken, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -133,7 +133,7 @@ const ReportsPage = () => {
     {
       id: 'diplomas',
       title: 'Reporte de Diplomas',
-      description: 'Listado de diplomas generados',
+      description: 'Reporte de diplomas generados y entregados',
       icon: '🎓',
       endpoint: 'GET /api/reports/diplomas',
       requiresFilters: false,
@@ -142,9 +142,9 @@ const ReportsPage = () => {
     
     // REPORTES DE COMPETENCIAS
     {
-      id: 'competitions-results',
+      id: 'competition-results',
       title: 'Resultados de Competencias',
-      description: 'Reporte de resultados de competencias',
+      description: 'Reporte de resultados y ganadores de competencias',
       icon: '🏅',
       endpoint: 'GET /api/reports/competitions/results',
       requiresFilters: false,
@@ -505,6 +505,147 @@ const ReportsPage = () => {
            ];
            
            XLSX.utils.book_append_sheet(workbook, statsSheet, 'Reporte');
+         } else if (reportData.diplomas && Array.isArray(reportData.diplomas)) {
+           // Es un reporte de diplomas con estructura {total_diplomas: X, diplomas: Array}
+           const diplomaData = [
+             ['UNIVERSIDAD MARIANO GÁLVEZ DE GUATEMALA'],
+             [''],
+             ['INFORMACIÓN DEL REPORTE'],
+             [''],
+             ['Generado el:', new Date().toLocaleString('es-GT')],
+             [''],
+             ['RESUMEN'],
+             ['Total Diplomas:', reportData.total_diplomas || reportData.diplomas.length],
+             [''],
+             ['DATOS DETALLADOS'],
+             ['']
+           ];
+
+           // Agregar encabezados de la tabla de diplomas
+           if (reportData.diplomas.length > 0) {
+             const firstDiploma = reportData.diplomas[0];
+             const headers = Object.keys(firstDiploma).map(key => 
+               key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+             );
+             diplomaData.push(headers);
+
+             // Procesar cada diploma
+             reportData.diplomas.forEach(diploma => {
+               const processedRow = [];
+               Object.keys(diploma).forEach(key => {
+                 let value = diploma[key];
+                 if (value === null || value === undefined) {
+                   value = '';
+                 } else if (typeof value === 'object') {
+                   value = JSON.stringify(value);
+                 } else if (key.includes('fecha')) {
+                   try {
+                     value = new Date(value).toLocaleDateString('es-GT');
+                   } catch (e) {
+                     value = String(value);
+                   }
+                 } else {
+                   value = String(value);
+                 }
+                 processedRow.push(value);
+               });
+               diplomaData.push(processedRow);
+             });
+           }
+
+           const diplomaSheet = XLSX.utils.aoa_to_sheet(diplomaData);
+           diplomaSheet['!cols'] = [
+             { width: 20 },
+             { width: 15 },
+             { width: 25 },
+             { width: 30 },
+             { width: 20 },
+             { width: 15 },
+             { width: 20 },
+             { width: 20 },
+             { width: 15 },
+             { width: 15 },
+             { width: 20 },
+             { width: 20 },
+             { width: 15 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 },
+             { width: 15 },
+             { width: 15 },
+             { width: 20 }
+           ];
+           
+           XLSX.utils.book_append_sheet(workbook, diplomaSheet, 'Reporte');
+         } else if (reportData.resultados && Array.isArray(reportData.resultados)) {
+           // Es un reporte de competencias con estructura {total_resultados: X, resultados: Array}
+           const competitionData = [
+             ['UNIVERSIDAD MARIANO GÁLVEZ DE GUATEMALA'],
+             [''],
+             ['INFORMACIÓN DEL REPORTE'],
+             [''],
+             ['Generado el:', new Date().toLocaleString('es-GT')],
+             [''],
+             ['RESUMEN'],
+             ['Total Resultados:', reportData.total_resultados || reportData.resultados.length],
+             [''],
+             ['DATOS DETALLADOS'],
+             ['']
+           ];
+
+           // Agregar encabezados de la tabla de resultados
+           if (reportData.resultados.length > 0) {
+             const firstResult = reportData.resultados[0];
+             const headers = Object.keys(firstResult).map(key => 
+               key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+             );
+             competitionData.push(headers);
+
+             // Procesar cada resultado
+             reportData.resultados.forEach(result => {
+               const processedRow = [];
+               Object.keys(result).forEach(key => {
+                 let value = result[key];
+                 if (value === null || value === undefined) {
+                   value = '';
+                 } else if (typeof value === 'object') {
+                   value = JSON.stringify(value);
+                 } else if (key.includes('fecha')) {
+                   try {
+                     value = new Date(value).toLocaleDateString('es-GT');
+                   } catch (e) {
+                     value = String(value);
+                   }
+                 } else {
+                   value = String(value);
+                 }
+                 processedRow.push(value);
+               });
+               competitionData.push(processedRow);
+             });
+           }
+
+           const competitionSheet = XLSX.utils.aoa_to_sheet(competitionData);
+           competitionSheet['!cols'] = [
+             { width: 15 },
+             { width: 20 },
+             { width: 25 },
+             { width: 25 },
+             { width: 30 },
+             { width: 15 },
+             { width: 15 },
+             { width: 30 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 },
+             { width: 20 }
+           ];
+           
+           XLSX.utils.book_append_sheet(workbook, competitionSheet, 'Reporte');
          } else if (reportData.usuarios && Array.isArray(reportData.usuarios)) {
            // Es un reporte con estructura {total_usuarios: X, usuarios: Array}
            const userData = [
@@ -770,16 +911,22 @@ const ReportsPage = () => {
 
   return (
     <div className="reports-page">
-      {/* Header */}
-      <div className="page-header">
-        <button 
-          className="back-button"
-          onClick={() => navigate('/admin-panel')}
-        >
-          <span>←</span> Volver al Panel
-        </button>
-         <h1>Generar Reportes en Excel</h1>
-      </div>
+      <div className="reports-container">
+        {/* Header */}
+        <div className="reports-header">
+          <button 
+            className="back-button"
+            onClick={() => navigate('/admin-panel')}
+          >
+            <span>←</span> Volver al Panel Admin
+          </button>
+          <h1>📊 Generar Reportes en Excel</h1>
+          <p>Selecciona el tipo de reporte que deseas generar</p>
+          <div className="management-info">
+            <span className="management-badge">📊 Generar Reportes</span>
+            <span className="management-email">{user?.email || 'Usuario'}</span>
+          </div>
+        </div>
 
       {/* Mensaje de error */}
       {error && (
@@ -819,7 +966,6 @@ const ReportsPage = () => {
                 <div className="report-icon">{report.icon}</div>
                 <h3 className="report-title">{report.title}</h3>
                 <p className="report-description">{report.description}</p>
-                <div className="report-endpoint">{report.endpoint}</div>
                 {report.requiresFilters && (
                   <div className="filter-indicator">🔍 Requiere filtros</div>
                 )}
@@ -912,6 +1058,7 @@ const ReportsPage = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

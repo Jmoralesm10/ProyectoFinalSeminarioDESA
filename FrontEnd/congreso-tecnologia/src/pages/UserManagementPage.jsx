@@ -10,6 +10,8 @@ import AdminGuard from '../components/AdminGuard/AdminGuard';
 import ListUsersModal from '../components/UserManagement/ListUsersModal';
 import ChangeUserStatusModal from '../components/UserManagement/ChangeUserStatusModal';
 import UserHistoryModal from '../components/UserManagement/UserHistoryModal';
+import ListAdminsModal from '../components/UserManagement/ListAdminsModal';
+import ViewPermissionsModal from '../components/UserManagement/ViewPermissionsModal';
 import './UserManagementPage.css';
 
 const UserManagementPage = () => {
@@ -79,52 +81,14 @@ const UserManagementPage = () => {
       endpoint: 'GET /api/admin/permissions/:userId',
       permission: 'gestionar_usuarios',
       onClick: () => openModal('viewPermissions')
-    },
-    {
-      id: 'promote-admin',
-      title: 'Promover a Admin',
-      description: 'Promover usuario a administrador',
-      icon: '⬆️',
-      endpoint: 'POST /api/admin/promote/:userId',
-      permission: 'gestionar_usuarios',
-      onClick: () => openModal('promoteAdmin')
-    },
-    {
-      id: 'demote-admin',
-      title: 'Quitar Admin',
-      description: 'Quitar permisos de administrador',
-      icon: '⬇️',
-      endpoint: 'POST /api/admin/demote/:userId',
-      permission: 'gestionar_usuarios',
-      onClick: () => openModal('demoteAdmin')
-    },
-    {
-      id: 'update-permissions',
-      title: 'Actualizar Permisos',
-      description: 'Modificar permisos de administrador',
-      icon: '⚙️',
-      endpoint: 'PUT /api/admin/admins/:userId/permissions',
-      permission: 'gestionar_administradores',
-      onClick: () => openModal('updatePermissions')
     }
   ];
 
-  const statisticsFeatures = [
-    {
-      id: 'system-stats',
-      title: 'Ver Estadísticas',
-      description: 'Estadísticas generales del sistema',
-      icon: '📊',
-      endpoint: 'GET /api/admin/stats',
-      permission: 'ver_estadisticas',
-      onClick: () => openModal('systemStats')
-    }
-  ];
 
   // Función para renderizar botones de funcionalidades
   const renderFeatureButtons = (features, sectionTitle) => (
-    <div className="features-section">
-      <h2 className="section-title">{sectionTitle}</h2>
+    <div className="management-features">
+      <h2>{sectionTitle}</h2>
       <div className="features-grid">
         {features.map((feature) => {
           const hasAccess = hasPermission(feature.permission);
@@ -132,7 +96,7 @@ const UserManagementPage = () => {
           return (
             <button
               key={feature.id}
-              className={`feature-button ${!hasAccess ? 'disabled' : ''}`}
+              className={`feature-btn ${feature.id === 'manage-users' ? 'primary' : 'secondary'} ${!hasAccess ? 'disabled' : ''}`}
               onClick={hasAccess ? feature.onClick : undefined}
               disabled={!hasAccess}
               title={hasAccess ? feature.description : 'Sin permisos'}
@@ -141,7 +105,6 @@ const UserManagementPage = () => {
               <div className="feature-content">
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
-                <span className="endpoint-info">{feature.endpoint}</span>
               </div>
             </button>
           );
@@ -158,15 +121,13 @@ const UserManagementPage = () => {
           <header className="management-header">
             <Link to="/admin-panel" className="back-button">
               <span>←</span>
-              Volver al Panel Admin
+              Volver al Inicio
             </Link>
-            <div className="header-content">
-              <h1>🔧 Gestión de Usuarios</h1>
-              <p>Administra usuarios, administradores y permisos del sistema</p>
-              <div className="user-info">
-                <span className="user-badge">👑 Super Administrador</span>
-                <span className="user-email">{user?.email_usuario}</span>
-              </div>
+            <h1>🔧 Gestión de Usuarios</h1>
+            <p>Administra usuarios, administradores y permisos del sistema</p>
+            <div className="management-info">
+              <span className="management-badge">👑 Super Administrador</span>
+              <span className="management-email">{user?.email_usuario}</span>
             </div>
           </header>
 
@@ -176,16 +137,23 @@ const UserManagementPage = () => {
           {/* Funcionalidades de Gestión de Administradores */}
           {renderFeatureButtons(adminManagementFeatures, '👑 Gestión de Administradores')}
 
-          {/* Funcionalidades de Estadísticas */}
-          {renderFeatureButtons(statisticsFeatures, '📊 Estadísticas')}
-
           {/* Modales */}
           <ListUsersModal 
             isOpen={activeModal === 'listUsers'} 
             onClose={closeModal} 
           />
           
-          {activeModal && activeModal !== 'listUsers' && (
+          <ListAdminsModal
+            isOpen={activeModal === 'listAdmins'}
+            onClose={closeModal}
+          />
+          
+          <ViewPermissionsModal
+            isOpen={activeModal === 'viewPermissions'}
+            onClose={closeModal}
+          />
+          
+          {activeModal && activeModal !== 'listUsers' && activeModal !== 'changeStatus' && activeModal !== 'userHistory' && activeModal !== 'listAdmins' && activeModal !== 'viewPermissions' && (
             <div className="modal-overlay" onClick={closeModal}>
               <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
