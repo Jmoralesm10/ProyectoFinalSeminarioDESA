@@ -789,7 +789,7 @@ const ReportsPage = () => {
       setError(null);
 
       const token = getAuthToken();
-      let url = `http://localhost:3001${report.endpoint.replace('GET ', '')}`;
+      let url = `https://proyecto-final-seminario-desa-dmgi.vercel.app${report.endpoint.replace('GET ', '')}`;
       
       // Agregar parámetros de filtro si es necesario
       if (report.requiresFilters && filters) {

@@ -54,7 +54,7 @@ const ActivityManagementPage = () => {
       };
 
       // Cargar inscripciones del usuario
-      const inscriptionsResponse = await fetch('http://localhost:3001/api/activities/user/inscriptions', {
+      const inscriptionsResponse = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/user/inscriptions', {
         method: 'GET',
         headers
       });
@@ -67,7 +67,7 @@ const ActivityManagementPage = () => {
       }
 
       // Cargar todas las actividades para estadísticas
-      const activitiesResponse = await fetch('http://localhost:3001/api/activities', {
+      const activitiesResponse = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities', {
         method: 'GET',
         headers
       });

@@ -23,7 +23,7 @@ const AttendancePage = () => {
   const loadActivities = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/activities?limite=100');
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities?limite=100');
       const result = await response.json();
       
       if (result.success) {
@@ -49,7 +49,7 @@ const AttendancePage = () => {
 
       if (attendanceType === 'general') {
         // Asistencia general al congreso
-        endpoint = 'http://localhost:3001/api/attendance/general';
+        endpoint = 'https://proyecto-final-seminario-desa-dmgi.vercel.app/api/attendance/general';
         body = {
           codigo_qr_usuario: qrCode
         };
@@ -61,7 +61,7 @@ const AttendancePage = () => {
           return;
         }
 
-        endpoint = 'http://localhost:3001/api/attendance/activity';
+        endpoint = 'https://proyecto-final-seminario-desa-dmgi.vercel.app/api/attendance/activity';
         body = {
           codigo_qr_usuario: qrCode,
           id_actividad: selectedActivity.id_actividad

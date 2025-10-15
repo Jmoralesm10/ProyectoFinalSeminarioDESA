@@ -68,7 +68,7 @@ const EnrollmentModal = ({
       }
 
       // Enviar pago a la API
-      const response = await fetch('http://localhost:3001/api/payments/process', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/payments/process', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

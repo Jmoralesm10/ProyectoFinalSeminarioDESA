@@ -20,7 +20,7 @@ const ListAdminsModal = ({ isOpen, onClose }) => {
       setError(null);
 
       const token = getAuthToken();
-      const response = await fetch('http://localhost:3001/api/admin/admins', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/admins', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -38,7 +38,7 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:3001/api/admin/users/search?termino_busqueda=${encodeURIComponent(email)}&limite=1`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/users/search?termino_busqueda=${encodeURIComponent(email)}&limite=1`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -75,7 +75,7 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
       const token = localStorage.getItem('authToken');
       const nuevoEstado = !usuario.estado_usuario;
 
-      const response = await fetch(`http://localhost:3001/api/admin/users/${usuario.id_usuario}/status`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/users/${usuario.id_usuario}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

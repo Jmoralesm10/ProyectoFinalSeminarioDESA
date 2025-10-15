@@ -33,11 +33,29 @@ const app = express();
 app.use(helmet());
 
 // CORS
+const allowedOrigins = [
+  'http://localhost:5173', // Desarrollo local
+  'http://localhost:3000', // Desarrollo local alternativo
+  'https://proyecto-final-seminario-desa.vercel.app', // Frontend en Vercel
+  process.env['FRONTEND_URL'] // Variable de entorno personalizada
+].filter(Boolean); // Eliminar valores undefined/null
+
 app.use(cors({
-  origin: process.env['FRONTEND_URL'] || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Permitir requests sin origin (como mobile apps o curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    console.log(`🚫 CORS bloqueado para origin: ${origin}`);
+    return callback(new Error('No permitido por CORS'), false);
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 }));
 
 // Logging
