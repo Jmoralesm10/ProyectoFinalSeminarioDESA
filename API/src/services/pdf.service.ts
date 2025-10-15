@@ -3,7 +3,7 @@
 // Sistema de Gestión del Congreso de Tecnología
 // =====================================================
 
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import fs from 'fs';
 import path from 'path';
 
@@ -21,10 +21,18 @@ export class PDFService {
   private outputDir: string;
 
   constructor() {
-    // Crear directorio de salida si no existe
-    this.outputDir = path.join(process.cwd(), 'diplomas');
-    if (!fs.existsSync(this.outputDir)) {
-      fs.mkdirSync(this.outputDir, { recursive: true });
+    // En Vercel, usar /tmp para archivos temporales
+    if (process.env['NODE_ENV'] === 'production' || process.env['VERCEL']) {
+      this.outputDir = '/tmp/diplomas';
+    } else {
+      this.outputDir = path.join(process.cwd(), 'diplomas');
+    }
+    
+    // Crear directorio de salida si no existe (solo en desarrollo)
+    if (process.env['NODE_ENV'] !== 'production' && !process.env['VERCEL']) {
+      if (!fs.existsSync(this.outputDir)) {
+        fs.mkdirSync(this.outputDir, { recursive: true });
+      }
     }
   }
 
@@ -33,11 +41,27 @@ export class PDFService {
    */
   async generateDiplomaPDF(data: DiplomaPDFData): Promise<string> {
     try {
-      const browser = await puppeteer.launch({
+      // Configuración de Puppeteer para Vercel
+      const browserOptions: any = {
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process',
+          '--disable-gpu'
+        ]
+      };
 
+      // En Vercel, usar Chromium incluido
+      if (process.env['VERCEL']) {
+        browserOptions.executablePath = '/usr/bin/chromium-browser';
+      }
+
+      const browser = await puppeteer.launch(browserOptions);
       const page = await browser.newPage();
       
       // Configurar tamaño de página A4
@@ -51,6 +75,11 @@ export class PDFService {
       // Generar nombre único para el archivo
       const fileName = `diploma_${data.nombreCompleto.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
       const filePath = path.join(this.outputDir, fileName);
+
+      // Asegurar que el directorio existe en Vercel
+      if (process.env['VERCEL'] && !fs.existsSync(this.outputDir)) {
+        fs.mkdirSync(this.outputDir, { recursive: true });
+      }
 
       // Generar PDF
       await page.pdf({
