@@ -15,10 +15,10 @@ const dbConfig = {
   database: process.env['DB_NAME'] || 'congreso_tecnologia',
   user: process.env['DB_USER'] || 'postgres',
   password: process.env['DB_PASSWORD'] || 'Javier123.',
-  ssl: process.env['NODE_ENV'] === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: process.env['NODE_ENV'] === 'production' || process.env['DB_HOST']?.includes('neon') ? { rejectUnauthorized: false } : false,
   max: 20, // Máximo número de conexiones en el pool
   idleTimeoutMillis: 30000, // Tiempo de inactividad antes de cerrar conexión
-  connectionTimeoutMillis: 2000, // Tiempo de espera para obtener conexión
+  connectionTimeoutMillis: 10000, // Tiempo de espera para obtener conexión (aumentado para Neon)
 };
 
 // Crear pool de conexiones
