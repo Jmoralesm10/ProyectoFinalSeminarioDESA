@@ -278,6 +278,30 @@ JOIN tb_usuarios u ON a.id_usuario = u.id_usuario
 JOIN tb_tipos_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario
 LEFT JOIN tb_usuarios asignador ON a.asignado_por_usuario = asignador.id_usuario;
 
+-- Vista de administradores (compatible con la API)
+CREATE OR REPLACE VIEW vista_administradores AS
+SELECT 
+    a.id_usuario,
+    u.nombre_usuario,
+    u.apellido_usuario,
+    u.email_usuario,
+    u.telefono_usuario,
+    u.es_administrador,
+    u.permisos_especiales,
+    a.rol_administrador,
+    a.permisos_administrador,
+    a.estado_administrador,
+    a.fecha_asignacion_administrador,
+    a.fecha_ultima_actividad_administrador,
+    a.observaciones_administrador,
+    u.estado_usuario,
+    u.fecha_inscripcion_usuario,
+    u.ultimo_acceso_usuario
+FROM tb_administradores a
+JOIN tb_usuarios u ON a.id_usuario = u.id_usuario
+WHERE a.estado_administrador = true
+ORDER BY a.fecha_asignacion_administrador DESC;
+
 -- Vista de reporte de inscripciones por actividad
 CREATE OR REPLACE VIEW vista_reporte_inscripciones_actividad AS
 SELECT 
@@ -434,9 +458,96 @@ COMMENT ON VIEW vista_estadisticas_generales IS 'Estadísticas generales del sis
 COMMENT ON VIEW vista_reporte_asistencia_actividad IS 'Reporte de asistencia por actividad con porcentajes';
 COMMENT ON VIEW vista_usuarios_mas_activos IS 'Usuarios con mayor participación en actividades';
 COMMENT ON VIEW vista_administradores_completa IS 'Vista completa de administradores con información del usuario y quien los asignó';
+COMMENT ON VIEW vista_administradores IS 'Vista de administradores compatible con la API, incluye información básica del usuario y datos de administrador';
 COMMENT ON VIEW vista_reporte_inscripciones_actividad IS 'Reporte de inscripciones por actividad con estadísticas';
 COMMENT ON VIEW vista_reporte_usuarios_por_colegio IS 'Reporte de usuarios agrupados por colegio';
 COMMENT ON VIEW vista_reporte_actividades_por_categoria IS 'Reporte de actividades agrupadas por categoría';
 COMMENT ON VIEW vista_reporte_diplomas_actividad IS 'Reporte de diplomas generados por actividad';
 COMMENT ON VIEW vista_reporte_diplomas_congreso IS 'Reporte de diplomas del congreso por fecha';
 COMMENT ON VIEW vista_estadisticas_diplomas IS 'Estadísticas generales de diplomas';
+
+-- =====================================================
+-- VISTAS PÚBLICAS - INFORMACIÓN GENERAL DEL CONGRESO
+-- =====================================================
+
+-- Vista pública de preguntas frecuentes (FAQ)
+CREATE OR REPLACE VIEW vista_faq_publica AS
+SELECT 
+    id_faq,
+    pregunta_faq,
+    respuesta_faq,
+    categoria_faq,
+    orden_faq,
+    fecha_creacion_faq,
+    fecha_actualizacion_faq
+FROM tb_faq
+WHERE estado_faq = TRUE
+ORDER BY categoria_faq, orden_faq, pregunta_faq;
+
+-- Vista pública de información del congreso (más reciente)
+CREATE OR REPLACE VIEW vista_informacion_congreso_publica AS
+SELECT 
+    ic.id_informacion,
+    ic.titulo_informacion,
+    ic.descripcion_informacion,
+    ic.fecha_inicio_informacion,
+    ic.fecha_fin_informacion,
+    ic.lugar_informacion,
+    ic.informacion_carrera_informacion,
+    ic.fecha_creacion_informacion,
+    ic.fecha_actualizacion_informacion
+FROM tb_informacion_congreso ic
+WHERE ic.estado_informacion = TRUE
+ORDER BY ic.fecha_creacion_informacion DESC
+LIMIT 1;
+
+-- Vista pública de agenda del congreso
+CREATE OR REPLACE VIEW vista_agenda_congreso_publica AS
+SELECT 
+    ac.id_agenda,
+    ac.id_informacion,
+    ac.dia_agenda,
+    ac.hora_inicio_agenda,
+    ac.hora_fin_agenda,
+    ac.titulo_actividad_agenda,
+    ac.descripcion_actividad_agenda,
+    ac.tipo_actividad_agenda,
+    ac.ponente_agenda,
+    ac.orden_agenda,
+    ic.titulo_informacion as congreso_titulo
+FROM tb_agenda_congreso ac
+JOIN tb_informacion_congreso ic ON ac.id_informacion = ic.id_informacion
+WHERE ac.estado_agenda = TRUE AND ic.estado_informacion = TRUE
+ORDER BY ac.dia_agenda, ac.orden_agenda, ac.hora_inicio_agenda;
+
+-- Vista pública de ponentes del congreso
+CREATE OR REPLACE VIEW vista_ponentes_congreso_publica AS
+SELECT 
+    pc.id_ponente,
+    pc.id_informacion,
+    pc.nombre_ponente,
+    pc.apellido_ponente,
+    pc.titulo_academico_ponente,
+    pc.cargo_ponente,
+    pc.empresa_ponente,
+    pc.especialidad_ponente,
+    pc.foto_ponente_path,
+    pc.email_ponente,
+    pc.linkedin_ponente,
+    pc.twitter_ponente,
+    pc.orden_ponente,
+    ic.titulo_informacion as congreso_titulo,
+    CONCAT(
+        COALESCE(pc.titulo_academico_ponente || ' ', ''),
+        pc.nombre_ponente, ' ', pc.apellido_ponente
+    ) as nombre_completo_ponente
+FROM tb_ponentes_congreso pc
+JOIN tb_informacion_congreso ic ON pc.id_informacion = ic.id_informacion
+WHERE pc.estado_ponente = TRUE AND ic.estado_informacion = TRUE
+ORDER BY pc.orden_ponente, pc.nombre_ponente, pc.apellido_ponente;
+
+-- Comentarios de las vistas públicas
+COMMENT ON VIEW vista_faq_publica IS 'Vista pública de preguntas frecuentes activas, ordenadas por categoría';
+COMMENT ON VIEW vista_informacion_congreso_publica IS 'Vista pública de la información más reciente del congreso';
+COMMENT ON VIEW vista_agenda_congreso_publica IS 'Vista pública de la agenda del congreso ordenada por día y hora';
+COMMENT ON VIEW vista_ponentes_congreso_publica IS 'Vista pública de los ponentes invitados al congreso';

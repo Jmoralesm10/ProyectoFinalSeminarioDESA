@@ -22,29 +22,48 @@
   background: #1A365D;
   color: white;
   padding: 2rem;
-  text-align: center;
+  border-radius: 16px;
+  margin-bottom: 2rem;
   position: relative;
+  box-shadow: 0 4px 20px rgba(26, 54, 93, 0.2);
+  text-align: center;
 }
 
 .attendance-header h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.attendance-header h1::before {
-  content: '📱';
-  font-size: 1.8rem;
+  color: white;
 }
 
 .attendance-header p {
-  margin: 0;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
   opacity: 0.9;
-  font-size: 1.1rem;
+  color: white;
+}
+
+.management-info {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.management-badge {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.management-email {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
 }
 
 .attendance-header .back-button {

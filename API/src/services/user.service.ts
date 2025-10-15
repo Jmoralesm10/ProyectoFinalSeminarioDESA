@@ -603,7 +603,6 @@ export class UserService {
       `;
       
       const adminResult = await executeQuery(adminQuery, [userId]);
-      console.log('🔐 [UserService] Resultado de consulta tb_administradores:', adminResult);
       
       if (adminResult && adminResult.rows && adminResult.rows.length > 0) {
         const adminData = adminResult.rows[0];
@@ -694,7 +693,15 @@ export class UserService {
       const query = 'SELECT * FROM vista_administradores';
       const result = await executeQuery(query);
       
-      return result.map((admin: any) => ({
+      if (!result || !result.rows || !Array.isArray(result.rows)) {
+        return [];
+      }
+      
+      if (result.rows.length === 0) {
+        return [];
+      }
+      
+      return result.rows.map((admin: any) => ({
         id_usuario: admin.id_usuario,
         nombre_usuario: admin.nombre_usuario,
         apellido_usuario: admin.apellido_usuario,

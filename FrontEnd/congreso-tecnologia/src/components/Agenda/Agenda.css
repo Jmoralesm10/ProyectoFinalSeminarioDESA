@@ -1,0 +1,437 @@
+.agenda-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #2C3E50;
+  position: relative;
+  overflow: hidden;
+}
+
+.agenda-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.agenda-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.agenda-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1A252F;
+  margin-bottom: 1rem;
+  position: relative;
+  text-align: center;
+  display: block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: #1A365D;
+  border-radius: 2px;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #2C3E50;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.agenda-content {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(26, 54, 93, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.agenda-day {
+  margin-bottom: 25px;
+}
+
+.agenda-day:last-child {
+  margin-bottom: 0;
+}
+
+.day-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #D92027;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 15px;
+  background: rgba(217, 32, 39, 0.1);
+  border-radius: 15px;
+  border-left: 4px solid #D92027;
+}
+
+/* Agenda Table Styles */
+.agenda-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(26, 54, 93, 0.1);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: minmax(90px, 110px) 1fr minmax(110px, 140px);
+  background: #1A365D;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-header > div {
+  padding: 8px 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  color: white !important;
+  background: #1A365D !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-header > div:last-child {
+  border-right: none;
+}
+
+.table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 110px) 1fr minmax(110px, 140px);
+  border-bottom: 1px solid rgba(26, 54, 93, 0.1);
+  transition: background-color 0.2s ease;
+  min-height: 60px;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:hover {
+  background-color: rgba(30, 58, 138, 0.05);
+}
+
+.table-row:focus-within {
+  outline: 2px solid rgba(30, 58, 138, 0.3);
+  outline-offset: -2px;
+}
+
+.table-row > div {
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid rgba(26, 54, 93, 0.05);
+}
+
+.table-row > div:last-child {
+  border-right: none;
+}
+
+.col-time {
+  justify-content: center;
+  background: rgba(30, 58, 138, 0.05);
+  min-width: 90px;
+}
+
+.time-text {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.col-title {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 12px;
+}
+
+.activity-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A252F;
+  margin: 0;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.activity-description {
+  color: #2C3E50;
+  line-height: 1.4;
+  margin: 0;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.col-type {
+  justify-content: center;
+  min-width: 110px;
+}
+
+.activity-type {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  color: white;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  min-width: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1199px) {
+  .agenda-content {
+    padding: 15px;
+  }
+  
+  .table-header,
+  .table-row {
+    grid-template-columns: minmax(85px, 100px) 1fr minmax(100px, 120px);
+  }
+  
+  .table-header > div,
+  .table-row > div {
+    padding: 6px 8px;
+  }
+  
+  .time-text {
+    font-size: 0.8rem;
+  }
+  
+  .activity-title {
+    font-size: 0.95rem;
+  }
+  
+  .activity-description {
+    font-size: 0.8rem;
+  }
+  
+  .activity-type {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+  
+  .col-title {
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .agenda-section {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+  }
+  
+  .agenda-content {
+    padding: 10px;
+  }
+  
+  .table-header {
+    display: none;
+  }
+  
+  .table-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0;
+    padding: 8px;
+    border: 1px solid rgba(26, 54, 93, 0.1);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .table-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  .table-row > div {
+    border-right: none;
+    padding: 4px 6px;
+  }
+  
+  .col-time {
+    grid-column: 1;
+    grid-row: 1;
+    background: rgba(30, 58, 138, 0.1);
+    border-radius: 6px;
+    margin-right: 8px;
+    min-width: 80px;
+    justify-content: center;
+  }
+  
+  .col-title {
+    grid-column: 2;
+    grid-row: 1;
+    gap: 2px;
+    padding: 4px 6px;
+  }
+  
+  .col-type {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-end;
+    padding: 4px 6px;
+    margin-top: 4px;
+  }
+  
+  .activity-title {
+    font-size: 0.9rem;
+    white-space: normal;
+    line-height: 1.2;
+    overflow: visible;
+    text-overflow: unset;
+  }
+  
+  .activity-description {
+    font-size: 0.75rem;
+    white-space: normal;
+    line-height: 1.3;
+    overflow: visible;
+    text-overflow: unset;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  
+  .activity-type {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    max-width: 120px;
+  }
+  
+  .time-text {
+    font-size: 0.75rem;
+  }
+  
+  .day-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .agenda-section {
+    padding: 40px 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .agenda-content {
+    padding: 8px;
+  }
+  
+  .table-row {
+    padding: 6px;
+    margin-bottom: 6px;
+  }
+  
+  .table-row > div {
+    padding: 3px 4px;
+  }
+  
+  .col-time {
+    min-width: 70px;
+    margin-right: 6px;
+  }
+  
+  .col-title {
+    padding: 3px 4px;
+  }
+  
+  .col-type {
+    padding: 3px 4px;
+    margin-top: 3px;
+  }
+  
+  .activity-title {
+    font-size: 0.85rem;
+  }
+  
+  .activity-description {
+    font-size: 0.7rem;
+  }
+  
+  .activity-type {
+    font-size: 0.55rem;
+    padding: 2px 4px;
+    max-width: 100px;
+  }
+  
+  .time-text {
+    font-size: 0.7rem;
+  }
+  
+  .day-title {
+    font-size: 1.3rem;
+    padding: 12px;
+  }
+}

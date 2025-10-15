@@ -210,52 +210,70 @@ const ListUsersPage = () => {
   return (
     <AdminGuard>
       <div className="list-users-page">
-        <div className="page-container">
+        <div className="list-container">
           {/* Header */}
-          <header className="page-header">
+          <header className="management-header">
             <Link to="/gestion-usuarios" className="back-button">
               <span>←</span>
               Volver a Gestión de Usuarios
             </Link>
-            <div className="header-content">
-              <h1>👥 Listar Usuarios</h1>
-              <p>Gestiona y visualiza todos los usuarios del sistema</p>
-              <div className="user-info">
-                <span className="user-badge">👑 Super Administrador</span>
-                <span className="user-email">{user?.email_usuario}</span>
-              </div>
+            <h1>👥 Listar Usuarios</h1>
+            <p>Gestiona y visualiza todos los usuarios del sistema</p>
+            <div className="management-info">
+              <span className="management-badge">👑 Super Administrador</span>
+              <span className="management-email">{user?.email_usuario}</span>
             </div>
           </header>
 
           {/* Filtros */}
-          <div className="filtros-section">
-            <h2>🔍 Filtros de Búsqueda</h2>
-            <div className="filtros-grid">
-              <div className="filtro-group">
-                <label>Buscar:</label>
+          <div className="filters-section">
+            <div className="filters-header">
+              <h2>🔍 Filtros de Búsqueda</h2>
+              <button 
+                className="clear-filters-button"
+                onClick={() => {
+                  setFiltros({
+                    page: 1,
+                    limit: 20,
+                    search: '',
+                    tipo_usuario: '',
+                    estado: ''
+                  });
+                }}
+              >
+                Limpiar Filtros
+              </button>
+            </div>
+            <div className="filters-grid">
+              <div className="filter-group">
+                <label className="filter-label">Buscar:</label>
                 <input
                   type="text"
+                  className="filter-input"
                   placeholder="Nombre, apellido o email..."
                   value={filtros.search}
                   onChange={(e) => handleFiltroChange('search', e.target.value)}
                 />
               </div>
 
-              <div className="filtro-group">
-                <label>Tipo de Usuario:</label>
+              <div className="filter-group">
+                <label className="filter-label">Tipo de Usuario:</label>
                 <select
+                  className="filter-select"
                   value={filtros.tipo_usuario}
                   onChange={(e) => handleFiltroChange('tipo_usuario', e.target.value)}
                 >
                   <option value="">Todos</option>
                   <option value="externo">Externo</option>
                   <option value="interno">Interno</option>
+                  <option value="administrador">Administrador</option>
                 </select>
               </div>
 
-              <div className="filtro-group">
-                <label>Estado:</label>
+              <div className="filter-group">
+                <label className="filter-label">Estado:</label>
                 <select
+                  className="filter-select"
                   value={filtros.estado}
                   onChange={(e) => handleFiltroChange('estado', e.target.value)}
                 >
@@ -264,33 +282,31 @@ const ListUsersPage = () => {
                   <option value="false">Inactivo</option>
                 </select>
               </div>
-
-
-              <div className="filtro-group">
-                <button 
-                  className="btn-refresh" 
-                  onClick={cargarUsuarios}
-                  disabled={loading}
-                >
-                  {loading ? '🔄' : '🔄'} Actualizar
-                </button>
-              </div>
+            </div>
+            <div className="filter-actions">
+              <button 
+                className="search-button"
+                onClick={cargarUsuarios}
+                disabled={loading}
+              >
+                {loading ? '🔄' : '🔍'} {loading ? 'Buscando...' : 'Buscar'}
+              </button>
             </div>
           </div>
 
           {/* Resultados */}
-          <div className="resultados-section">
-            <div className="resultados-header">
+          <div className="users-section">
+            <div className="users-header">
               <h2>
                 {filtros.search ? 
                   `🔍 Resultados de búsqueda para "${filtros.search}"` : 
-                  `📊 Resultados (${paginacion.total} usuarios encontrados)`
+                  `📊 Resultados`
                 }
               </h2>
-              <div className="resultados-info">
+              <div className="users-count">
                 {filtros.search ? 
-                  `Mostrando ${usuarios.length} resultado${usuarios.length !== 1 ? 's' : ''}` :
-                  `Página ${paginacion.pagina_actual} de ${paginacion.total_paginas}`
+                  `${usuarios.length} resultado${usuarios.length !== 1 ? 's' : ''}` :
+                  `${paginacion.total} usuarios encontrados`
                 }
               </div>
             </div>
@@ -302,60 +318,30 @@ const ListUsersPage = () => {
             )}
 
             {loading ? (
-              <div className="loading-message">
-                🔄 Cargando usuarios...
+              <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>Cargando usuarios...</p>
               </div>
             ) : usuarios.length === 0 ? (
-              <div className="no-users-message">
-                <div className="no-users-content">
-                  <div className="no-users-icon">👥</div>
-                  <h3>
-                    {filtros.search ? 
-                      `No se encontraron usuarios que coincidan con "${filtros.search}"` : 
-                      'No se encontraron usuarios con los criterios especificados'
-                    }
-                  </h3>
-                  <p>
-                    {filtros.search ? 
-                      'Intenta con otros términos de búsqueda o ajusta los filtros.' : 
-                      'No hay usuarios que coincidan con los filtros aplicados. Intenta cambiar los criterios de búsqueda.'
-                    }
-                  </p>
-                  <div className="no-users-actions">
-                    {filtros.search && (
-                      <button 
-                        className="btn btn-primary"
-                        onClick={() => {
-                          setFiltros(prev => ({ ...prev, search: '' }));
-                          cargarUsuarios();
-                        }}
-                      >
-                        🔄 Limpiar búsqueda
-                      </button>
-                    )}
-                    {(filtros.tipo_usuario || filtros.estado) && (
-                      <button 
-                        className="btn btn-secondary"
-                        onClick={() => {
-                          setFiltros(prev => ({ 
-                            ...prev, 
-                            tipo_usuario: '', 
-                            estado: '' 
-                          }));
-                          cargarUsuarios();
-                        }}
-                      >
-                        🧹 Limpiar filtros
-                      </button>
-                    )}
-                  </div>
-                </div>
+              <div className="no-results">
+                <h3>
+                  {filtros.search ? 
+                    `No se encontraron usuarios que coincidan con "${filtros.search}"` : 
+                    'No se encontraron usuarios con los criterios especificados'
+                  }
+                </h3>
+                <p>
+                  {filtros.search ? 
+                    'Intenta con otros términos de búsqueda o ajusta los filtros.' : 
+                    'No hay usuarios que coincidan con los filtros aplicados. Intenta cambiar los criterios de búsqueda.'
+                  }
+                </p>
               </div>
             ) : (
               <>
                 {/* Tabla de usuarios */}
-                <div className="usuarios-table-container">
-                  <table className="usuarios-table">
+                <div className="table-wrapper">
+                  <table className="users-table">
                     <thead>
                       <tr>
                         <th>Usuario</th>
@@ -372,35 +358,43 @@ const ListUsersPage = () => {
                       {usuarios.map((usuario) => (
                         <tr key={usuario.id_usuario}>
                           <td>
-                            <div className="usuario-info">
-                              <div className="usuario-nombre">
-                                {usuario.nombre_usuario} {usuario.apellido_usuario}
+                            <div className="user-info">
+                              <div className="user-avatar">
+                                {usuario.nombre_usuario?.charAt(0)?.toUpperCase()}
                               </div>
-                              <div className="usuario-email">
-                                {usuario.email_usuario}
-                              </div>
-                              <div className="usuario-telefono">
-                                📞 {usuario.telefono_usuario}
+                              <div className="user-details">
+                                <div className="user-name">
+                                  {usuario.nombre_usuario} {usuario.apellido_usuario}
+                                </div>
+                                <div className="user-email">
+                                  {usuario.email_usuario}
+                                </div>
+                                <div className="user-phone">
+                                  📞 {usuario.telefono_usuario}
+                                </div>
                               </div>
                             </div>
                           </td>
                           <td>
-                            {getTipoBadge(usuario.tipo_usuario?.nombre_tipo_usuario)}
+                            <span className={`user-type ${usuario.tipo_usuario?.nombre_tipo_usuario}`}>
+                              {usuario.tipo_usuario?.nombre_tipo_usuario}
+                            </span>
                           </td>
                           <td>
-                            {getEstadoBadge(usuario.estado_usuario)}
+                            <span className={`user-status ${usuario.estado_usuario ? 'activo' : 'inactivo'}`}>
+                              {usuario.estado_usuario ? '✅ Activo' : '❌ Inactivo'}
+                            </span>
                           </td>
                           <td>
-                            {usuario.email_verificado_usuario ? 
-                              <span className="badge badge-success">✅ Verificado</span> : 
-                              <span className="badge badge-warning">⏳ Pendiente</span>
-                            }
+                            <span className={`email-verified ${usuario.email_verificado_usuario ? 'verificado' : 'pendiente'}`}>
+                              {usuario.email_verificado_usuario ? '✅ Verificado' : '⏳ Pendiente'}
+                            </span>
                           </td>
                           <td>
-                            <span className="stat-number">{usuario.total_actividades_inscritas}</span>
+                            <span className="stat-number">{usuario.total_actividades_inscritas || 0}</span>
                           </td>
                           <td>
-                            <span className="stat-number">{usuario.total_asistencias}</span>
+                            <span className="stat-number">{usuario.total_asistencias || 0}</span>
                           </td>
                           <td>
                             <div className="fecha-info">
@@ -408,15 +402,12 @@ const ListUsersPage = () => {
                             </div>
                           </td>
                           <td>
-                            <div className="acciones-buttons">
-                              <button 
-                                className="btn-action btn-view" 
-                                title="Ver detalles"
-                                onClick={() => verUsuarioEspecifico(usuario)}
-                              >
-                                👁️ Ver Detalle
-                              </button>
-                            </div>
+                            <button 
+                              className="action-button"
+                              onClick={() => verUsuarioEspecifico(usuario)}
+                            >
+                              👁️ Ver Detalle
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -430,27 +421,19 @@ const ListUsersPage = () => {
                     <button
                       onClick={() => handlePageChange(paginacion.pagina_actual - 1)}
                       disabled={paginacion.pagina_actual === 1}
-                      className="btn-pagination"
+                      className="pagination-button"
                     >
                       ← Anterior
                     </button>
                     
-                    <div className="pagination-numbers">
-                      {Array.from({ length: paginacion.total_paginas }, (_, i) => i + 1).map(page => (
-                        <button
-                          key={page}
-                          onClick={() => handlePageChange(page)}
-                          className={`btn-pagination-number ${page === paginacion.pagina_actual ? 'active' : ''}`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </div>
+                    <span className="pagination-info">
+                      Página {paginacion.pagina_actual} de {paginacion.total_paginas}
+                    </span>
                     
                     <button
                       onClick={() => handlePageChange(paginacion.pagina_actual + 1)}
                       disabled={paginacion.pagina_actual === paginacion.total_paginas}
-                      className="btn-pagination"
+                      className="pagination-button"
                     >
                       Siguiente →
                     </button>
@@ -465,7 +448,7 @@ const ListUsersPage = () => {
       {/* Modal de Usuario Específico */}
       {mostrarModalUsuario && usuarioSeleccionado && (
         <div className="modal-overlay" onClick={cerrarModalUsuario}>
-          <div className="modal-content usuario-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>👤 Detalles del Usuario</h2>
               <button className="close-button" onClick={cerrarModalUsuario}>✕</button>

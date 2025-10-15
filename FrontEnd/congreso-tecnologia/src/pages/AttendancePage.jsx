@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import AdminGuard from '../components/AdminGuard/AdminGuard';
 import QRScanner from '../components/QRScanner/QRScanner';
 import './AttendancePage.css';
 
 const AttendancePage = () => {
+  const { user } = useAuth();
   const [scannerActive, setScannerActive] = useState(false);
   const [attendanceType, setAttendanceType] = useState('general'); // 'general' o 'activity'
   const [selectedActivity, setSelectedActivity] = useState(null);
@@ -132,15 +135,19 @@ const AttendancePage = () => {
   };
 
   return (
-    <div className="attendance-page">
+    <AdminGuard>
+      <div className="attendance-page">
       <div className="attendance-container">
         <header className="attendance-header">
-          <Link to="/" className="back-button">
-            <span>←</span>
-            Volver al Inicio
+          <Link to="/admin-panel" className="back-button">
+            <span>←</span> Volver al Panel Admin
           </Link>
-          <h1>Registro de Asistencia</h1>
+          <h1>📱 Registro de Asistencia</h1>
           <p>Escanea el código QR del usuario para registrar su asistencia</p>
+          <div className="management-info">
+            <span className="management-badge">📱 Tomar Asistencia</span>
+            <span className="management-email">{user?.email_usuario}</span>
+          </div>
         </header>
 
         {/* Selector de tipo de asistencia */}
@@ -282,6 +289,7 @@ const AttendancePage = () => {
         )}
       </div>
     </div>
+    </AdminGuard>
   );
 };
 

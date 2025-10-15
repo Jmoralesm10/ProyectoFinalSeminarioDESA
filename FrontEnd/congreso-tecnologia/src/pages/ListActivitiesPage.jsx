@@ -12,7 +12,7 @@ import './ListActivitiesPage.css';
 const API_BASE_URL = 'http://localhost:3001';
 
 const ListActivitiesPage = () => {
-  const { getAuthToken } = useAuth();
+  const { getAuthToken, user } = useAuth();
   const [activities, setActivities] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,13 @@ const ListActivitiesPage = () => {
 
   const cargarCategorias = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/activities/categories`);
+      const token = getAuthToken();
+      const response = await fetch(`${API_BASE_URL}/api/activities/categories`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
       
       if (data.success) {
@@ -60,6 +66,7 @@ const ListActivitiesPage = () => {
       setLoading(true);
       setError(null);
 
+      const token = getAuthToken();
       const params = new URLSearchParams();
       if (filtros.tipo_actividad) params.append('tipo_actividad', filtros.tipo_actividad);
       if (filtros.id_categoria) params.append('id_categoria', filtros.id_categoria);
@@ -68,7 +75,12 @@ const ListActivitiesPage = () => {
       params.append('limite', filtros.limite);
       params.append('offset', filtros.offset);
 
-      const response = await fetch(`${API_BASE_URL}/api/activities?${params}`);
+      const response = await fetch(`${API_BASE_URL}/api/activities?${params}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
 
       if (data.success) {
@@ -156,12 +168,19 @@ const ListActivitiesPage = () => {
   return (
     <AdminGuard>
       <div className="list-activities-page">
-        <header className="page-header">
-          <Link to="/gestion-actividades" className="back-button">
-            <span>←</span> Volver a Gestión de Actividades
-          </Link>
-          <h1>Lista de Actividades</h1>
-        </header>
+        <div className="list-container">
+          <header className="management-header">
+            <Link to="/gestion-actividades" className="back-button">
+              <span>←</span> Volver a Gestión de Actividades
+            </Link>
+            <h1>📋 Lista de Actividades</h1>
+            <p>Explora y gestiona todas las actividades del congreso</p>
+            <div className="management-info">
+              <span className="management-badge">📋 Lista de Actividades</span>
+              <span className="management-email">{user?.email_usuario}</span>
+            </div>
+          </header>
+        </div>
 
         {/* Filtros */}
         <div className="filters-section">

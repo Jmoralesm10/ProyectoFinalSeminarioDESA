@@ -57,7 +57,7 @@ const Header = () => {
             <li><a href="#congreso"><span className="nav-icon">ℹ️</span>Sobre el Congreso</a></li>
             <li><a href="#actividades"><span className="nav-icon">🎯</span>Actividades</a></li>
             <li><a href="#agenda"><span className="nav-icon">📅</span>Agenda</a></li>
-            <li><a href="#ponentes"><span className="nav-icon">👥</span>Oponentes</a></li>
+            <li><a href="#ponentes"><span className="nav-icon">👥</span>Ponentes</a></li>
             <li><a href="#carrera"><span className="nav-icon">🎓</span>Carrera</a></li>
             <li><a href="#faq"><span className="nav-icon">❓</span>FAQ</a></li>
             {isAuthenticated && (
@@ -164,7 +164,7 @@ const Header = () => {
           <li><a href="#congreso" onClick={toggleMenu}><span className="nav-icon">ℹ️</span>Sobre el Congreso</a></li>
           <li><a href="#actividades" onClick={toggleMenu}><span className="nav-icon">🎯</span>Actividades</a></li>
           <li><a href="#agenda" onClick={toggleMenu}><span className="nav-icon">📅</span>Agenda</a></li>
-          <li><a href="#ponentes" onClick={toggleMenu}><span className="nav-icon">👥</span>Oponentes</a></li>
+          <li><a href="#ponentes" onClick={toggleMenu}><span className="nav-icon">👥</span>Ponentes</a></li>
           <li><a href="#carrera" onClick={toggleMenu}><span className="nav-icon">🎓</span>Carrera</a></li>
           <li><a href="#faq" onClick={toggleMenu}><span className="nav-icon">❓</span>FAQ</a></li>
           {isAuthenticated && (

@@ -546,20 +546,25 @@ export class ReportRepository {
     try {
       const query = `
         SELECT 
-          id_diploma,
           id_usuario,
           id_actividad,
           nombre_completo,
           email_usuario,
           actividad_nombre,
           tipo_actividad,
+          tipo_diploma,
           nombre_diploma,
           plantilla_path_diploma,
           archivo_path_diploma,
           fecha_generacion_diploma,
           fecha_descarga_diploma,
           enviado_email_diploma,
-          fecha_envio_email_diploma
+          fecha_envio_email_diploma,
+          generado_por_nombre,
+          observaciones_diploma,
+          posicion_resultado,
+          puntuacion_resultado,
+          tipo_diploma_descripcion
         FROM vista_diplomas_completa
         ORDER BY fecha_generacion_diploma DESC
       `;
@@ -567,20 +572,25 @@ export class ReportRepository {
       const result = await executeQuery(query);
 
       const diplomas = result.rows.map((record: any) => ({
-        id_diploma: record.id_diploma,
         id_usuario: record.id_usuario,
         id_actividad: record.id_actividad,
         nombre_completo: record.nombre_completo,
         email_usuario: record.email_usuario,
         actividad_nombre: record.actividad_nombre,
         tipo_actividad: record.tipo_actividad,
+        tipo_diploma: record.tipo_diploma,
         nombre_diploma: record.nombre_diploma,
         plantilla_path_diploma: record.plantilla_path_diploma,
         archivo_path_diploma: record.archivo_path_diploma,
         fecha_generacion_diploma: record.fecha_generacion_diploma,
         fecha_descarga_diploma: record.fecha_descarga_diploma,
         enviado_email_diploma: record.enviado_email_diploma,
-        fecha_envio_email_diploma: record.fecha_envio_email_diploma
+        fecha_envio_email_diploma: record.fecha_envio_email_diploma,
+        generado_por_nombre: record.generado_por_nombre,
+        observaciones_diploma: record.observaciones_diploma,
+        posicion_resultado: record.posicion_resultado,
+        puntuacion_resultado: record.puntuacion_resultado,
+        tipo_diploma_descripcion: record.tipo_diploma_descripcion
       }));
 
       return {
@@ -609,7 +619,6 @@ export class ReportRepository {
     try {
       const query = `
         SELECT 
-          id_resultado,
           id_actividad,
           id_usuario,
           competencia_nombre,
@@ -622,7 +631,9 @@ export class ReportRepository {
           fecha_resultado,
           observaciones_resultado,
           fecha_inicio_actividad,
-          lugar_actividad
+          lugar_actividad,
+          categoria_nombre,
+          tiene_diploma_generado
         FROM vista_resultados_competencia
         ORDER BY posicion_resultado ASC, puntuacion_resultado DESC
       `;
@@ -630,7 +641,6 @@ export class ReportRepository {
       const result = await executeQuery(query);
 
       const resultados = result.rows.map((record: any) => ({
-        id_resultado: record.id_resultado,
         id_actividad: record.id_actividad,
         id_usuario: record.id_usuario,
         competencia_nombre: record.competencia_nombre,
@@ -643,7 +653,9 @@ export class ReportRepository {
         fecha_resultado: record.fecha_resultado,
         observaciones_resultado: record.observaciones_resultado,
         fecha_inicio_actividad: record.fecha_inicio_actividad,
-        lugar_actividad: record.lugar_actividad
+        lugar_actividad: record.lugar_actividad,
+        categoria_nombre: record.categoria_nombre,
+        tiene_diploma_generado: record.tiene_diploma_generado
       }));
 
       return {

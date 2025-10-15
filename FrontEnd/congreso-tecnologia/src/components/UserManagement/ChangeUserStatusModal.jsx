@@ -124,7 +124,7 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="change-status-modal">
+      <div className="modal-content">
         <div className="modal-header">
           <h2>🔄 Cambiar Estado de Usuario</h2>
           <button className="close-button" onClick={onClose}>
@@ -136,10 +136,10 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
           {!showConfirmation ? (
             <>
               {/* Búsqueda de usuario */}
-              <div className="search-section">
-                <div className="input-group">
-                  <label htmlFor="email">Email del Usuario:</label>
-                  <div className="input-with-button">
+              <div className="change-form">
+                <div className="form-group">
+                  <label htmlFor="email" className="form-label">Email del Usuario:</label>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
                     <input
                       id="email"
                       type="email"
@@ -148,11 +148,14 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
                       onKeyPress={handleKeyPress}
                       placeholder="ejemplo@correo.com"
                       disabled={loading}
+                      className="form-select"
+                      style={{ flex: 1 }}
                     />
                     <button 
-                      className="btn-search" 
+                      className="btn-primary" 
                       onClick={buscarUsuario}
                       disabled={loading || !email.trim()}
+                      style={{ whiteSpace: 'nowrap' }}
                     >
                       {loading ? '🔍' : '🔍 Buscar'}
                     </button>
@@ -168,27 +171,19 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
                 {/* Información del usuario encontrado */}
                 {usuario && (
                   <div className="user-info">
-                    <h3>👤 Usuario Encontrado</h3>
-                    <div className="user-details">
-                      <div className="detail-item">
-                        <label>Nombre:</label>
-                        <span>{usuario.nombre_usuario} {usuario.apellido_usuario}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>Email:</label>
-                        <span>{usuario.email_usuario}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>Estado Actual:</label>
-                        <span className={`status-badge ${usuario.estado_usuario ? 'active' : 'inactive'}`}>
-                          {usuario.estado_usuario ? '✅ Activo' : '❌ Inactivo'}
-                        </span>
-                      </div>
+                    <div className="user-avatar">
+                      {usuario.nombre_usuario?.charAt(0)?.toUpperCase()}
+                    </div>
+                    <h3 className="user-name">{usuario.nombre_usuario} {usuario.apellido_usuario}</h3>
+                    <p className="user-email">{usuario.email_usuario}</p>
+                    <div className={`current-status ${usuario.estado_usuario ? 'activo' : 'inactivo'}`}>
+                      {usuario.estado_usuario ? '✅ Activo' : '❌ Inactivo'}
                     </div>
                     
                     <button 
-                      className="btn-change-status"
+                      className="btn-primary"
                       onClick={() => setShowConfirmation(true)}
+                      style={{ marginTop: '1rem' }}
                     >
                       🔄 Cambiar Estado
                     </button>
@@ -199,18 +194,16 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
           ) : (
             <>
               {/* Confirmación de cambio */}
-              <div className="confirmation-section">
+              <div className="user-info">
                 <h3>⚠️ Confirmar Cambio de Estado</h3>
-                <div className="confirmation-details">
+                <div className="user-details">
                   <p><strong>Usuario:</strong> {usuario.nombre_usuario} {usuario.apellido_usuario}</p>
                   <p><strong>Email:</strong> {usuario.email_usuario}</p>
                   <p><strong>Estado Actual:</strong> {usuario.estado_usuario ? 'Activo' : 'Inactivo'}</p>
                   <p><strong>Nuevo Estado:</strong> {!usuario.estado_usuario ? 'Activo' : 'Inactivo'}</p>
                 </div>
                 
-                <div className="confirmation-message">
-                  <p>¿Estás seguro de que deseas cambiar el estado de este usuario?</p>
-                </div>
+                <p>¿Estás seguro de que deseas cambiar el estado de este usuario?</p>
 
                 {error && (
                   <div className="error-message">
@@ -218,16 +211,16 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
                   </div>
                 )}
 
-                <div className="confirmation-actions">
+                <div className="modal-footer" style={{ border: 'none', padding: '1rem 0 0 0', background: 'transparent' }}>
                   <button 
-                    className="btn-cancel"
+                    className="btn-secondary"
                     onClick={() => setShowConfirmation(false)}
                     disabled={changingStatus}
                   >
                     Cancelar
                   </button>
                   <button 
-                    className="btn-confirm"
+                    className="btn-primary"
                     onClick={cambiarEstado}
                     disabled={changingStatus}
                   >
@@ -237,6 +230,12 @@ const ChangeUserStatusModal = ({ isOpen, onClose, onStatusChanged }) => {
               </div>
             </>
           )}
+        </div>
+        
+        <div className="modal-footer">
+          <button className="btn-secondary" onClick={onClose}>
+            Cerrar
+          </button>
         </div>
       </div>
     </div>

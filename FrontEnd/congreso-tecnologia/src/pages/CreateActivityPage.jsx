@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import AdminGuard from '../components/AdminGuard/AdminGuard';
 import './CreateActivityPage.css';
 
 const CreateActivityPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState('');
@@ -40,7 +43,7 @@ const CreateActivityPage = () => {
 
   const loadCategories = async () => {
     try {
-      const token = await getAuthToken();
+      const token = getAuthToken();
       if (!token) {
         setError('No se pudo obtener el token de autenticación');
         return;
@@ -66,29 +69,8 @@ const CreateActivityPage = () => {
     }
   };
 
-  const getAuthToken = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email_usuario: 'jmoralesm45@miumg.edu.gt',
-          password: 'Javier123.'
-        })
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        return result.data.token;
-      }
-      return null;
-    } catch (error) {
-      console.error('Error al obtener token:', error);
-      return null;
-    }
+  const getAuthToken = () => {
+    return localStorage.getItem('authToken');
   };
 
   const handleInputChange = (e) => {
@@ -147,7 +129,7 @@ const CreateActivityPage = () => {
     setLoading(true);
 
     try {
-      const token = await getAuthToken();
+      const token = getAuthToken();
       if (!token) {
         setError('No se pudo obtener el token de autenticación');
         setLoading(false);
@@ -226,11 +208,19 @@ const CreateActivityPage = () => {
   };
 
   return (
-    <div className="create-activity-page">
+    <AdminGuard>
+      <div className="create-activity-page">
       <div className="create-activity-container">
         <div className="create-activity-header">
-          <h1>🎯 Crear Nueva Actividad</h1>
+          <Link to="/gestion-actividades" className="back-button">
+            <span>←</span> Volver a Gestión de Actividades
+          </Link>
+          <h1>➕ Crear Nueva Actividad</h1>
           <p>Complete el formulario para crear una nueva actividad del congreso</p>
+          <div className="management-info">
+            <span className="management-badge">➕ Crear Actividad</span>
+            <span className="management-email">{user?.email_usuario}</span>
+          </div>
         </div>
 
         {error && (
@@ -253,12 +243,13 @@ const CreateActivityPage = () => {
             <h3>📋 Información Básica</h3>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="id_categoria">Categoría *</label>
+                <label htmlFor="id_categoria" className="form-label">Categoría *</label>
                 <select
                   id="id_categoria"
                   name="id_categoria"
                   value={formData.id_categoria}
                   onChange={handleInputChange}
+                  className="form-select"
                   required
                 >
                   <option value="">Seleccione una categoría</option>
@@ -271,12 +262,13 @@ const CreateActivityPage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="tipo_actividad">Tipo de Actividad *</label>
+                <label htmlFor="tipo_actividad" className="form-label">Tipo de Actividad *</label>
                 <select
                   id="tipo_actividad"
                   name="tipo_actividad"
                   value={formData.tipo_actividad}
                   onChange={handleInputChange}
+                  className="form-select"
                   required
                 >
                   <option value="taller">Taller</option>
@@ -286,25 +278,27 @@ const CreateActivityPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="nombre_actividad">Nombre de la Actividad *</label>
+              <label htmlFor="nombre_actividad" className="form-label">Nombre de la Actividad *</label>
               <input
                 type="text"
                 id="nombre_actividad"
                 name="nombre_actividad"
                 value={formData.nombre_actividad}
                 onChange={handleInputChange}
+                className="form-input"
                 placeholder="Ej: Taller de Python Avanzado"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="descripcion_actividad">Descripción</label>
+              <label htmlFor="descripcion_actividad" className="form-label">Descripción</label>
               <textarea
                 id="descripcion_actividad"
                 name="descripcion_actividad"
                 value={formData.descripcion_actividad}
                 onChange={handleInputChange}
+                className="form-textarea"
                 placeholder="Descripción detallada de la actividad"
                 rows="3"
               />
@@ -316,25 +310,27 @@ const CreateActivityPage = () => {
             <h3>📅 Fechas y Horarios</h3>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="fecha_inicio_actividad">Fecha y Hora de Inicio *</label>
+                <label htmlFor="fecha_inicio_actividad" className="form-label">Fecha y Hora de Inicio *</label>
                 <input
                   type="datetime-local"
                   id="fecha_inicio_actividad"
                   name="fecha_inicio_actividad"
                   value={formData.fecha_inicio_actividad}
                   onChange={handleInputChange}
+                  className="form-input"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="fecha_fin_actividad">Fecha y Hora de Fin *</label>
+                <label htmlFor="fecha_fin_actividad" className="form-label">Fecha y Hora de Fin *</label>
                 <input
                   type="datetime-local"
                   id="fecha_fin_actividad"
                   name="fecha_fin_actividad"
                   value={formData.fecha_fin_actividad}
                   onChange={handleInputChange}
+                  className="form-input"
                   required
                 />
               </div>
@@ -342,24 +338,26 @@ const CreateActivityPage = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="fecha_limite_inscripcion">Límite de Inscripción</label>
+                <label htmlFor="fecha_limite_inscripcion" className="form-label">Límite de Inscripción</label>
                 <input
                   type="datetime-local"
                   id="fecha_limite_inscripcion"
                   name="fecha_limite_inscripcion"
                   value={formData.fecha_limite_inscripcion}
                   onChange={handleInputChange}
+                  className="form-input"
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="duracion_estimada_minutos">Duración Estimada (minutos)</label>
+                <label htmlFor="duracion_estimada_minutos" className="form-label">Duración Estimada (minutos)</label>
                 <input
                   type="number"
                   id="duracion_estimada_minutos"
                   name="duracion_estimada_minutos"
                   value={formData.duracion_estimada_minutos}
                   onChange={handleInputChange}
+                  className="form-input"
                   placeholder="180"
                   min="1"
                 />
@@ -372,13 +370,14 @@ const CreateActivityPage = () => {
             <h3>👥 Cupos y Ubicación</h3>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="cupo_maximo_actividad">Cupo Máximo *</label>
+                <label htmlFor="cupo_maximo_actividad" className="form-label">Cupo Máximo *</label>
                 <input
                   type="number"
                   id="cupo_maximo_actividad"
                   name="cupo_maximo_actividad"
                   value={formData.cupo_maximo_actividad}
                   onChange={handleInputChange}
+                  className="form-input"
                   placeholder="25"
                   min="1"
                   required
@@ -386,26 +385,28 @@ const CreateActivityPage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="lugar_actividad">Lugar</label>
+                <label htmlFor="lugar_actividad" className="form-label">Lugar</label>
                 <input
                   type="text"
                   id="lugar_actividad"
                   name="lugar_actividad"
                   value={formData.lugar_actividad}
                   onChange={handleInputChange}
+                  className="form-input"
                   placeholder="Ej: Aula 101, Auditorio Principal"
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="ponente_actividad">Ponente/Instructor</label>
+              <label htmlFor="ponente_actividad" className="form-label">Ponente/Instructor</label>
               <input
                 type="text"
                 id="ponente_actividad"
                 name="ponente_actividad"
                 value={formData.ponente_actividad}
                 onChange={handleInputChange}
+                className="form-input"
                 placeholder="Ej: Dr. Ana Martínez"
               />
             </div>
@@ -416,12 +417,13 @@ const CreateActivityPage = () => {
             <h3>📝 Requisitos y Restricciones</h3>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="nivel_requerido">Nivel Requerido</label>
+                <label htmlFor="nivel_requerido" className="form-label">Nivel Requerido</label>
                 <select
                   id="nivel_requerido"
                   name="nivel_requerido"
                   value={formData.nivel_requerido}
                   onChange={handleInputChange}
+                  className="form-select"
                 >
                   <option value="">Seleccione nivel</option>
                   <option value="basico">Básico</option>
@@ -431,26 +433,28 @@ const CreateActivityPage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="edad_minima">Edad Mínima</label>
+                <label htmlFor="edad_minima" className="form-label">Edad Mínima</label>
                 <input
                   type="number"
                   id="edad_minima"
                   name="edad_minima"
                   value={formData.edad_minima}
                   onChange={handleInputChange}
+                  className="form-input"
                   placeholder="16"
                   min="0"
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="edad_maxima">Edad Máxima</label>
+                <label htmlFor="edad_maxima" className="form-label">Edad Máxima</label>
                 <input
                   type="number"
                   id="edad_maxima"
                   name="edad_maxima"
                   value={formData.edad_maxima}
                   onChange={handleInputChange}
+                  className="form-input"
                   placeholder="25"
                   min="0"
                 />
@@ -458,24 +462,26 @@ const CreateActivityPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="requisitos_actividad">Requisitos</label>
+              <label htmlFor="requisitos_actividad" className="form-label">Requisitos</label>
               <textarea
                 id="requisitos_actividad"
                 name="requisitos_actividad"
                 value={formData.requisitos_actividad}
                 onChange={handleInputChange}
+                className="form-textarea"
                 placeholder="Ej: Conocimientos básicos de Python"
                 rows="2"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="materiales_requeridos">Materiales Requeridos</label>
+              <label htmlFor="materiales_requeridos" className="form-label">Materiales Requeridos</label>
               <textarea
                 id="materiales_requeridos"
                 name="materiales_requeridos"
                 value={formData.materiales_requeridos}
                 onChange={handleInputChange}
+                className="form-textarea"
                 placeholder="Ej: Laptop con Python instalado"
                 rows="2"
               />
@@ -487,13 +493,14 @@ const CreateActivityPage = () => {
             <h3>💰 Costo y Configuración</h3>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="costo_actividad">Costo</label>
+                <label htmlFor="costo_actividad" className="form-label">Costo</label>
                 <input
                   type="number"
                   id="costo_actividad"
                   name="costo_actividad"
                   value={formData.costo_actividad}
                   onChange={handleInputChange}
+                  className="form-input"
                   placeholder="0.00"
                   min="0"
                   step="0.01"
@@ -501,12 +508,13 @@ const CreateActivityPage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="moneda_costo">Moneda</label>
+                <label htmlFor="moneda_costo" className="form-label">Moneda</label>
                 <select
                   id="moneda_costo"
                   name="moneda_costo"
                   value={formData.moneda_costo}
                   onChange={handleInputChange}
+                  className="form-select"
                 >
                   <option value="GTQ">GTQ (Quetzales)</option>
                   <option value="USD">USD (Dólares)</option>
@@ -515,28 +523,30 @@ const CreateActivityPage = () => {
             </div>
 
             <div className="form-row">
-              <div className="form-group checkbox-group">
-                <label className="checkbox-label">
+              <div className="form-group">
+                <div className="form-checkbox">
                   <input
                     type="checkbox"
+                    id="permite_inscripciones"
                     name="permite_inscripciones"
                     checked={formData.permite_inscripciones}
                     onChange={handleInputChange}
                   />
-                  <span className="checkbox-text">Permitir inscripciones</span>
-                </label>
+                  <label htmlFor="permite_inscripciones">Permitir inscripciones</label>
+                </div>
               </div>
 
-              <div className="form-group checkbox-group">
-                <label className="checkbox-label">
+              <div className="form-group">
+                <div className="form-checkbox">
                   <input
                     type="checkbox"
+                    id="requiere_aprobacion"
                     name="requiere_aprobacion"
                     checked={formData.requiere_aprobacion}
                     onChange={handleInputChange}
                   />
-                  <span className="checkbox-text">Requiere aprobación</span>
-                </label>
+                  <label htmlFor="requiere_aprobacion">Requiere aprobación</label>
+                </div>
               </div>
             </div>
           </div>
@@ -561,6 +571,7 @@ const CreateActivityPage = () => {
         </form>
       </div>
     </div>
+    </AdminGuard>
   );
 };
 

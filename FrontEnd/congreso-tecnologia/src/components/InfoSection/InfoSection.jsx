@@ -1,7 +1,11 @@
 import React from 'react';
+import { usePublicDataSimple } from '../../hooks/usePublicDataSimple';
 import './InfoSection.css';
 
 const InfoSection = () => {
+  const { publicStats } = usePublicDataSimple();
+  
+  // El hook de fallback ya proporciona valores por defecto
   const features = [
     {
       icon: '🎯',
@@ -22,6 +26,16 @@ const InfoSection = () => {
       icon: '📚',
       title: 'Aprendizaje',
       description: 'Oportunidades únicas de aprendizaje práctico, networking profesional y desarrollo de habilidades tecnológicas actuales.'
+    },
+    {
+      icon: '👨‍💼',
+      title: 'Asistencia Personalizada',
+      description: 'Acompañamiento individual y grupal durante todo el evento, con mentores especializados para guiar tu experiencia.'
+    },
+    {
+      icon: '📜',
+      title: 'Certificados',
+      description: 'Certificaciones oficiales de participación y diplomas de reconocimiento por competencias y talleres completados.'
     }
   ];
 
@@ -32,12 +46,12 @@ const InfoSection = () => {
       description: 'Organizando eventos tecnológicos'
     },
     {
-      number: '1000+',
+      number: `${publicStats.total_usuarios}+`,
       label: 'Estudiantes impactados',
       description: 'En ediciones anteriores'
     },
     {
-      number: '50+',
+      number: `${publicStats.total_actividades}+`,
       label: 'Talleres realizados',
       description: 'Con expertos de la industria'
     },
@@ -101,17 +115,6 @@ const InfoSection = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="info-cta">
-          <div className="cta-content">
-            <h3>¿Listo para ser parte del futuro tecnológico?</h3>
-            <p>Inscríbete ahora y forma parte de esta experiencia única</p>
-            <div className="cta-buttons">
-              <button className="btn-cta-primary">Inscribirse Ahora</button>
-              <button className="btn-cta-secondary">Ver Programa Completo</button>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

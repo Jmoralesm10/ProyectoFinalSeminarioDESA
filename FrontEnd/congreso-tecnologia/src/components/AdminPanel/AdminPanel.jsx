@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import AdminGuard from '../AdminGuard/AdminGuard';
+import { isSuperAdmin } from '../../utils/adminUtils';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -112,16 +113,6 @@ const AdminPanel = () => {
       color: 'success'
     },
     {
-      id: 'administradores',
-      title: 'Gestionar Administradores',
-      description: 'Administrar otros administradores del sistema',
-      icon: '🔐',
-      permission: 'gestionar_administradores',
-      superAdminOnly: true,
-      onClick: () => console.log('Navegar a gestión de administradores'),
-      color: 'secondary'
-    },
-    {
       id: 'sistema',
       title: 'Configuración del Sistema',
       description: 'Configuraciones generales del sistema',
@@ -175,17 +166,14 @@ const AdminPanel = () => {
             <h2>Funcionalidades Disponibles</h2>
             <div className="features-grid">
             {adminFeatures.map((feature) => {
-              // Verificar si es super admin
-              const isSuperAdmin = user?.permisos_especiales && Array.isArray(user.permisos_especiales) &&
-                user.permisos_especiales.some(item => 
-                  typeof item === 'object' && item.rol_administrador === 'super_admin'
-                );
+              // Verificar si es super admin usando la función actualizada
+              const isSuperAdminUser = isSuperAdmin(user, adminPermissions);
               
               // Lógica de permisos: Super admin tiene acceso a todo, admin normal solo a funcionalidades permitidas
               let hasFeaturePermission = false;
               let accessType = '';
               
-              if (isSuperAdmin) {
+              if (isSuperAdminUser) {
                 hasFeaturePermission = true;
                 accessType = '👑 Super Admin';
               } else if (feature.superAdminOnly) {

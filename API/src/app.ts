@@ -18,6 +18,7 @@ import attendanceRoutes from './routes/attendance.routes';
 import adminRoutes from './routes/admin.routes';
 import reportRoutes from './routes/report.routes';
 import diplomaRoutes from './routes/diploma.routes';
+import publicRoutes from './routes/public.routes';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -68,6 +69,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/diplomas', diplomaRoutes);
+app.use('/api/public', publicRoutes);
 
 // =====================================================
 // MANEJO DE ERRORES
@@ -113,6 +115,7 @@ const initializeApp = async () => {
       console.log(`👥 Usuarios API: http://localhost:${PORT}/api/users`);
       console.log(`📋 Asistencia API: http://localhost:${PORT}/api/attendance`);
       console.log(`👑 Administradores API: http://localhost:${PORT}/api/admin`);
+      console.log(`🌐 API Pública: http://localhost:${PORT}/api/public`);
       console.log(`🌍 Entorno: ${process.env['NODE_ENV'] || 'development'}`);
     });
   } catch (error) {
