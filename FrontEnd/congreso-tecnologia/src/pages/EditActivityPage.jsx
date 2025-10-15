@@ -59,7 +59,7 @@ const EditActivityPage = () => {
       setLoading(true);
       setError('');
       
-      const response = await fetch('http://localhost:3001/api/activities', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const EditActivityPage = () => {
   // Cargar categorías
   const loadCategories = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/activities/categories', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/categories', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const EditActivityPage = () => {
       setError('');
       
       // Obtener datos completos de la actividad
-      const response = await fetch(`http://localhost:3001/api/activities/${activity.id_actividad}`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/${activity.id_actividad}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -294,7 +294,7 @@ const EditActivityPage = () => {
         estado_actividad: formData.estado_actividad
       };
 
-      const response = await fetch(`http://localhost:3001/api/activities/${selectedActivity.id_actividad}`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/${selectedActivity.id_actividad}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

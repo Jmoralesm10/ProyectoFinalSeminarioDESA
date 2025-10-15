@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../../src/hooks/useAuth';
 import './UserHistoryModal.css';
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = 'https://proyecto-final-seminario-desa-dmgi.vercel.app';
 
 const UserHistoryModal = ({ isOpen, onClose }) => {
   const { getAuthToken } = useAuth();

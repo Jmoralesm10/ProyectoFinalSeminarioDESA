@@ -49,7 +49,7 @@ const CreateActivityPage = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/activities/categories', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/categories', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -160,7 +160,7 @@ const CreateActivityPage = () => {
         requiere_aprobacion: formData.requiere_aprobacion
       };
 
-      const response = await fetch('http://localhost:3001/api/activities', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

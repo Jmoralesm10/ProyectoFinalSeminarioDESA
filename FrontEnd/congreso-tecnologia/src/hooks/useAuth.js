@@ -121,7 +121,7 @@ export const useAuth = () => {
         return [];
       }
 
-      const response = await fetch('http://localhost:3001/api/activities/user/inscriptions', {
+      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/user/inscriptions', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -147,7 +147,7 @@ export const useAuth = () => {
     }
 
     try {
-      const apiUrl = `http://localhost:3001/api/users/${currentUser.id_usuario}/permissions`;
+      const apiUrl = `https://proyecto-final-seminario-desa-dmgi.vercel.app/api/users/${currentUser.id_usuario}/permissions`;
       
       // Verificar si el usuario es administrador usando la API
       const response = await fetch(apiUrl, {

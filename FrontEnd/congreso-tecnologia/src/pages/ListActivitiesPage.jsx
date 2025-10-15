@@ -9,7 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import AdminGuard from '../components/AdminGuard/AdminGuard';
 import './ListActivitiesPage.css';
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = 'https://proyecto-final-seminario-desa-dmgi.vercel.app';
 
 const ListActivitiesPage = () => {
   const { getAuthToken, user } = useAuth();

@@ -23,7 +23,7 @@ const AttendanceHistory = ({ userId }) => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3001/api/attendance/user?codigo_qr_usuario=${userId}`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/attendance/user?codigo_qr_usuario=${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

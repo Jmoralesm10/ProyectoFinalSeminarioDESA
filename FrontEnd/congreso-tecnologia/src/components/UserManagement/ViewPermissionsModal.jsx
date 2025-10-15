@@ -22,7 +22,7 @@ const ViewPermissionsModal = ({ isOpen, onClose }) => {
       setUserPermissions(null);
 
       const token = getAuthToken();
-      const response = await fetch(`http://localhost:3001/api/admin/users?busqueda=${encodeURIComponent(searchTerm.trim())}`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/users?busqueda=${encodeURIComponent(searchTerm.trim())}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -37,7 +37,7 @@ const ViewPermissionsModal = ({ isOpen, onClose }) => {
         
         // Obtener permisos específicos del usuario
         try {
-          const permissionsResponse = await fetch(`http://localhost:3001/api/users/${user.id_usuario}/permissions`, {
+          const permissionsResponse = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/users/${user.id_usuario}/permissions`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -68,7 +68,7 @@ const ViewPermissionsModal = ({ isOpen, onClose }) => {
       } else {
         // Intentar con el endpoint de búsqueda alternativo
         try {
-          const searchResponse = await fetch(`http://localhost:3001/api/admin/users/search?termino_busqueda=${encodeURIComponent(searchTerm.trim())}`, {
+          const searchResponse = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/users/search?termino_busqueda=${encodeURIComponent(searchTerm.trim())}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -83,7 +83,7 @@ const ViewPermissionsModal = ({ isOpen, onClose }) => {
             
             // Obtener permisos específicos del usuario
             try {
-              const permissionsResponse = await fetch(`http://localhost:3001/api/users/${user.id_usuario}/permissions`, {
+              const permissionsResponse = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/users/${user.id_usuario}/permissions`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `Bearer ${token}`,

@@ -39,7 +39,7 @@ const ListUsersModal = ({ isOpen, onClose }) => {
         }
       });
 
-      const response = await fetch(`http://localhost:3001/api/admin/users?${params.toString()}`, {
+      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/users?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
