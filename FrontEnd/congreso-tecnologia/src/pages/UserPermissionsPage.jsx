@@ -4,38 +4,29 @@
 // =====================================================
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import UserPermissions from '../components/UserPermissions/UserPermissions';
 import AdminGuard from '../components/AdminGuard/AdminGuard';
+import './UserPermissionsPage.css';
 
 const UserPermissionsPage = () => {
+  const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '1.2rem',
-        color: '#1A365D'
-      }}>
-        Cargando...
+      <div className="user-permissions-loading">
+        <div className="loading-spinner"></div>
+        <p>Cargando permisos...</p>
       </div>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        textAlign: 'center'
-      }}>
-        <div>
+      <div className="access-restricted">
+        <div className="access-restricted-content">
           <h2>🔒 Acceso Restringido</h2>
           <p>Necesitas iniciar sesión para ver los permisos del usuario.</p>
         </div>
@@ -44,41 +35,31 @@ const UserPermissionsPage = () => {
   }
 
   return (
-    <div style={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '2rem 1rem'
-    }}>
-      <div style={{ 
-        maxWidth: '1200px', 
-        margin: '0 auto' 
-      }}>
-        <div style={{ 
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '15px',
-          padding: '2rem',
-          backdropFilter: 'blur(10px)',
-          marginBottom: '2rem'
-        }}>
-          <h1 style={{ 
-            color: 'white', 
-            textAlign: 'center', 
-            margin: '0 0 1rem 0',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
-          }}>
-            🔐 Información de Permisos
-          </h1>
-          <p style={{ 
-            color: 'rgba(255, 255, 255, 0.9)', 
-            textAlign: 'center', 
-            margin: 0,
-            fontSize: '1.1rem'
-          }}>
-            Visualiza y gestiona los permisos de tu cuenta
-          </p>
+    <div className="user-permissions-page">
+      <div className="user-permissions-container">
+        {/* Header de la Página */}
+        <div className="user-permissions-header">
+          <div className="header-content">
+            <button
+              onClick={() => navigate('/')}
+              className="back-button"
+            >
+              🏠 Volver al Inicio
+            </button>
+            <div className="header-info">
+              <h1>
+                <span className="title-icon">🔐</span>
+                Información de Permisos
+              </h1>
+              <p>Visualiza y gestiona los permisos de tu cuenta</p>
+            </div>
+          </div>
         </div>
 
-        <UserPermissions />
+        {/* Contenido de Permisos */}
+        <div className="user-permissions-content">
+          <UserPermissions />
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,221 @@
+/* =====================================================
+   Página de Permisos del Usuario - Estilos
+   Sistema de Gestión del Congreso de Tecnología
+   ===================================================== */
+
+.user-permissions-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1A365D 0%, #2C5282 50%, #3182CE 100%);
+  padding: 2rem 1rem;
+  padding-top: 120px;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.user-permissions-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* =====================================================
+   HEADER DE LA PÁGINA
+   ===================================================== */
+
+.user-permissions-header {
+  background: linear-gradient(135deg, #1A365D 0%, #2C5282 100%);
+  color: white;
+  padding: 2rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.header-info {
+  flex: 1;
+  text-align: center;
+}
+
+.header-info h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.title-icon {
+  font-size: 2.2rem;
+}
+
+.header-info p {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  color: white;
+}
+
+/* =====================================================
+   CONTENIDO DE PERMISOS
+   ===================================================== */
+
+.user-permissions-content {
+  padding: 2rem;
+}
+
+/* =====================================================
+   LOADING STATES
+   ===================================================== */
+
+.user-permissions-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #1A365D;
+  font-size: 1.2rem;
+}
+
+.user-permissions-loading .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e9ecef;
+  border-top: 4px solid #1A365D;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* =====================================================
+   ACCESO RESTRINGIDO
+   ===================================================== */
+
+.access-restricted {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  background: linear-gradient(135deg, #1A365D 0%, #2C5282 50%, #3182CE 100%);
+  color: white;
+  padding: 2rem;
+}
+
+.access-restricted-content {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3rem;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.access-restricted h2 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+  color: white;
+}
+
+.access-restricted p {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  color: white;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .user-permissions-page {
+    padding: 1rem 0.5rem;
+    padding-top: 100px;
+  }
+  
+  .user-permissions-container {
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .user-permissions-header {
+    padding: 1.5rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .back-button {
+    align-self: flex-start;
+    margin-bottom: 0.5rem;
+  }
+  
+  .header-info h1 {
+    font-size: 2rem;
+  }
+  
+  .user-permissions-content {
+    padding: 1rem;
+  }
+  
+  .access-restricted-content {
+    padding: 2rem;
+  }
+  
+  .access-restricted h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-info h1 {
+    font-size: 1.5rem;
+  }
+  
+  .title-icon {
+    font-size: 1.8rem;
+  }
+  
+  .access-restricted-content {
+    padding: 1.5rem;
+  }
+}
