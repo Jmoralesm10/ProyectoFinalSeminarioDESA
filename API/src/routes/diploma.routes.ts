@@ -206,4 +206,11 @@ router.post(
   diplomaController.reenviarDiplomaPorCorreo.bind(diplomaController)
 );
 
+/**
+ * @route   GET /api/diplomas/download/:filename
+ * @desc    Descargar archivo de diploma
+ * @access  Private
+ */
+router.get('/download/:filename', diplomaController.downloadDiploma.bind(diplomaController));
+
 export default router;

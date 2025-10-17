@@ -3,7 +3,10 @@
 // Sistema de Gestión del Congreso de Tecnología
 // =====================================================
 
-import puppeteer from 'puppeteer-core';
+// Usar puppeteer en desarrollo y puppeteer-core en producción
+const puppeteer = process.env['NODE_ENV'] === 'production' || process.env['VERCEL'] 
+  ? require('puppeteer-core') 
+  : require('puppeteer');
 import fs from 'fs';
 import path from 'path';
 
@@ -41,7 +44,7 @@ export class PDFService {
    */
   async generateDiplomaPDF(data: DiplomaPDFData): Promise<string> {
     try {
-      // Configuración de Puppeteer para Vercel
+      // Configuración de Puppeteer
       const browserOptions: any = {
         headless: true,
         args: [
@@ -59,6 +62,21 @@ export class PDFService {
       // En Vercel, usar Chromium incluido
       if (process.env['VERCEL']) {
         browserOptions.executablePath = '/usr/bin/chromium-browser';
+      } else {
+        // En desarrollo local, intentar encontrar Chrome
+        const possiblePaths = [
+          'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Users\\' + process.env['USERNAME'] + '\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe'
+        ];
+        
+        for (const path of possiblePaths) {
+          if (fs.existsSync(path)) {
+            browserOptions.executablePath = path;
+            console.log('🔍 Usando Chrome encontrado en:', path);
+            break;
+          }
+        }
       }
 
       const browser = await puppeteer.launch(browserOptions);

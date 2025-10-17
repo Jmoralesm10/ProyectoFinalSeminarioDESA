@@ -122,6 +122,10 @@ const Header = () => {
                           <span className="action-icon">🎯</span>
                           Mis Actividades
                         </Link>
+                        <Link to="/mis-diplomas" className="profile-action">
+                          <span className="action-icon">🏆</span>
+                          Mis Diplomas
+                        </Link>
                         <Link to="/permisos" className="profile-action">
                           <span className="action-icon">🔐</span>
                           Mis Permisos
@@ -199,6 +203,10 @@ const Header = () => {
                 <Link to="/mis-actividades" className="mobile-profile-action" onClick={toggleMenu}>
                   <span className="action-icon">🎯</span>
                   Mis Actividades
+                </Link>
+                <Link to="/mis-diplomas" className="mobile-profile-action" onClick={toggleMenu}>
+                  <span className="action-icon">🏆</span>
+                  Mis Diplomas
                 </Link>
                 <Link to="/permisos" className="mobile-profile-action" onClick={toggleMenu}>
                   <span className="action-icon">🔐</span>

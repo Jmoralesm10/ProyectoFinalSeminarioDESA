@@ -4,6 +4,8 @@
 // =====================================================
 
 import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { DiplomaService } from '../services/diploma.service';
 import {
   RegistrarResultadosCompetenciaDto,
@@ -472,4 +474,72 @@ export class DiplomaController {
       });
     }
   }
+
+  /**
+   * Descargar archivo de diploma
+   * GET /api/diplomas/download/:filename
+   */
+  downloadDiploma = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const filename = req.params['filename'];
+      console.log('📥 [DiplomaController] Descargando diploma:', filename);
+
+      if (!filename) {
+        res.status(400).json({
+          success: false,
+          message: 'Nombre de archivo requerido'
+        });
+        return;
+      }
+
+      // Decodificar el nombre del archivo (por si tiene caracteres especiales)
+      const decodedFilename = decodeURIComponent(filename);
+      console.log('📥 [DiplomaController] Nombre decodificado:', decodedFilename);
+
+      // Construir la ruta completa del archivo
+      const filePath = path.join(process.cwd(), 'diplomas', path.basename(decodedFilename));
+      console.log('📥 [DiplomaController] Ruta del archivo:', filePath);
+
+      // Verificar si el archivo existe
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ [DiplomaController] Archivo no encontrado:', filePath);
+        res.status(404).json({
+          success: false,
+          message: 'Archivo no encontrado'
+        });
+        return;
+      }
+
+      // Configurar headers para descarga
+      const fileName = path.basename(filePath);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      res.setHeader('Content-Length', fs.statSync(filePath).size);
+
+      // Enviar el archivo
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
+
+      fileStream.on('error', (error) => {
+        console.error('❌ [DiplomaController] Error al leer archivo:', error);
+        if (!res.headersSent) {
+          res.status(500).json({
+            success: false,
+            message: 'Error al leer el archivo'
+          });
+        }
+      });
+
+      console.log('✅ [DiplomaController] Archivo enviado exitosamente:', fileName);
+
+    } catch (error) {
+      console.error('❌ [DiplomaController] Error al descargar diploma:', error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
+    }
+  };
 }

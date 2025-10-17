@@ -79,4 +79,18 @@ router.get('/congress/speakers', publicController.consultarPonentesCongreso.bind
  */
 router.get('/stats', publicController.obtenerEstadisticasPublicas.bind(publicController));
 
+/**
+ * @route   GET /api/public/user-diplomas/:userId
+ * @desc    Obtener diplomas de un usuario específico (endpoint temporal)
+ * @access  Public (temporal para testing)
+ */
+router.get('/user-diplomas/:userId', publicController.obtenerDiplomasUsuario.bind(publicController));
+
+/**
+ * @route   POST /api/public/generate-diploma-pdf/:diplomaId/:userId
+ * @desc    Generar PDF para un diploma específico
+ * @access  Public (temporal para testing)
+ */
+router.post('/generate-diploma-pdf/:diplomaId/:userId', publicController.generarPDFDiploma.bind(publicController));
+
 export default router;

@@ -207,4 +207,65 @@ export class PublicController {
       });
     }
   };
+
+  /**
+   * Obtener diplomas de un usuario específico (endpoint temporal)
+   * GET /api/public/user-diplomas/:userId
+   */
+  obtenerDiplomasUsuario = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params['userId'];
+      console.log('🎓 [PublicController] Obteniendo diplomas de usuario:', userId);
+
+      if (!userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de usuario requerido',
+          diplomas: []
+        });
+        return;
+      }
+
+      const result = await this.publicService.obtenerDiplomasUsuario(userId);
+      
+      res.status(result.success ? 200 : 500).json(result);
+    } catch (error) {
+      console.error('❌ [PublicController] Error al obtener diplomas de usuario:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor al obtener diplomas del usuario',
+        diplomas: []
+      });
+    }
+  };
+
+  /**
+   * Generar PDF para un diploma específico
+   * POST /api/public/generate-diploma-pdf/:diplomaId/:userId
+   */
+  generarPDFDiploma = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const diplomaId = req.params['diplomaId'];
+      const userId = req.params['userId'];
+      console.log('🎓 [PublicController] Generando PDF para diploma:', diplomaId, 'usuario:', userId);
+
+      if (!diplomaId || !userId) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de diploma y usuario requeridos'
+        });
+        return;
+      }
+
+      const result = await this.publicService.generarPDFDiploma(diplomaId, userId);
+      
+      res.status(result.success ? 200 : 500).json(result);
+    } catch (error) {
+      console.error('❌ [PublicController] Error al generar PDF del diploma:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor al generar PDF del diploma'
+      });
+    }
+  };
 }

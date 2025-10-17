@@ -919,4 +919,100 @@ export class UserService {
       };
     }
   }
+
+  // Obtener diplomas del usuario autenticado
+  async getMyDiplomas(userId: string): Promise<any> {
+    try {
+      console.log('🎓 [UserService] getMyDiplomas llamado para usuario:', userId);
+      
+      // Usar consulta directa para generar id_diploma sintético
+      const { executeQuery } = await import('../config/database');
+      
+      const query = `
+        SELECT 
+          d.id_usuario,
+          d.id_actividad,
+          d.tipo_diploma,
+          u.nombre_usuario,
+          u.apellido_usuario,
+          u.email_usuario,
+          a.nombre_actividad as actividad_nombre,
+          a.tipo_actividad,
+          d.nombre_diploma,
+          d.plantilla_path_diploma,
+          d.archivo_path_diploma,
+          d.fecha_generacion_diploma,
+          d.fecha_descarga_diploma,
+          d.enviado_email_diploma,
+          d.fecha_envio_email_diploma,
+          d.observaciones_diploma,
+          rc.posicion_resultado,
+          rc.puntuacion_resultado
+        FROM tb_diplomas d
+        JOIN tb_usuarios u ON d.id_usuario = u.id_usuario
+        LEFT JOIN tb_actividades a ON d.id_actividad = a.id_actividad
+        LEFT JOIN tb_resultados_competencia rc ON d.id_usuario = rc.id_usuario AND d.id_actividad = rc.id_actividad
+        WHERE d.id_usuario = $1
+        ORDER BY d.fecha_generacion_diploma DESC
+        LIMIT 100
+      `;
+
+      console.log('🎓 [UserService] Ejecutando query:', query);
+      console.log('🎓 [UserService] Con parámetros:', [userId]);
+
+      const result = await executeQuery(query, [userId]);
+
+      console.log('🎓 [UserService] Resultado de la query:', result);
+
+      if (!result || !result.rows || !Array.isArray(result.rows)) {
+        console.log('❌ [UserService] Error en el resultado de la query');
+        return {
+          success: false,
+          message: 'Error al consultar los diplomas del usuario',
+          diplomas: []
+        };
+      }
+
+      const diplomas = result.rows.map((diploma: any) => ({
+        // Generar un ID único basado en la clave primaria compuesta
+        id_diploma: `${diploma.id_usuario}|||${diploma.id_actividad}|||${diploma.tipo_diploma}`,
+        id_usuario: diploma.id_usuario,
+        id_actividad: diploma.id_actividad,
+        nombre_completo: `${diploma.nombre_usuario} ${diploma.apellido_usuario}`,
+        email_usuario: diploma.email_usuario,
+        actividad_nombre: diploma.actividad_nombre,
+        tipo_actividad: diploma.tipo_actividad,
+        tipo_diploma: diploma.tipo_diploma,
+        nombre_diploma: diploma.nombre_diploma,
+        plantilla_path_diploma: diploma.plantilla_path_diploma,
+        archivo_path_diploma: diploma.archivo_path_diploma,
+        fecha_generacion_diploma: diploma.fecha_generacion_diploma,
+        fecha_descarga_diploma: diploma.fecha_descarga_diploma,
+        enviado_email_diploma: diploma.enviado_email_diploma,
+        fecha_envio_email_diploma: diploma.fecha_envio_email_diploma,
+        generado_por_nombre: 'Sistema',
+        observaciones_diploma: diploma.observaciones_diploma,
+        posicion_resultado: diploma.posicion_resultado,
+        puntuacion_resultado: diploma.puntuacion_resultado,
+        tipo_diploma_descripcion: diploma.tipo_diploma === 'participacion' ? '📜 Participación' : 
+                                 diploma.tipo_diploma === 'congreso_general' ? '🏆 Congreso General' : 
+                                 diploma.tipo_diploma
+      }));
+
+      console.log('🎓 [UserService] Diplomas procesados:', diplomas.length);
+
+      return {
+        success: true,
+        message: `Diplomas consultados exitosamente para el usuario`,
+        diplomas: diplomas,
+        total_registros: diplomas.length
+      };
+    } catch (error) {
+      console.error('❌ [UserService] Error al obtener diplomas del usuario:', error);
+      return {
+        success: false,
+        message: 'Error interno del servidor'
+      };
+    }
+  }
 }
