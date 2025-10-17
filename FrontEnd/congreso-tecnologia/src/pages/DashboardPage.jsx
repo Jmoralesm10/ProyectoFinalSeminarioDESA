@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { getApiUrl } from '../config/api';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
@@ -143,7 +144,7 @@ const DashboardPage = () => {
         'Content-Type': 'application/json'
       };
 
-      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/diplomas/user/${user.id_usuario}`, {
+      const response = await fetch(getApiUrl(`/api/diplomas/user/${user.id_usuario}`), {
         headers
       });
 

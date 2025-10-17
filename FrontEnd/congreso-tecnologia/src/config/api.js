@@ -4,7 +4,7 @@
 // =====================================================
 
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:3001',
+  BASE_URL: 'https://proyecto-final-seminario-desa-dmgi.vercel.app',
   ENDPOINTS: {
     // Usuarios
     REGISTER: '/api/users/register',

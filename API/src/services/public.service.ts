@@ -543,8 +543,8 @@ export class PublicService {
         observaciones_diploma: diploma.observaciones_diploma,
         posicion_resultado: diploma.posicion_resultado,
         puntuacion_resultado: diploma.puntuacion_resultado,
-        tipo_diploma_descripcion: diploma.tipo_diploma === 'participacion' ? '📜 Participación' : 
-                                 diploma.tipo_diploma === 'congreso_general' ? '🏆 Congreso General' : 
+        tipo_diploma_descripcion: diploma.tipo_diploma === 'participacion' ? 'Participación' : 
+                                 diploma.tipo_diploma === 'congreso_general' ? 'Congreso General' : 
                                  diploma.tipo_diploma
       }));
 
