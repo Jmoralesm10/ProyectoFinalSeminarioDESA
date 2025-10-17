@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { isSuperAdmin } from '../utils/adminUtils';
+import { getApiUrl } from '../config/api';
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -121,7 +122,7 @@ export const useAuth = () => {
         return [];
       }
 
-      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities/user/inscriptions', {
+      const response = await fetch(getApiUrl('/api/activities/user/inscriptions'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -147,7 +148,7 @@ export const useAuth = () => {
     }
 
     try {
-      const apiUrl = `https://proyecto-final-seminario-desa-dmgi.vercel.app/api/users/${currentUser.id_usuario}/permissions`;
+      const apiUrl = getApiUrl(`/api/users/${currentUser.id_usuario}/permissions`);
       
       // Verificar si el usuario es administrador usando la API
       const response = await fetch(apiUrl, {

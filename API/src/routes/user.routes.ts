@@ -127,6 +127,37 @@ router.put(
 );
 
 /**
+ * @route   GET /api/users/my-diplomas
+ * @desc    Obtener diplomas del usuario autenticado
+ * @access  Private
+ */
+router.get(
+  '/my-diplomas',
+  authMiddleware.authenticateToken,
+  authMiddleware.requireActiveUser,
+  userController.getMyDiplomas
+);
+
+/**
+ * @route   GET /api/users/test-diplomas
+ * @desc    Endpoint de prueba para diplomas
+ * @access  Private
+ */
+router.get(
+  '/test-diplomas',
+  authMiddleware.authenticateToken,
+  authMiddleware.requireActiveUser,
+  (req, res) => {
+    console.log('🧪 [Test] Endpoint de prueba llamado');
+    res.json({
+      success: true,
+      message: 'Endpoint de prueba funcionando',
+      user: req.user
+    });
+  }
+);
+
+/**
  * @route   GET /api/users/:userId/permissions
  * @desc    Obtener permisos de un usuario específico (propios o admin)
  * @access  Private (Usuario puede ver sus propios permisos, admin puede ver cualquier usuario)

@@ -3,7 +3,10 @@
 // Sistema de Gestión del Congreso de Tecnología
 // =====================================================
 
-import puppeteer from 'puppeteer-core';
+// Usar puppeteer en desarrollo y puppeteer-core en producción
+const puppeteer = process.env['NODE_ENV'] === 'production' || process.env['VERCEL'] 
+  ? require('puppeteer-core') 
+  : require('puppeteer');
 import fs from 'fs';
 import path from 'path';
 
@@ -41,7 +44,7 @@ export class PDFService {
    */
   async generateDiplomaPDF(data: DiplomaPDFData): Promise<string> {
     try {
-      // Configuración de Puppeteer para Vercel
+      // Configuración de Puppeteer
       const browserOptions: any = {
         headless: true,
         args: [
@@ -59,13 +62,28 @@ export class PDFService {
       // En Vercel, usar Chromium incluido
       if (process.env['VERCEL']) {
         browserOptions.executablePath = '/usr/bin/chromium-browser';
+      } else {
+        // En desarrollo local, intentar encontrar Chrome
+        const possiblePaths = [
+          'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Users\\' + process.env['USERNAME'] + '\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe'
+        ];
+        
+        for (const path of possiblePaths) {
+          if (fs.existsSync(path)) {
+            browserOptions.executablePath = path;
+            console.log('🔍 Usando Chrome encontrado en:', path);
+            break;
+          }
+        }
       }
 
       const browser = await puppeteer.launch(browserOptions);
       const page = await browser.newPage();
       
-      // Configurar tamaño de página A4
-      await page.setViewport({ width: 794, height: 1123 }); // A4 en píxeles
+      // Configurar tamaño de página A4 en formato horizontal (landscape)
+      await page.setViewport({ width: 1123, height: 794 }); // A4 landscape en píxeles
 
       // Generar HTML del diploma
       const htmlContent = this.generateDiplomaHTML(data);
@@ -81,16 +99,17 @@ export class PDFService {
         fs.mkdirSync(this.outputDir, { recursive: true });
       }
 
-      // Generar PDF
+      // Generar PDF en formato horizontal
       await page.pdf({
         path: filePath,
         format: 'A4',
+        landscape: true, // Formato horizontal
         printBackground: true,
         margin: {
-          top: '0.5in',
-          right: '0.5in',
-          bottom: '0.5in',
-          left: '0.5in'
+          top: '0.2in',
+          right: '0.2in',
+          bottom: '0.2in',
+          left: '0.2in'
         }
       });
 
@@ -111,7 +130,6 @@ export class PDFService {
   private generateDiplomaHTML(data: DiplomaPDFData): string {
     const tipoTexto = this.getTipoTexto(data.tipoDiploma);
     const colorPrincipal = this.getColorPrincipal(data.tipoDiploma);
-    const icono = this.getIcono(data.tipoDiploma);
 
     return `
     <!DOCTYPE html>
@@ -136,25 +154,30 @@ export class PDFService {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 20px;
+                padding: 5px;
+                margin: 0;
             }
             
             .diploma-container {
                 background: white;
                 width: 100%;
-                max-width: 800px;
-                border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                max-width: 1000px;
+                height: 100vh;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
                 position: relative;
+                display: flex;
+                flex-direction: column;
             }
             
             .diploma-header {
                 background: linear-gradient(135deg, ${colorPrincipal} 0%, #2C3E50 100%);
                 color: white;
-                padding: 40px;
+                padding: 15px 30px;
                 text-align: center;
                 position: relative;
+                flex-shrink: 0;
             }
             
             .diploma-header::before {
@@ -168,18 +191,11 @@ export class PDFService {
                 opacity: 0.3;
             }
             
-            .university-logo {
-                font-size: 2.5rem;
-                margin-bottom: 10px;
-                position: relative;
-                z-index: 1;
-            }
-            
             .university-name {
                 font-family: 'Playfair Display', serif;
                 font-size: 1.8rem;
                 font-weight: 700;
-                margin-bottom: 5px;
+                margin-bottom: 3px;
                 position: relative;
                 z-index: 1;
             }
@@ -187,13 +203,7 @@ export class PDFService {
             .university-subtitle {
                 font-size: 1rem;
                 opacity: 0.9;
-                position: relative;
-                z-index: 1;
-            }
-            
-            .diploma-icon {
-                font-size: 4rem;
-                margin: 30px 0;
+                margin-bottom: 8px;
                 position: relative;
                 z-index: 1;
             }
@@ -202,7 +212,7 @@ export class PDFService {
                 font-family: 'Playfair Display', serif;
                 font-size: 2.2rem;
                 font-weight: 900;
-                margin-bottom: 10px;
+                margin-bottom: 3px;
                 position: relative;
                 z-index: 1;
             }
@@ -215,15 +225,19 @@ export class PDFService {
             }
             
             .diploma-content {
-                padding: 50px 40px;
+                padding: 15px 30px;
                 text-align: center;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
             
             .diploma-text {
                 font-size: 1.3rem;
-                line-height: 1.8;
+                line-height: 1.6;
                 color: #2C3E50;
-                margin-bottom: 30px;
+                margin-bottom: 10px;
             }
             
             .recipient-name {
@@ -231,7 +245,7 @@ export class PDFService {
                 font-size: 2.5rem;
                 font-weight: 700;
                 color: ${colorPrincipal};
-                margin: 30px 0;
+                margin: 10px 0;
                 text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
             
@@ -239,18 +253,18 @@ export class PDFService {
                 font-size: 1.4rem;
                 color: #34495e;
                 font-weight: 600;
-                margin: 20px 0;
-                padding: 15px 30px;
+                margin: 8px 0;
+                padding: 10px 20px;
                 background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                border-radius: 10px;
-                border-left: 5px solid ${colorPrincipal};
+                border-radius: 8px;
+                border-left: 4px solid ${colorPrincipal};
             }
             
             .diploma-details {
-                margin-top: 40px;
-                padding: 30px;
+                margin-top: 10px;
+                padding: 15px;
                 background: #f8f9fa;
-                border-radius: 15px;
+                border-radius: 10px;
                 border: 2px solid #e9ecef;
             }
             
@@ -278,16 +292,17 @@ export class PDFService {
             }
             
             .diploma-footer {
-                padding: 30px 40px;
+                padding: 15px 30px;
                 background: #f8f9fa;
                 text-align: center;
                 border-top: 3px solid ${colorPrincipal};
+                flex-shrink: 0;
             }
             
             .signature-section {
                 display: flex;
                 justify-content: space-between;
-                margin-top: 30px;
+                margin-top: 15px;
             }
             
             .signature {
@@ -297,20 +312,20 @@ export class PDFService {
             
             .signature-line {
                 border-bottom: 2px solid #2C3E50;
-                width: 150px;
-                margin: 0 auto 10px;
-                height: 40px;
+                width: 120px;
+                margin: 0 auto 8px;
+                height: 30px;
             }
             
             .signature-text {
-                font-size: 0.9rem;
+                font-size: 0.8rem;
                 color: #6c757d;
                 font-weight: 600;
             }
             
             .congress-info {
-                margin-top: 20px;
-                font-size: 0.9rem;
+                margin-top: 15px;
+                font-size: 0.8rem;
                 color: #6c757d;
                 font-style: italic;
             }
@@ -320,7 +335,7 @@ export class PDFService {
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 8rem;
+                font-size: 6rem;
                 color: rgba(0, 0, 0, 0.03);
                 font-weight: 900;
                 z-index: 0;
@@ -333,11 +348,9 @@ export class PDFService {
             <div class="watermark">UMG</div>
             
             <div class="diploma-header">
-                <div class="university-logo">🎓</div>
                 <div class="university-name">Universidad Mariano Gálvez de Guatemala</div>
                 <div class="university-subtitle">Facultad de Ingeniería en Sistemas</div>
                 
-                <div class="diploma-icon">${icono}</div>
                 <div class="diploma-title">${tipoTexto}</div>
                 <div class="diploma-subtitle">Congreso de Tecnología 2024</div>
             </div>
@@ -441,26 +454,6 @@ export class PDFService {
         return '#D92027'; // Rojo UMG
       default:
         return '#1A365D';
-    }
-  }
-
-  /**
-   * Obtener icono según el tipo
-   */
-  private getIcono(tipo: string): string {
-    switch (tipo) {
-      case 'primer_lugar':
-        return '🥇';
-      case 'segundo_lugar':
-        return '🥈';
-      case 'tercer_lugar':
-        return '🥉';
-      case 'participacion':
-        return '🎓';
-      case 'congreso_general':
-        return '🏆';
-      default:
-        return '🎓';
     }
   }
 

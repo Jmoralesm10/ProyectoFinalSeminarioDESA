@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { getApiUrl } from '../config/api';
 import './GenerateDiplomasPage.css';
 
 const GenerateDiplomasPage = () => {
@@ -41,7 +42,7 @@ const GenerateDiplomasPage = () => {
   const loadActivities = async () => {
     try {
       const token = getAuthToken();
-      const response = await fetch('https://proyecto-final-seminario-desa-dmgi.vercel.app/api/activities', {
+      const response = await fetch(getApiUrl('/api/activities'), {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -66,7 +67,7 @@ const GenerateDiplomasPage = () => {
     
     try {
       const token = getAuthToken();
-      const response = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/admin/users/search?termino_busqueda=${encodeURIComponent(email)}`, {
+      const response = await fetch(getApiUrl(`/api/admin/users/search?termino_busqueda=${encodeURIComponent(email)}`), {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -180,7 +181,7 @@ const GenerateDiplomasPage = () => {
           observaciones: formData.observaciones || undefined
         };
 
-        const resultadosResponse = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/diplomas/competitions/${selectedActivity.id_actividad}/resultados`, {
+        const resultadosResponse = await fetch(getApiUrl(`/api/diplomas/competitions/${selectedActivity.id_actividad}/resultados`), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -200,7 +201,7 @@ const GenerateDiplomasPage = () => {
           plantilla_participacion: 'default' // Usar plantilla por defecto
         };
 
-        const diplomasResponse = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/diplomas/activities/${selectedActivity.id_actividad}/generate`, {
+        const diplomasResponse = await fetch(getApiUrl(`/api/diplomas/activities/${selectedActivity.id_actividad}/generate`), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -223,7 +224,7 @@ const GenerateDiplomasPage = () => {
           plantilla_participacion: 'default' // Usar plantilla por defecto
         };
 
-        const diplomasResponse = await fetch(`https://proyecto-final-seminario-desa-dmgi.vercel.app/api/diplomas/activities/${selectedActivity.id_actividad}/generate`, {
+        const diplomasResponse = await fetch(getApiUrl(`/api/diplomas/activities/${selectedActivity.id_actividad}/generate`), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

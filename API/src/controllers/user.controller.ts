@@ -868,4 +868,40 @@ export class UserController {
       });
     }
   };
+
+  // Obtener diplomas del usuario autenticado
+  getMyDiplomas = async (req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('🎓 [UserController] getMyDiplomas llamado');
+      console.log('🎓 [UserController] Usuario autenticado:', req.user);
+      
+      const userId = req.user?.id_usuario;
+
+      if (!userId) {
+        console.log('❌ [UserController] Usuario no autenticado');
+        res.status(401).json({
+          success: false,
+          message: 'Usuario no autenticado'
+        });
+        return;
+      }
+
+      console.log('🎓 [UserController] Obteniendo diplomas para usuario:', userId);
+      const result = await this.userService.getMyDiplomas(userId);
+      
+      console.log('🎓 [UserController] Resultado:', result);
+      
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('❌ [UserController] Error al obtener diplomas del usuario:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  };
 }

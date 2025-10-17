@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import MyActivitiesPage from './pages/MyActivitiesPage';
+import MyDiplomasPage from './pages/MyDiplomasPage';
 import AttendancePage from './pages/AttendancePage';
 import AttendanceStatsPage from './pages/AttendanceStatsPage';
 import AdminPanelPage from './pages/AdminPanelPage';
@@ -32,6 +33,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/perfil" element={<ProfilePage />} />
           <Route path="/mis-actividades" element={<MyActivitiesPage />} />
+          <Route path="/mis-diplomas" element={<MyDiplomasPage />} />
           <Route path="/asistencia" element={
             <AdminGuard>
               <AttendancePage />
