@@ -451,14 +451,14 @@
 
 .profile-details p {
   margin: 0 0 0.5rem 0;
-  color: #6c757d;
+  color: #1A365D;
   font-size: 0.85rem;
 }
 
 .user-type {
   display: inline-block;
   background: #e3f2fd;
-  color: #1976d2;
+  color: #1A365D;
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -478,7 +478,7 @@
   padding: 0.75rem 1.5rem;
   background: none;
   border: none;
-  color: #495057;
+  color: #1A365D !important;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -489,16 +489,16 @@
 
 .profile-action:hover {
   background: #f8f9fa;
-  color: #1A365D;
+  color: #2C5282 !important;
 }
 
 .profile-action.logout {
-  color: #dc3545;
+  color: #dc3545 !important;
 }
 
 .profile-action.logout:hover {
   background: #fff5f5;
-  color: #c82333;
+  color: #c82333 !important;
 }
 
 .action-icon {
@@ -570,7 +570,7 @@
   background: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: white !important;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -581,14 +581,16 @@
 
 .mobile-profile-action:hover {
   background: rgba(255, 255, 255, 0.2);
+  color: white !important;
 }
 
 .mobile-profile-action.logout {
-  color: #ff6b6b;
+  color: #ff6b6b !important;
 }
 
 .mobile-profile-action.logout:hover {
   background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b !important;
 }
 
 /* Responsive para dropdown */

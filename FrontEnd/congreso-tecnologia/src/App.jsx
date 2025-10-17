@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage';
 import RegistrationPage from './pages/RegistrationPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
+import MyActivitiesPage from './pages/MyActivitiesPage';
 import AttendancePage from './pages/AttendancePage';
 import AttendanceStatsPage from './pages/AttendanceStatsPage';
 import AdminPanelPage from './pages/AdminPanelPage';
@@ -28,6 +30,8 @@ function App() {
           <Route path="/registro" element={<RegistrationPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/mis-actividades" element={<MyActivitiesPage />} />
           <Route path="/asistencia" element={
             <AdminGuard>
               <AttendancePage />
